@@ -10,6 +10,7 @@ use tauri_plugin_opener::OpenerExt;
 mod app_icons;
 mod bongo;
 mod config;
+mod diagnostics;
 mod layout;
 mod media;
 mod net;
@@ -834,6 +835,7 @@ pub fn run() {
             layout::save_layout,
             config::load_app_config,
             config::save_app_config,
+            diagnostics::save_diagnostics,
             get_audio_sessions,
             set_app_volume,
             toggle_app_mute,

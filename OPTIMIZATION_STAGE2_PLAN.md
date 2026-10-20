@@ -80,14 +80,16 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **Done**: `npm.cmd run check` pass (unit + build + flip 17 PASS).
 - **Token thực tế**: ~14k.
 
-### P0-4 · Nút "Xuất chẩn đoán"
-- [ ] **Mục tiêu**: có file log để gửi kèm khi báo lỗi.
-- **File**: `src-tauri/src/lib.rs`, `src/core/settings-panel.js`, `index.html`, `src/core/diagnostics.js`.
-- **Việc**:
-  - Thêm command `save_diagnostics(text: String) -> Result<String, String>` ghi vào `app_data_dir/logs/diagnostics-<timestamp>.txt`, trả đường dẫn.
-  - Trong modal Cài đặt: nút "Xuất chẩn đoán" → ghép `diagnostics.format({ title })` + version app + user agent, gọi command, hiện toast đường dẫn (browser fallback: tải file `.txt`).
-- **Done**: `npm.cmd run check`; thử tay trên `npm.cmd run tauri dev` 1 lần.
-- **Token**: ~20k.
+### P0-4 · Nút "Xuất chẩn đoán" ✅
+- [x] **Mục tiêu**: có file log để gửi kèm khi báo lỗi.
+- **Kết quả**:
+  - `src-tauri/src/diagnostics.rs`: command `save_diagnostics(text)` ghi `app_data_dir/logs/diagnostics-<millis>.txt`, tự thêm header phiên bản app (`package_info`), giới hạn 2 MB; có unit test.
+  - `settings-panel.js`: nút "Xuất chẩn đoán" ghép `diagnostics.format()` + thời gian + chế độ + số phím + kích thước cửa sổ + user agent; Tauri → ghi file và hiện đường dẫn; web → tải `.txt` qua Blob.
+  - Sửa luôn nút **"Xong"** trong modal Cài đặt trước đây chưa được nối sự kiện.
+  - `index.html` thêm nút + vùng trạng thái (`role="status"`); `modals.css` thêm `.settings-note`.
+- **Done**: `npm.cmd run check` pass; `check:capsule` 75 PASS; `cargo test` **8 PASS**.
+- **Còn lại**: chưa bấm thử trong app desktop thật (cần `npm.cmd run tauri dev`) — sẽ kiểm khi làm P1-2.
+- **Token thực tế**: ~24k.
 
 ---
 
@@ -261,7 +263,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - [ ] P0-2b · Sửa smoke/preview
 - [ ] P0-2c · Format toàn bộ
 - [x] P0-3 · Ring buffer lỗi
-- [ ] P0-4 · Xuất chẩn đoán
+- [x] P0-4 · Xuất chẩn đoán
 - [ ] P1-1 · Scheduler đồng hồ
 - [ ] P1-2 · Vòng quét audio/media
 - [ ] P1-3 · Đo lại

@@ -226,7 +226,11 @@ export function bootstrapApp() {
      ========================================================================= */
   applyMode();
 
-  const settingsPanel = initSettingsPanel({ onResetLayout: () => resetLayout() });
+  const settingsPanel = initSettingsPanel({
+    onResetLayout: () => resetLayout(),
+    invokeCmd,
+    getTauri,
+  });
 
   // Segmented Chạy / Chỉnh sửa bên trong modal cài đặt
   document.querySelectorAll('#modeSegment .seg-btn').forEach((btn) => {

@@ -111,6 +111,13 @@
   .btn-delete { background: var(--danger); color: #fff; }
   /* NÃºt phÃ¡ huá»· Ä‘ang CHá»œ xÃ¡c nháº­n (cháº¡m láº§n 2) -> Ä‘á»•i sang mÃ u cáº£nh bÃ¡o */
   .btn-delete.is-armed { background: var(--warn); color: #1a1200; }
+  .settings-note {
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+  }
   /* =======================================================================
    SD-LOOK â€” giao diá»‡n phÃ­m giá»‘ng Stream Deck THáº¬T
    (dÃ¡n tá»« deck-keys-streamdeck.css, GIá»® nguyÃªn ná»™i dung, chá»‰ Ä‘á»•i header)
