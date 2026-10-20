@@ -14,7 +14,8 @@ Dự án này là một ứng dụng Stream Deck kiểu desktop chạy bằng Ta
 - `src-tauri/` : Rust/Tauri backend và cấu hình app
 - `public/` : tài nguyên công khai
 - `index.html`, `todo.html` : hai trang Vite (cửa sổ chính và cửa sổ Todo)
-- `.devtmp/` : script kiểm tra (gate hiện hành: `npm.cmd run check`)
+- `scripts/` : script kiểm tra/build phụ trợ; gate hiện hành: `npm.cmd run check` (nhanh) và `npm.cmd run check:full` (đầy đủ)
+- `.devtmp/` : file sinh ra khi xem trước, không commit
 - `README.md` : hướng dẫn chạy/build/kiểm tra
 - `OPTIMIZATION_STAGE1.md` : ghi chú tối ưu build và trạng thái module hóa
 
@@ -69,4 +70,4 @@ Dự án này là một ứng dụng Stream Deck kiểu desktop chạy bằng Ta
 ## 9. Mục tiêu tiếp theo
 - Hoàn thiện polish UI cho từng widget theo `sd-look`
 - Kiểm tra lại toàn bộ widget trên các kích thước deck khác nhau
-- Port các script `.devtmp/` còn assertion theo thiết kế cũ (xem `README.md`)
+- Port các script `scripts/smoke.mjs` và `check-preview.mjs` còn assertion theo thiết kế cũ (xem `README.md`)

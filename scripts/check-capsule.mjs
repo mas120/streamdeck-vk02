@@ -5,7 +5,7 @@
    4. đấu dây tương tác: throttle 20ms, flush cuối, bỏ qua nút mute, fader dọc,
       refresh khi đổi cỡ ô / đổi cỡ cửa sổ;
    5. không còn tàn dư slider cũ (touch-track/touch-fill/vol-status-row).
-   Chạy: node .devtmp/check-capsule.mjs */
+   Chạy: node scripts/check-capsule.mjs */
 import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { root, jsSrc, cssSrc as style, extractFn, widgetSrc } from './_sources.mjs';

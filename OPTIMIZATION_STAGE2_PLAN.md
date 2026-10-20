@@ -42,18 +42,33 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **Done**: `git status` sạch; `git log --oneline` có 1 commit; tag tồn tại.
 - **Token**: ~8k.
 
-### P0-2 · Chuẩn hoá tooling + `check:full`
-- [ ] **Mục tiêu**: gate kiểm tra thật sự bắt lỗi, script không nằm trong thư mục tạm.
-- **File**: `package.json`, `.devtmp/*.mjs`, `.gitignore`.
+### P0-2 · Chuẩn hoá tooling + `check:full` ✅
+- [x] **Mục tiêu**: gate kiểm tra thật sự bắt lỗi, script không nằm trong thư mục tạm.
+- **Kết quả**:
+  - 7 script chuyển `.devtmp/*.mjs` → `scripts/` (giữ lịch sử qua `git mv`); `.devtmp/` chỉ còn output sinh ra và đã vào `.gitignore`.
+  - `preview.mjs` tự tạo thư mục output; `check-preview.mjs` báo rõ nếu thiếu file.
+  - `package.json`: thêm `preview`, `check:capsule`, `check:rust`, `check:smoke`, `check:preview`, `check:format`, `check:full`; thêm `prettier` vào devDependencies (trước đó script `format` bị hỏng vì chưa cài).
+  - `check:full` = `check` (unit + build + flip) + `check:capsule` (75 PASS) + `cargo test` (7 PASS). Đã chạy pass.
+  - **Chưa đưa vào gate** (assertion theo thiết kế cũ): `check:smoke` fail ở pomodoro/weather, `check:preview` fail 2 assertion pomodoro, `check:format` fail 56 file.
+- **Bước tiếp theo tách riêng**: P0-2b (sửa smoke/preview), P0-2c (format toàn bộ) — xem dưới.
+- **Token thực tế**: ~30k.
+
+### P0-2b · Sửa suite `smoke` + `preview` cũ
+- [ ] **Mục tiêu**: đưa 2 suite tĩnh vào gate, bắt drift markup/CSS thật.
+- **File**: `scripts/smoke.mjs`, `scripts/check-preview.mjs`, `scripts/_sources.mjs`, `src/widgets/pomodoro.js`, `src/styles/widgets/weather.css`.
 - **Việc**:
-  - Chuyển `.devtmp/check-flip.mjs`, `check-capsule.mjs`, `check-preview.mjs`, `smoke.mjs`, `_sources.mjs`, `_dist.mjs` → `scripts/` (giữ nguyên nội dung, sửa đường dẫn `../src` nếu cần).
-  - Cập nhật script:
-    - `check`: 3 unit test + build + `scripts/check-flip.mjs` (giữ nhanh).
-    - `check:smoke`: `node scripts/smoke.mjs`.
-    - `check:full`: `prettier --check` + 3 unit test + smoke + build + check-flip + `cargo test` (trong `src-tauri`).
-  - Thêm `.devtmp/` vào `.gitignore` sau khi đã chuyển file.
-- **Done**: `npm.cmd run check:smoke` pass; `npm.cmd run check:full` pass (nếu `cargo test` fail vì môi trường, ghi rõ lý do vào plan).
-- **Token**: ~15k.
+  - Thay `extractFn('renderPomodoro')` bằng hàm hiện có (kiểm tra tên thật trong `pomodoro.js`).
+  - Cập nhật assertion pomodoro theo markup mới (glyph + `--pomo-ratio`, `.pomo-sr`).
+  - Cập nhật 5 assertion weather CSS (font 48px, translateX(15%), layout 2x1, bảng gradient).
+  - Khi pass: thêm `check:smoke` + `check:preview` vào `check:full`.
+- **Done**: `npm.cmd run check:smoke` + `npm.cmd run check:preview` pass; `check:full` pass.
+- **Token**: ~25k.
+
+### P0-2c · Format toàn bộ (tuỳ chọn)
+- [ ] **File**: toàn bộ `src/**/*.{js,css}`, `*.{html,js,json}`.
+- **Việc**: chạy `npm.cmd run format`, commit riêng chỉ gồm thay đổi format (không trộn logic), rồi thêm `check:format` vào `check:full`.
+- **Done**: `npm.cmd run check:format` pass; `git diff` của commit chỉ là whitespace/format.
+- **Token**: ~10k (chủ yếu là đọc diff lớn — nên `git diff --stat` thay vì đọc từng file).
 
 ### P0-3 · Bắt lỗi frontend vào ring buffer
 - [ ] **Mục tiêu**: lỗi widget/runtime không biến mất khỏi console.
@@ -113,6 +128,9 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 ## Phase 2 — Tách Rust (4 session, độc lập, làm bất kỳ thứ tự)
 
 > Nguyên tắc: **chỉ di chuyển code, không đổi hành vi**. Mỗi bước build được ngay.
+> Lưu ý: `scripts/check-capsule.mjs` và `scripts/smoke.mjs` đang đọc thẳng
+> `src-tauri/src/lib.rs` — sau mỗi bước P2 phải sửa đường dẫn đọc sang module mới,
+> nếu không `check:capsule` sẽ fail.
 
 ### P2-1 · `audio.rs`
 - [ ] **File**: `src-tauri/src/lib.rs`, tạo `src-tauri/src/audio.rs`.
@@ -239,7 +257,9 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 ## Trạng thái
 
 - [x] P0-1 · Git baseline
-- [ ] P0-2 · Tooling + check:full
+- [x] P0-2 · Tooling + check:full
+- [ ] P0-2b · Sửa smoke/preview
+- [ ] P0-2c · Format toàn bộ
 - [ ] P0-3 · Ring buffer lỗi
 - [ ] P0-4 · Xuất chẩn đoán
 - [ ] P1-1 · Scheduler đồng hồ

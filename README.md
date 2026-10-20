@@ -32,7 +32,8 @@ src/core/                 app.js (composition), grid, renderer, registry,
 src/widgets/              Mỗi widget một module
 src/styles/               index.css import tokens, khung deck, keycap, widgets/*, overrides.css
 src-tauri/src/            Rust: audio/mic (WASAPI), media (GSMTC), weather, layout, config, bongo
-.devtmp/                  Script kiểm tra (xem bên dưới)
+.devtmp/                  File sinh ra khi xem trước (không commit)
+scripts/                  Script kiểm tra/build phụ trợ (xem bên dưới)
 _archive/, ai-handoff-package/   Tài liệu/mã cũ, chỉ để tham khảo; không sửa thay cho source
 ```
 
@@ -52,18 +53,22 @@ npm.cmd run dev           # chỉ giao diện web tại http://localhost:1420 (k
 npm.cmd run build         # build frontend vào dist/
 npm.cmd run tauri build   # đóng gói bản phát hành
 npm.cmd run build:icons   # sinh lại dữ liệu icon từ scripts/build-icons.mjs
+npm.cmd run preview       # dựng .devtmp/preview.html để xem nhanh widget
 npm.cmd run format        # Prettier (format:check để chỉ kiểm tra)
 ```
 
 ## Kiểm tra
 
 ```powershell
-npm.cmd run check
+npm.cmd run check        # gate nhanh: unit test + build + flip clock
+npm.cmd run check:full   # check + capsule (markup/CSS/capabilities) + cargo test
 ```
 
-Chạy lần lượt: Node unit test (`layout-store`, `widget-renderer`, `volume`), `vite build`, rồi `.devtmp/check-flip.mjs` (hành vi thẻ lật của flip clock). Đây là gate hiện hành.
+`check` chạy lần lượt: Node unit test (`layout-store`, `widget-renderer`, `volume`), `vite build`, rồi `scripts/check-flip.mjs` (hành vi thẻ lật của flip clock).
 
-Các script khác trong `.devtmp/` (`smoke.mjs`, `check-capsule.mjs`, `check-preview.mjs`, `preview.mjs`, `_dist.mjs`) là kiểm tra tĩnh bản cũ; chúng đã đọc nguồn module qua `.devtmp/_sources.mjs` nhưng một phần assertion vẫn theo thiết kế trước và chưa nằm trong gate.
+`check:full` thêm `scripts/check-capsule.mjs` (75 assertion: token, class markup có CSS, quyền cửa sổ, dist 2 trang) và `cargo test`. Đây là gate nên chạy trước khi kết thúc session lớn.
+
+Các suite chưa nằm trong gate vì assertion còn theo thiết kế cũ: `check:smoke` (đọc `renderPomodoro`/markup weather cũ) và `check:preview` (2 assertion pomodoro). `check:format` hiện fail trên 56 file — repo chưa format toàn bộ, hãy chạy `npm run format` ở một session riêng. `check:rust` chạy riêng `cargo test`.
 
 ## Tài liệu liên quan
 

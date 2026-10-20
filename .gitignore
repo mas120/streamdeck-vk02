@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Sinh ra khi chạy scripts/preview.mjs (không commit)
+.devtmp/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -1,7 +1,7 @@
 /* Sinh .devtmp/preview.html: xem trước 2 widget ở đúng các cỡ ô (1x1 / 2x1 / 2x2)
    bằng CSS + markup THẬT của app (đọc từ index.html, src/core, src/widgets, src/styles).
-   Chạy: node .devtmp/preview.mjs  ->  mở .devtmp/preview.html */
-import { readFileSync, writeFileSync } from 'node:fs';
+   Chạy: npm run preview  ->  mở .devtmp/preview.html */
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { root, jsSrc, cssSrc } from './_sources.mjs';
 
@@ -294,6 +294,7 @@ setInterval(tick, 1000);
 </html>
 `;
 
+mkdirSync(path.join(root, '.devtmp'), { recursive: true });
 writeFileSync(path.join(root, '.devtmp', 'preview.html'), page, 'utf8');
 console.log('Đã tạo .devtmp/preview.html (' + page.length + ' ký tự)');
 

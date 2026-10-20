@@ -1,9 +1,14 @@
-/* Kiểm tra file .devtmp/preview.html sinh ra có đúng nội dung mong đợi. */
-import { readFileSync, statSync } from 'node:fs';
+/* Kiểm tra file .devtmp/preview.html sinh ra có đúng nội dung mong đợi.
+   Chạy `npm run preview` trước nếu chưa có file. */
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { root, jsSrc } from './_sources.mjs';
 
 const file = path.join(root, '.devtmp', 'preview.html');
+if (!existsSync(file)) {
+  console.error('Chưa có .devtmp/preview.html — chạy `npm run preview` trước.');
+  process.exit(1);
+}
 const h = readFileSync(file, 'utf8');
 const q = String.fromCharCode(34);
 /* Mặt THẺ LẬT là tính năng tuỳ chọn -> chỉ kiểm tra khi nguồn thực sự có. */

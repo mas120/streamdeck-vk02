@@ -1,6 +1,6 @@
 /* Kiểm tra nhanh dist: CSS inline + bundle JS có ĐỦ tính năng Weather Widget
    mới (skin / gradient spec / badge / cache / is-wide3 / animation).
-   Chạy sau `vite build`: node .devtmp/_dist.mjs */
+   Chạy sau `vite build`: node scripts/_dist.mjs */
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';

@@ -7,7 +7,14 @@
     "dev": "vite --port 1420",
     "build": "vite build",
     "build:icons": "node scripts/build-icons.mjs",
-    "check": "node --test src/core/layout-store.test.js src/core/widget-renderer.test.js src/widgets/volume.test.js && npm run build && node .devtmp/check-flip.mjs",
+    "preview": "node scripts/preview.mjs",
+    "check": "node --test src/core/layout-store.test.js src/core/widget-renderer.test.js src/widgets/volume.test.js && npm run build && node scripts/check-flip.mjs",
+    "check:capsule": "node scripts/check-capsule.mjs",
+    "check:rust": "cd src-tauri && cargo test",
+    "check:smoke": "node scripts/smoke.mjs",
+    "check:preview": "npm run preview && node scripts/check-preview.mjs",
+    "check:format": "prettier --check \"src/**/*.{js,css}\" \"*.{html,js,json}\"",
+    "check:full": "npm run check && npm run check:capsule && npm run check:rust",
     "tauri": "tauri",
     "format": "prettier --write \"src/**/*.{js,css}\" \"*.{html,js,json}\"",
     "format:check": "prettier --check \"src/**/*.{js,css}\" \"*.{html,js,json}\""
@@ -17,6 +24,7 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",
+    "prettier": "^3.9.10",
     "vite": "^5.4.0"
   }
 }

@@ -165,7 +165,7 @@ npm run build
 Trong PowerShell nếu `npm.ps1` bị Execution Policy chặn, dùng `npm.cmd run build`.
 
 ### Kiểm tra
-`npm.cmd run check` chạy Node unit tests cho layout migration, widget teardown và keyboard volume, production build, rồi kiểm tra hành vi flip clock. Một số smoke/preview script cũ trong `.devtmp/` vẫn đọc theo cấu trúc monolithic trước đây (`src/main.js`, CSS gộp); chúng chưa thuộc gate hiện hành và cần được port riêng nếu tiếp tục dùng.
+`npm.cmd run check` chạy Node unit tests cho layout migration, widget teardown và keyboard volume, production build, rồi kiểm tra hành vi flip clock. `npm.cmd run check:full` chạy thêm `scripts/check-capsule.mjs` (token/CSS/capabilities/dist) và `cargo test`. Hai suite `check:smoke` và `check:preview` vẫn theo thiết kế cũ (markup pomodoro/weather trước đây), chưa thuộc gate và cần port riêng. Script kiểm tra nằm trong `scripts/`; `.devtmp/` chỉ còn file sinh ra khi chạy `npm run preview`.
 
 ### Chạy dev
 ```bash

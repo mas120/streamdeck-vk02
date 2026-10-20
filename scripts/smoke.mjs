@@ -1,5 +1,5 @@
 /* Smoke test cho widget Đồng hồ & Thời tiết (bản redesign).
-   Chạy: node .devtmp/smoke.mjs  — chỉ test các hàm THUẦN (không cần DOM). */
+   Chạy: node scripts/smoke.mjs  — chỉ test các hàm THUẦN (không cần DOM). */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { root, jsSrc, cssSrc as css, extractFn } from './_sources.mjs';
