@@ -107,15 +107,16 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **Đã kiểm runtime** (Vite + browser): clock `19:01:24 → :26` sau 2,1s; khi deck idle thì dừng, `pointermove` đánh thức và chạy lại; không có console error.
 - **Token thực tế**: ~26k.
 
-### P1-2 · Giảm vòng quét audio/media
-- [ ] **Mục tiêu**: không enumerate WASAPI session 2s/lần khi deck không có slider app.
-- **File**: `src-tauri/src/lib.rs` (chỉ `get_audio_sessions`), `src/core/deck-audio.js`, `src/widgets/app-slider.js`, `src/widgets/media.js`.
-- **Việc**:
-  - `syncDeckAudio`: tách 3 nhánh độc lập — master volume 2s (chỉ khi có `volume_slider`), session app 5s (chỉ khi có `app_slider`), media theo tick riêng.
-  - `media.tick()` 500ms → 1000ms và bỏ qua sớm nếu không có `media_player`.
-  - Bỏ `mediaWidget.syncAll()` khỏi nhịp 2s nếu nó đã được `tick` phủ.
-- **Done**: `npm.cmd run check`; `npm.cmd run tauri dev` kiểm tra kéo slider app + media không trễ rõ rệt.
-- **Token**: ~22k.
+### P1-2 · Giảm vòng quét audio/media ✅
+- [x] **Mục tiêu**: không enumerate WASAPI session 2s/lần khi deck không có slider app.
+- **Kết quả** (`src/core/deck-audio.js`):
+  - Gộp 2 interval (2s + 500ms) thành **1 vòng 1 giây**; mỗi việc có chu kỳ riêng: media tick 1s, master volume 2s, media state 2s, session app **5s**.
+  - Mỗi việc tự bỏ qua khi không có widget tương ứng (`syncSystemVolume`, `syncAll`, `appSliderWidget.sync` đều có guard sẵn).
+  - Dừng hẳn interval khi deck idle / cửa sổ ẩn; chạy lại + quét đầy đủ khi thức (`visibilitychange`, `focus`, `deck-idle-change`).
+- **Ước tính giảm**: gọi `get_audio_sessions` 30 → 12 lần/phút; số lần timer thức 150 → 60 lần/phút. `get_media_state` và `get_master_volume` giữ 2s.
+- **Done**: `npm.cmd run check` pass; chạy Vite 12 phím, không console error.
+- **Còn lại**: chưa đo IPC thật trong Tauri — chuyển sang P1-3.
+- **Token thực tế**: ~16k.
 
 ### P1-3 · Đo lại và ghi số
 - [ ] **Mục tiêu**: có baseline định lượng, tránh tối ưu cảm tính về sau.
@@ -267,7 +268,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - [x] P0-3 · Ring buffer lỗi
 - [x] P0-4 · Xuất chẩn đoán
 - [x] P1-1 · Scheduler đồng hồ
-- [ ] P1-2 · Vòng quét audio/media
+- [x] P1-2 · Vòng quét audio/media
 - [ ] P1-3 · Đo lại
 - [ ] P2-1 · audio.rs
 - [ ] P2-2 · windows_info.rs
