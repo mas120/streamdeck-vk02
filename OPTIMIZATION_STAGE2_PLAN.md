@@ -4,6 +4,17 @@
 > chỉ mở 2–5 file, kết thúc bằng commit. Không bước nào phụ thuộc vào việc đọc lại
 > toàn bộ source.
 
+## Trạng thái hiện tại (cập nhật cuối: P1-2)
+
+- **Đã xong**: P0-1, P0-2, P0-3, P0-4, P1-1, P1-2.
+- **Commit gần nhất**: `69aaf67` (nhánh `master`, working tree sạch).
+- **Gate dùng từ giờ**: `npm.cmd run check` (nhanh) và `npm.cmd run check:full` (thêm capsule + `cargo test`).
+- **Bước tiếp theo đề xuất**: **P2-1 · tách `src-tauri/src/audio.rs`** (không cần GUI).
+  Có thể thay bằng P1-3 (đo IPC) nếu muốn số liệu trước khi tối ưu tiếp.
+- **Đang treo, làm bất cứ lúc nào**: P0-2b (sửa `smoke`/`preview`) và P0-2c (format toàn bộ).
+- **Lưu ý cho P2**: `scripts/check-capsule.mjs` và `scripts/smoke.mjs` đọc thẳng
+  `src-tauri/src/lib.rs`; sau mỗi lần tách module phải sửa script đọc file mới.
+
 ## Quy ước chung cho mọi session
 
 **Prompt mẫu (thay `<ID>`):**
@@ -36,7 +47,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **File**: `.gitignore`, `.gitattributes` (tạo mới).
 - **Việc**:
   - `git init` trong `streandeck-vk02/` (thư mục có `package.json`).
-  - Thêm `.gitattributes` với `* text=auto` để tránh diff CRLF/LF lẫn lộn; kiểm tra `git diff --stat` sau khi add — nếu đổi toàn bộ file thì đổi thành `* -text` và commit lại từ đầu.
+  - Thêm `.gitattributes` với `* text=auto eol=lf` để tránh diff CRLF/LF lẫn lộn.
   - Commit baseline gồm source + `.devtmp/` (vì `npm run check` phụ thuộc `.devtmp/check-flip.mjs`).
   - Tag `v0.1.0-baseline`.
 - **Done**: `git status` sạch; `git log --oneline` có 1 commit; tag tồn tại.
