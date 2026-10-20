@@ -132,6 +132,24 @@
   color: var(--text-muted);
   overflow-wrap: anywhere;
 }
+.settings-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.settings-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+#profileStatus,
+#backupStatus,
+#pageStatus {
+  white-space: pre-line;
+}
 .settings-update-row {
   display: flex;
   align-items: center;

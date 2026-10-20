@@ -5,6 +5,7 @@ use tauri::{Emitter, Manager};
 mod actions;
 mod app_icons;
 mod audio;
+mod autostart;
 mod bongo;
 mod config;
 mod diagnostics;
@@ -80,7 +81,10 @@ pub fn run() {
             app_icons::get_favicon,
             app_icons::save_icon_pair,
             windows::open_todo_window,
-            windows::close_todo_window
+            windows::close_todo_window,
+            windows_info::get_foreground_process,
+            autostart::get_autostart,
+            autostart::set_autostart
         ])
         .setup(|app| {
             if let Some(window) = app.get_webview_window("main") {

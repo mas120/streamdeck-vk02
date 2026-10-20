@@ -244,30 +244,46 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 
 ## Phase 5 — Tính năng (mỗi bước 1 session, làm sau cùng)
 
-### P5-1 · Mở rộng Cài đặt
-- [ ] **File**: `settings-panel.js`, `index.html`, `config-store.js`, `idle.js`.
-- **Nội dung**: độ sáng, thời gian idle, khởi động cùng Windows (`tauri-plugin-autostart`), ngôn ngữ (vi/en), nút xuất chẩn đoán (đã có ở P0-4).
-- **Token**: ~25k.
+### P5-1 · Mở rộng Cài đặt ✅ (một phần)
+- [x] **Đã làm**:
+  - `src-tauri/src/autostart.rs`: `get_autostart` / `set_autostart` qua khoá `HKCU\...\Run` (reg.exe + `CREATE_NO_WINDOW`, không thêm crate/plugin).
+  - `settings-panel.js`: nhóm "Khởi động" với checkbox "Khởi động cùng Windows" + trạng thái; tự làm mới mỗi lần mở modal; web thì khoá lại và ghi chú.
+  - Độ sáng / thời gian idle / xuất chẩn đoán đã có từ trước; vẫn nằm trong Cài đặt Deck.
+- [ ] **Chưa làm**: ngôn ngữ vi/en toàn giao diện. Muốn làm đúng cần tách toàn bộ chuỗi trong `index.html` + widget sang bảng i18n (việc riêng, ~1 session), nên chưa gộp vào bước này.
+- **Done**: `npm.cmd run check` pass (56 test JS), `cargo test` 12 pass.
+- **Token thực tế**: ~18k.
 
-### P5-2 · Nhiều trang deck
-- [ ] **File**: `layout-store.js` (schema trang), `app.js`, `grid.js`, `widget-registry.js`.
-- **Nội dung**: model `{ pages: [{ id, name, widgets }] }`, phím `page_switch`, chỉ số trang đang xem, giữ tương thích layout 1 trang.
-- **Token**: ~30k (tách nếu cần).
+### P5-2 · Nhiều trang deck ✅
+- [x] **Kết quả**:
+  - `layout-store.js` schema **v3**: `{ schemaVersion: 3, pages: [{ id, name, widgets }], activePageId }`; đọc được mảng cũ, v1, v2 và tự ghi lại v3 (cả localStorage và `layout.json`).
+  - `deck-pages.js`: model thuần (thêm/xoá/đổi tên/chuyển trang, `next()` vòng, luôn ≥ 1 trang, `toDoc`).
+  - `layout-persistence.js` ghi CẢ tài liệu (giữ nguyên các trang khác) và lưu trang đang xem.
+  - `widgets/page-switch.js` + `styles/widgets/page-switch.css`: hiện `trang/tổng`, chấm và tên trang; chạm ở Run Mode sang trang kế; Edit Mode không đổi trang.
+  - `settings-panel.js`: nhóm "Trang deck" (thêm trang / xoá trang có xác nhận, không cho xoá trang cuối).
+  - `backup.js` xuất/nhập cả tài liệu nhiều trang; `__deckRestoring` chặn lần ghi debounce/pagehide ghi đè bản vừa khôi phục.
+- **Done**: JS test 42 pass (thêm `deck-pages.test.js`, cập nhật `layout-store.test.js`/`backup.test.js`); Vite: 2 trang, chạm phím chuyển trang đổi đúng tile + `activePageId`.
+- **Token thực tế**: ~22k.
 
-### P5-3 · Profile theo app đang focus
-- [ ] **File**: Rust `windows_info.rs` (đã có hàm lấy process), command `get_foreground_process`, `app.js`.
-- **Nội dung**: map `processName → pageId`, polling 1s chỉ khi bật tính năng; fallback về trang mặc định.
-- **Token**: ~25k.
+### P5-3 · Profile theo app đang focus ✅
+- [x] **Kết quả**:
+  - Rust `windows_info.rs`: command `get_foreground_process` (GetForegroundWindow + tên exe, dùng cache sẵn có).
+  - `profiles.js`: lưu `{ enabled, map: { 'chrome.exe': pageId } }` trong localStorage; `resolveProfilePage` bỏ qua chính app deck; watcher poll 1 s, tự dừng khi tắt/Edit Mode/đang khôi phục.
+  - `app.js`: khởi động watcher; `settings-panel.js`: checkbox bật/tắt, nút "Gán app đang focus → trang này", danh sách gán + xoá tất cả.
+- **Done**: JS test 50 pass; `cargo test` pass; web hiển thị đúng trạng thái khoá (chỉ desktop mới đọc được tiến trình).
+- **Token thực tế**: ~16k.
 
-### P5-4 · Phím đa hành động
-- [ ] **File**: `tile-factory.js`, `widget-registry.js`, `modal-editor.js`, Rust `actions.rs`.
-- **Nội dung**: type `multi_action` với danh sách `{ action, target, delayMs }`, chạy tuần tự có huỷ.
-- **Token**: ~30k.
+### P5-4 · Phím đa hành động ✅
+- [x] **Kết quả**:
+  - `multi-action.js`: cú pháp `loại | tham số | chờ-thêm-ms` (`open_url`, `launch_app`, `set_volume`, `wait`), tối đa 20 bước, chạy tuần tự có gap 120 ms, dừng khi lỗi.
+  - `widgets/multi-action.js` + CSS: chạm chạy, hiện `bước/tổng`, chạm lần nữa để huỷ; Edit Mode không chạy.
+  - `modal-editor.js` + `index.html`: nhóm "Các bước" (textarea) chỉ hiện với `multi_action`; lưu vào `cfg.actions` (thêm vào `tile-factory` + `serializeNode`).
+- **Done**: JS test 56 pass; Vite: phím 3 bước chạy `2/3` rồi "Xong", không lỗi console.
+- **Token thực tế**: ~20k.
 
-### P5-5 · Auto-update + siết bảo mật
-- [ ] **File**: `tauri.conf.json`, `Cargo.toml`, `lib.rs`, `index.html`.
-- **Nội dung**: `tauri-plugin-updater` + endpoint; xác nhận 2 bước cho `shutdown_computer` ở lớp Rust; whitelist domain ảnh weather/icon; cân nhắc tắt `withGlobalTauri` sau khi chuyển hết sang import `@tauri-apps/api`.
-- **Token**: ~30k.
+### P5-5 · Auto-update + siết bảo mật ✅ (auto-update)
+- [x] `tauri-plugin-updater` + GitHub Releases (endpoint `mas120/streamdeck-vk02`), hộp thoại tiến trình, nút kiểm tra trong Cài đặt, workflow phát hành — phần này hoàn thiện song song trong lúc làm các bước trên.
+- **Còn lại (không chặn)**: whitelist domain ảnh weather/icon và tắt `withGlobalTauri` sau khi chuyển hết sang import `@tauri-apps/api`; xác nhận tắt máy hiện ở UI (widget), chưa chặn ở lớp Rust.
+- **Token thực tế**: ~0 (có sẵn).
 
 ---
 
@@ -305,8 +321,8 @@ mẫu 62 giây; giữ deck thức bằng `pointermove` tổng hợp (3 giây/l�
 
 - [x] P0-1 · Git baseline
 - [x] P0-2 · Tooling + check:full
-- [ ] P0-2b · Sửa smoke/preview
-- [ ] P0-2c · Format toàn bộ
+- [x] P0-2b · Sửa smoke/preview
+- [x] P0-2c · Format toàn bộ
 - [x] P0-3 · Ring buffer lỗi
 - [x] P0-4 · Xuất chẩn đoán
 - [x] P1-1 · Scheduler đồng hồ
@@ -316,15 +332,15 @@ mẫu 62 giây; giữ deck thức bằng `pointermove` tổng hợp (3 giây/l�
 - [x] P2-2 · windows_info.rs
 - [x] P2-3 · actions.rs
 - [x] P2-4 · windows.rs
-- [ ] P3-1 · Lõi registry
-- [ ] P3-2 · Migrate 3 widget đơn giản
-- [ ] P3-3 · Migrate widget sống
-- [ ] P3-4 · Migrate widget còn lại
-- [ ] P3-5 · Modal theo schema
-- [ ] P4-1 · Layout v2
-- [ ] P4-2 · Sao lưu/khôi phục
-- [ ] P5-1 · Cài đặt mở rộng
-- [ ] P5-2 · Nhiều trang
-- [ ] P5-3 · Profile theo app
-- [ ] P5-4 · Đa hành động
-- [ ] P5-5 · Auto-update + bảo mật
+- [x] P3-1 · Lõi registry
+- [x] P3-2 · Migrate 3 widget đơn giản
+- [x] P3-3 · Migrate widget sống
+- [x] P3-4 · Migrate widget còn lại
+- [x] P3-5 · Modal theo schema
+- [x] P4-1 · Layout v2 (nay là v3 nhiều trang)
+- [x] P4-2 · Sao lưu/khôi phục
+- [x] P5-1 · Cài đặt mở rộng (autostart; ngôn ngữ vi/en còn để riêng)
+- [x] P5-2 · Nhiều trang
+- [x] P5-3 · Profile theo app
+- [x] P5-4 · Đa hành động
+- [x] P5-5 · Auto-update (bảo mật nâng cao còn lại: whitelist ảnh, tắt withGlobalTauri)

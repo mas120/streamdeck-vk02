@@ -1,0 +1,47 @@
+.multi-action-unit {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15em;
+  width: 100%;
+  height: 100%;
+  padding: 0.4em;
+  color: var(--wx-ink, rgba(255, 255, 255, 0.92));
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.multi-action-unit.is-running {
+  outline: 2px solid var(--accent, #37d6f0);
+  outline-offset: -2px;
+  border-radius: 10%;
+}
+
+.multi-action-unit .ma-count {
+  font-size: clamp(11px, 1.5em, 26px);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--accent, #37d6f0);
+}
+
+.multi-action-unit .ma-label {
+  font-size: clamp(7px, 0.8em, 11px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.multi-action-unit .ma-step {
+  min-height: 1em;
+  font-size: clamp(8px, 0.9em, 12px);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.9;
+}
+
+.multi-action-unit.is-empty .ma-count {
+  color: rgba(255, 255, 255, 0.35);
+}

@@ -195,6 +195,11 @@ export function createTileFactory(services) {
         el.dataset.target = bongoCfg.size;
         el.dataset.showKps = bongoCfg.showKps ? '1' : '0';
       }
+      if (type === 'multi_action') {
+        el.dataset.cfg = JSON.stringify({
+          actions: Array.isArray(cfg && cfg.actions) ? cfg.actions : [],
+        });
+      }
 
       // Phím pomodoro: chuẩn bị tham số khởi tạo + state khôi phục (nếu có).
       if (type === 'pomodoro') {

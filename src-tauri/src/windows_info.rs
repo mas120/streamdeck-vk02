@@ -9,7 +9,8 @@ use windows::Win32::Foundation::{CloseHandle, HWND, LPARAM};
 use windows::Win32::System::ProcessStatus::GetProcessImageFileNameW;
 use windows::Win32::System::Threading::{OpenProcess, PROCESS_QUERY_LIMITED_INFORMATION};
 use windows::Win32::UI::WindowsAndMessaging::{
-    EnumWindows, GetWindowTextLengthW, GetWindowTextW, GetWindowThreadProcessId, IsWindowVisible,
+    EnumWindows, GetForegroundWindow, GetWindowTextLengthW, GetWindowTextW, GetWindowThreadProcessId,
+    IsWindowVisible,
 };
 
 /// Lấy tên tiến trình sạch (vd "chrome.exe") từ PID.
@@ -130,6 +131,24 @@ pub(crate) fn collect_visible_windows() -> Vec<WindowInfo> {
         );
     }
     collector.items
+}
+
+/// Tên exe của cửa sổ đang focus (vd "chrome.exe") cho profile theo ứng dụng.
+/// Trả None khi không có cửa sổ foreground hoặc không đọc được tiến trình.
+#[tauri::command]
+pub fn get_foreground_process() -> Option<String> {
+    unsafe {
+        let hwnd = GetForegroundWindow();
+        if hwnd.0.is_null() {
+            return None;
+        }
+        let mut pid: u32 = 0;
+        GetWindowThreadProcessId(hwnd, Some(&mut pid));
+        if pid == 0 {
+            return None;
+        }
+        Some(cached_process_name(pid))
+    }
 }
 
 /// Cắt hậu tố tên trình duyệt khỏi tiêu đề cửa sổ:

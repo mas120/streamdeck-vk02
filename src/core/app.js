@@ -2,7 +2,8 @@
 import { clampInt, clampFloat, escapeHtml } from './utils.js';
 import { initDisplaySettings } from './idle.js';
 import { loadAppConfig } from './config-store.js';
-import { loadLayout as loadSavedLayout } from './layout-store.js';
+import { loadLayoutDoc } from './layout-store.js';
+import { createDeckPages } from './deck-pages.js';
 import { defaultIconForType } from './widget-types.js';
 import { isVectorIcon, vectorMarkup, hydrateVectorIcons, initIconUI } from '../icons.js';
 import { TREE_SVGS } from '../forest-tree-svgs.js';
@@ -54,6 +55,9 @@ import { createTileFactory } from './tile-factory.js';
 import { createDeckAudioSync } from './deck-audio.js';
 import { initSettingsPanel } from './settings-panel.js';
 import { createUpdater } from './updater.js';
+import { createProfileWatcher, loadProfiles } from './profiles.js';
+import '../widgets/page-switch.js';
+import '../widgets/multi-action.js';
 
 export function bootstrapApp() {
   const {
@@ -95,8 +99,12 @@ export function bootstrapApp() {
     });
   }
 
+  /* Trạng thái nhiều trang: nạp sau, nhưng persistence giữ tham chiếu tới object này. */
+  const deckPages = createDeckPages(null);
+
   const layoutPersistence = createLayoutPersistence({
     grid,
+    pages: deckPages,
     getTauri,
     invokeCmd,
     onSaved: syncBongoHook,
@@ -205,6 +213,9 @@ export function bootstrapApp() {
     applyKeyTitle,
     registerLiveWidget,
     unregisterLiveWidget,
+    deckPages,
+    switchPage,
+    callTauriAction,
   });
   const { renderWidgetContent, destroyWidgetContent } = widgetRenderer;
 
@@ -236,6 +247,66 @@ export function bootstrapApp() {
   }
 
   /* =========================================================================
+     NHIỀU TRANG DECK
+     -------------------------------------------------------------------------
+     Mỗi trang giữ mảng phím riêng. Đổi trang: lưu trang hiện tại -> dựng lại
+     lưới từ trang đích. Phím page_switch tự gọi switchPage('next') ở Run Mode.
+     ========================================================================= */
+  function renderActivePage() {
+    const page = deckPages.active();
+    (page?.widgets || []).forEach(createWidgetSafe);
+  }
+
+  function clearDeck() {
+    grid.engine.nodes.forEach(({ el }) => destroyWidgetContent(el));
+    grid.removeAll();
+  }
+
+  /** Vẽ lại các phím page_switch để số trang/chấm khớp trạng thái mới. */
+  function syncPageIndicators() {
+    grid.engine.nodes.forEach(({ el }) => {
+      if (el.dataset.type === 'page_switch') renderWidgetContent(el);
+    });
+  }
+
+  function switchPage(target) {
+    flushLayout(); // lưu phím của trang đang xem trước khi rời
+    let ok = true;
+    if (target === 'next' || target === 'prev') {
+      deckPages.next(target === 'next' ? 1 : -1);
+    } else {
+      ok = deckPages.setActive(target);
+    }
+    if (!ok) return false;
+    clearDeck();
+    renderActivePage();
+    syncPageIndicators();
+    saveCurrentLayout();
+    return true;
+  }
+
+  function addPage() {
+    flushLayout();
+    const page = deckPages.addPage();
+    deckPages.setActive(page.id);
+    clearDeck();
+    saveCurrentLayout();
+    syncPageIndicators();
+    return page;
+  }
+
+  function deleteCurrentPage() {
+    if (deckPages.count() <= 1) return false;
+    flushLayout();
+    if (!deckPages.removePage(deckPages.activeId())) return false;
+    clearDeck();
+    renderActivePage();
+    syncPageIndicators();
+    saveCurrentLayout();
+    return true;
+  }
+
+  /* =========================================================================
      ĐỒNG BỘ ÂM THANH / MEDIA
      ========================================================================= */
   const deckAudio = createDeckAudioSync({
@@ -262,6 +333,15 @@ export function bootstrapApp() {
 
   const settingsPanel = initSettingsPanel({
     onResetLayout: () => resetLayout(),
+    onAddPage: () => addPage(),
+    onDeletePage: () => deleteCurrentPage(),
+    getPageInfo: () => ({
+      id: deckPages.activeId(),
+      count: deckPages.count(),
+      index: deckPages.activeIndex() + 1,
+      name: deckPages.active()?.name || '',
+    }),
+    getPages: () => deckPages.list().map((page) => ({ id: page.id, name: page.name })),
     invokeCmd,
     getTauri,
     updater,
@@ -269,6 +349,16 @@ export function bootstrapApp() {
 
   /* Kiểm tra bản mới ngầm sau khi app đã ổn định; chỉ hiện hộp thoại khi có bản mới. */
   updater.start();
+
+  /* Profile theo app đang focus: 1 nhịp/giây, tự bỏ qua khi tắt/Edit Mode. */
+  createProfileWatcher({
+    invokeCmd,
+    getTauri,
+    getActivePageId: () => deckPages.activeId(),
+    switchPage,
+    getProfiles: () => loadProfiles(),
+    shouldPause: () => isEditMode || globalThis.__deckRestoring === true,
+  }).start();
 
   // Segmented Chạy / Chỉnh sửa bên trong modal cài đặt
   document.querySelectorAll('#modeSegment .seg-btn').forEach((btn) => {
@@ -471,18 +561,22 @@ export function bootstrapApp() {
   /* Nạp layout đã lưu, nếu không thì dùng mặc định. */
   (async function loadLayout() {
     const ipc = getTauri() ? invokeCmd : null;
-    const [stored] = await Promise.all([loadSavedLayout(STORAGE_KEY, ipc), loadAppConfig(ipc)]);
+    const [storedDoc] = await Promise.all([loadLayoutDoc(STORAGE_KEY, ipc), loadAppConfig(ipc)]);
     initDisplaySettings({ onWake: deckAudio.refreshOnResume });
+
+    if (storedDoc) deckPages.replace(storedDoc);
+    const page = deckPages.active();
+
     // Layout cũ còn phím "settings" 1x1 đã bị gỡ bỏ.
-    const savedLayout = (stored || DEFAULT_WIDGETS).filter(
-      (item) => item && item.type !== 'settings'
-    );
+    const baseLayout = page.widgets.length ? page.widgets : DEFAULT_WIDGETS;
+    const savedLayout = baseLayout.filter((item) => item && item.type !== 'settings');
     const layout = savedLayout.some((item) => item && item.type === 'weather_widget')
       ? savedLayout
       : [
           ...savedLayout,
           ...DEFAULT_WIDGETS.filter((item) => item && item.type === 'weather_widget'),
         ];
+    page.widgets = layout;
     layout.forEach(createWidgetSafe);
     setLayoutLoading(false);
     saveCurrentLayout();

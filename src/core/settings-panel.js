@@ -3,11 +3,13 @@ import { getVersion } from '@tauri-apps/api/app';
 import {
   TODO_STORAGE_KEY,
   backupFileName,
+  countWidgets,
   createBackup,
   downloadBackup,
   restoreBackup,
   validateBackup,
 } from './backup.js';
+import { loadProfiles, saveProfiles } from './profiles.js';
 
 const RESET_CONFIRM_MS = 3000;
 
@@ -37,7 +39,16 @@ function downloadText(text, filename) {
  * Modal "Cài đặt Deck": mở/đóng, xác nhận 2 bước cho "Đặt lại bố cục",
  * xuất chẩn đoán, và đóng khi chạm ra vùng nền tối.
  */
-export function initSettingsPanel({ onResetLayout, invokeCmd, getTauri, updater }) {
+export function initSettingsPanel({
+  onResetLayout,
+  onAddPage,
+  onDeletePage,
+  getPageInfo,
+  getPages,
+  invokeCmd,
+  getTauri,
+  updater,
+}) {
   const modal = document.getElementById('settingsModal');
   const btnExport = document.getElementById('btnExportDiagnostics');
   const status = document.getElementById('diagnosticsStatus');
@@ -99,8 +110,18 @@ export function initSettingsPanel({ onResetLayout, invokeCmd, getTauri, updater 
     status.hidden = !message;
   }
 
+  // Mỗi nhóm đăng ký hàm làm mới để số trang/tên trang đúng tại thời điểm mở.
+  const openHandlers = [];
+
   function open() {
     setStatus('');
+    openHandlers.forEach((refresh) => {
+      try {
+        refresh();
+      } catch (err) {
+        console.warn('Làm mới Cài đặt lỗi:', err);
+      }
+    });
     modal?.classList.add('active');
   }
 
@@ -202,7 +223,7 @@ export function initSettingsPanel({ onResetLayout, invokeCmd, getTauri, updater 
       try {
         const backup = await collectBackup();
         const name = downloadBackup(backup, backupFileName());
-        setBackupStatus(`Đã tạo ${name} (${backup.layout.widgets.length} phím).`);
+        setBackupStatus(`Đã tạo ${name} (${countWidgets(backup.layout)} phím).`);
       } catch (err) {
         console.error('Sao lưu lỗi:', err);
         setBackupStatus(`Không sao lưu được: ${err}`);
@@ -228,7 +249,7 @@ export function initSettingsPanel({ onResetLayout, invokeCmd, getTauri, updater 
           setBackupStatus(`File không hợp lệ: ${result.error}`);
           return;
         }
-        const count = result.backup.layout.widgets.length;
+        const count = countWidgets(result.backup.layout);
         const when = result.backup.createdAt ? ` lúc ${result.backup.createdAt}` : '';
         const ok = window.confirm(
           `Khôi phục ${count} phím từ bản sao lưu${when}?\n` +
@@ -251,6 +272,211 @@ export function initSettingsPanel({ onResetLayout, invokeCmd, getTauri, updater 
       } finally {
         btnBackupImport.disabled = false;
       }
+    });
+  }
+
+  /* ---------- Nhiều trang deck: thêm/xoá trang ---------- */
+  if (modalActions && typeof onAddPage === 'function') {
+    const pageGroup = document.createElement('div');
+    pageGroup.className = 'form-group';
+    pageGroup.innerHTML = `
+      <label>Trang deck</label>
+      <div class="settings-update-row">
+        <button class="btn" id="btnAddPage" type="button">+ Thêm trang</button>
+        <button class="btn" id="btnDeletePage" type="button">Xoá trang này</button>
+      </div>
+      <div class="settings-note" id="pageStatus" role="status" hidden></div>`;
+    modalActions.before(pageGroup);
+
+    const statusEl = pageGroup.querySelector('#pageStatus');
+    const btnAdd = pageGroup.querySelector('#btnAddPage');
+    const btnDelete = pageGroup.querySelector('#btnDeletePage');
+    const readInfo = typeof getPageInfo === 'function' ? getPageInfo : () => null;
+
+    function setPageStatus(message) {
+      statusEl.textContent = message;
+      statusEl.hidden = !message;
+    }
+
+    function syncPageButtons() {
+      const info = readInfo();
+      if (!info) return;
+      btnDelete.disabled = info.count <= 1;
+      setPageStatus(`Trang ${info.index}/${info.count}${info.name ? ' · ' + info.name : ''}`);
+    }
+
+    btnAdd.addEventListener('click', () => {
+      onAddPage();
+      syncPageButtons();
+    });
+
+    btnDelete.addEventListener('click', () => {
+      const info = readInfo();
+      if (!info || info.count <= 1) return;
+      const ok = window.confirm(`Xoá "${info.name || 'trang này'}"? Các phím trong trang sẽ mất.`);
+      if (!ok) return;
+      if (typeof onDeletePage === 'function') onDeletePage();
+      syncPageButtons();
+    });
+
+    syncPageButtons();
+    openHandlers.push(syncPageButtons);
+  }
+
+  /* ---------- Khởi động cùng Windows ---------- */
+  if (modalActions) {
+    const startupGroup = document.createElement('div');
+    startupGroup.className = 'form-group';
+    startupGroup.innerHTML = `
+      <label>Khởi động</label>
+      <label class="settings-check">
+        <input type="checkbox" id="autostartEnabled" />
+        <span>Khởi động cùng Windows</span>
+      </label>
+      <div class="settings-note" id="autostartStatus" role="status" hidden></div>`;
+    modalActions.before(startupGroup);
+
+    const autostartBox = startupGroup.querySelector('#autostartEnabled');
+    const autostartStatus = startupGroup.querySelector('#autostartStatus');
+    const hasIpc = !!(getTauri && getTauri()) && typeof invokeCmd === 'function';
+
+    function setAutostartStatus(message) {
+      autostartStatus.textContent = message;
+      autostartStatus.hidden = !message;
+    }
+
+    async function refreshAutostart() {
+      if (!hasIpc) {
+        autostartBox.checked = false;
+        autostartBox.disabled = true;
+        setAutostartStatus('Chỉ đổi được trong app desktop.');
+        return;
+      }
+      try {
+        autostartBox.checked = !!(await invokeCmd('get_autostart'));
+        setAutostartStatus('');
+      } catch (err) {
+        console.warn('Đọc autostart lỗi:', err);
+        setAutostartStatus('Không đọc được trạng thái khởi động cùng Windows.');
+      }
+    }
+
+    autostartBox.addEventListener('change', async () => {
+      const wanted = autostartBox.checked;
+      autostartBox.disabled = true;
+      try {
+        const actual = await invokeCmd('set_autostart', { enabled: wanted });
+        autostartBox.checked = !!actual;
+        setAutostartStatus(
+          actual ? 'Đã bật khởi động cùng Windows.' : 'Đã tắt khởi động cùng Windows.'
+        );
+      } catch (err) {
+        console.error('Đổi autostart lỗi:', err);
+        autostartBox.checked = !wanted;
+        setAutostartStatus(`Không đổi được: ${err}`);
+      } finally {
+        autostartBox.disabled = !hasIpc;
+      }
+    });
+
+    refreshAutostart();
+    openHandlers.push(refreshAutostart);
+  }
+
+  /* ---------- Profile theo ứng dụng đang focus ---------- */
+  if (modalActions) {
+    const profileGroup = document.createElement('div');
+    profileGroup.className = 'form-group';
+    profileGroup.innerHTML = `
+      <label>Profile theo ứng dụng</label>
+      <label class="settings-check">
+        <input type="checkbox" id="profileEnabled" />
+        <span>Tự chuyển trang theo app đang dùng</span>
+      </label>
+      <div class="settings-update-row">
+        <button class="btn" id="btnProfileAssign" type="button">
+          Gán app đang focus → trang này
+        </button>
+        <button class="btn" id="btnProfileClear" type="button">Xoá tất cả gán</button>
+      </div>
+      <div class="settings-note" id="profileStatus" role="status" hidden></div>`;
+    modalActions.before(profileGroup);
+
+    const enabledBox = profileGroup.querySelector('#profileEnabled');
+    const btnAssign = profileGroup.querySelector('#btnProfileAssign');
+    const btnClear = profileGroup.querySelector('#btnProfileClear');
+    const profileStatus = profileGroup.querySelector('#profileStatus');
+    const hasIpc = !!(getTauri && getTauri()) && typeof invokeCmd === 'function';
+    const readPages = typeof getPages === 'function' ? getPages : () => [];
+
+    function setProfileStatus(message) {
+      profileStatus.textContent = message;
+      profileStatus.hidden = !message;
+    }
+
+    function describeProfiles() {
+      const { map } = loadProfiles();
+      const pages = readPages() || [];
+      const names = new Map(pages.map((page) => [page.id, page.name]));
+      const entries = Object.entries(map);
+      if (!entries.length) return 'Chưa gán app nào.';
+      return entries
+        .map(([process, pageId]) => {
+          const name = names.get(pageId);
+          return name ? `${process} → ${name}` : `${process} → (trang đã xoá)`;
+        })
+        .join('\n');
+    }
+
+    function syncProfiles() {
+      const profiles = loadProfiles();
+      enabledBox.checked = profiles.enabled;
+      const summary = describeProfiles();
+      setProfileStatus(summary === 'Chưa gán app nào.' ? summary : `Đã gán:\n${summary}`);
+    }
+
+    enabledBox.checked = loadProfiles().enabled;
+    enabledBox.disabled = !hasIpc;
+    btnAssign.disabled = !hasIpc;
+    btnClear.disabled = !hasIpc;
+    syncProfiles();
+    if (!hasIpc) setProfileStatus('Chỉ dùng được trong app desktop (cần đọc tiến trình).');
+    openHandlers.push(() => {
+      syncProfiles();
+      if (!hasIpc) setProfileStatus('Chỉ dùng được trong app desktop (cần đọc tiến trình).');
+    });
+
+    enabledBox.addEventListener('change', () => {
+      const profiles = loadProfiles();
+      saveProfiles({ ...profiles, enabled: enabledBox.checked });
+      syncProfiles();
+    });
+
+    btnAssign.addEventListener('click', async () => {
+      const info = typeof getPageInfo === 'function' ? getPageInfo() : null;
+      if (!info || !info.id) return;
+      setProfileStatus('Đang đọc app đang focus…');
+      try {
+        const processName = await invokeCmd('get_foreground_process');
+        if (!processName) {
+          setProfileStatus('Không đọc được app đang focus. Thử bấm vào cửa sổ app đó rồi lại.');
+          return;
+        }
+        const key = String(processName).trim().toLowerCase();
+        const profiles = loadProfiles();
+        saveProfiles({ ...profiles, map: { ...profiles.map, [key]: info.id } });
+        syncProfiles();
+        setProfileStatus(`Đã gán ${key} → ${info.name || 'trang này'}.`);
+      } catch (err) {
+        console.error('Gán profile lỗi:', err);
+        setProfileStatus(`Không gán được: ${err}`);
+      }
+    });
+
+    btnClear.addEventListener('click', () => {
+      const profiles = loadProfiles();
+      saveProfiles({ ...profiles, map: {} });
+      syncProfiles();
     });
   }
 

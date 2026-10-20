@@ -80,6 +80,8 @@
             <option value="todo_list">Danh sách việc cần làm (To-Do)</option>
             <option value="mic_widget">Microphone</option>
             <option value="shutdown_widget">Tắt máy tính</option>
+            <option value="page_switch">Chuyển trang deck</option>
+            <option value="multi_action">Đa hành động (chuỗi)</option>
             <option value="media_player">Đang phát (YouTube / media)</option>
             <option value="music_wave">Sóng nhạc (âm thanh đầu ra)</option>
             <option value="mini_clock">Đồng hồ</option>
@@ -233,6 +235,23 @@
           <label class="check-row" style="margin-top: 10px">
             <input type="checkbox" id="chkBongoKps" checked /> Hiện KPS (nhịp gõ)
           </label>
+        </div>
+
+        <div class="form-group" id="grpMulti" style="display: none">
+          <label for="inpMultiActions">Các bước (mỗi dòng: loại | tham số | chờ thêm ms)</label>
+          <textarea
+            id="inpMultiActions"
+            rows="5"
+            spellcheck="false"
+            placeholder="open_url | https://youtube.com
+wait | 800
+launch_app | notepad
+set_volume | 40"
+          ></textarea>
+          <div class="modal-hint">
+            Loại hỗ trợ: <code>open_url</code>, <code>launch_app</code>, <code>set_volume</code>,
+            <code>wait</code>. Chạm phím lần nữa khi đang chạy để huỷ.
+          </div>
         </div>
 
         <div class="form-group" id="grpFit" style="display: none">

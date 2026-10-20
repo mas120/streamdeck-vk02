@@ -1,4 +1,5 @@
 import { widgetRegistry } from './widget-registry.js';
+import { formatActionLines, parseActionLines } from './multi-action.js';
 
 export function createModalEditor(services) {
   const {
@@ -55,6 +56,10 @@ export function createModalEditor(services) {
   const grpBongo = document.getElementById('grpBongo');
   const selBongoSize = document.getElementById('selBongoSize');
   const chkBongoKps = document.getElementById('chkBongoKps');
+
+  /* Widget Đa hành động: danh sách bước dạng văn bản */
+  const grpMulti = document.getElementById('grpMulti');
+  const inpMultiActions = document.getElementById('inpMultiActions');
 
   /* Widget Đồng hồ: kiểu mặt + múi giờ + nhãn */
   const grpClock = document.getElementById('grpClock');
@@ -119,6 +124,7 @@ export function createModalEditor(services) {
     grpClock.style.display = hasField(type, 'face') ? 'flex' : 'none';
     grpWeather.style.display = hasField(type, 'city') ? 'flex' : 'none';
     grpBongo.style.display = hasField(type, 'kps') ? 'flex' : 'none';
+    if (grpMulti) grpMulti.style.display = type === 'multi_action' ? 'flex' : 'none';
     grpFit.style.display = type === 'open_url' || type === 'launch_app' ? 'flex' : 'none';
     // Cỡ ô chỉ chọn khi tạo mới; widget khai báo fixedSize tự quyết định cỡ.
     const fixedSize = !!definition?.fixedSize;
@@ -200,6 +206,15 @@ export function createModalEditor(services) {
         if (selBongoSize) selBongoSize.value = bongoCfg.size;
         if (chkBongoKps) chkBongoKps.checked = bongoCfg.showKps;
       }
+      if ((el.dataset.type || '') === 'multi_action' && inpMultiActions) {
+        let cfg = {};
+        try {
+          cfg = JSON.parse(el.dataset.cfg || '{}') || {};
+        } catch {
+          cfg = {};
+        }
+        inpMultiActions.value = formatActionLines(cfg.actions || []);
+      }
     } else {
       modalHeading.innerText = 'Tạo Phím Mới';
       iconUI.setValue('⭐', '');
@@ -223,6 +238,7 @@ export function createModalEditor(services) {
       if (inpWeatherKey) inpWeatherKey.value = '';
       if (selBongoSize) selBongoSize.value = '2x1';
       if (chkBongoKps) chkBongoKps.checked = true;
+      if (inpMultiActions) inpMultiActions.value = '';
       btnDelete.style.display = 'none';
     }
     syncModalTypeFields();
@@ -317,6 +333,8 @@ export function createModalEditor(services) {
     const weatherKey = ((inpWeatherKey ? inpWeatherKey.value : '') || '').trim();
     const bongoSize = normalizeBongoSize(selBongoSize ? selBongoSize.value : '2x1');
     const bongoShowKps = !!(chkBongoKps ? chkBongoKps.checked : true);
+    const isMulti = type === 'multi_action';
+    const multiActions = parseActionLines(inpMultiActions ? inpMultiActions.value : '');
     const display = readDisplayFromModal(); // khớp ảnh + nhãn chồng lên icon
 
     if (currentEditingEl) {
@@ -365,6 +383,9 @@ export function createModalEditor(services) {
       } else if (type === 'app_slider') {
         currentEditingEl.dataset.target = selApp.value || '';
         currentEditingEl.dataset.pid = '';
+      } else if (isMulti) {
+        currentEditingEl.dataset.target = '';
+        currentEditingEl.dataset.cfg = JSON.stringify({ actions: multiActions });
       } else if (isMic) {
         currentEditingEl.dataset.target = 'mic';
       } else if (type === 'music_wave') {
@@ -394,24 +415,27 @@ export function createModalEditor(services) {
         target:
           type === 'bongo_cat'
             ? bongoSize
-            : isPomo
-              ? `${pomoWork},${pomoBreak}`
-              : isClock
-                ? `${clockFace},${clockTz}`
-                : isWeather
-                  ? `${weatherLat},${weatherLon}`
-                  : type === 'volume_slider'
-                    ? '50'
-                    : type === 'app_slider'
-                      ? selApp.value || ''
-                      : type === 'todo_list' ||
-                          type === 'media_player' ||
-                          type === 'music_wave' ||
-                          type === 'shutdown_widget'
-                        ? ''
-                        : inpTarget.value.trim(),
-        cfg:
-          type === 'bongo_cat'
+            : isMulti
+              ? ''
+              : isPomo
+                ? `${pomoWork},${pomoBreak}`
+                : isClock
+                  ? `${clockFace},${clockTz}`
+                  : isWeather
+                    ? `${weatherLat},${weatherLon}`
+                    : type === 'volume_slider'
+                      ? '50'
+                      : type === 'app_slider'
+                        ? selApp.value || ''
+                        : type === 'todo_list' ||
+                            type === 'media_player' ||
+                            type === 'music_wave' ||
+                            type === 'shutdown_widget'
+                          ? ''
+                          : inpTarget.value.trim(),
+        cfg: isMulti
+          ? { actions: multiActions }
+          : type === 'bongo_cat'
             ? { size: bongoSize, showKps: bongoShowKps }
             : isClock
               ? { face: clockFace, tz: clockTz, label: clockLabel }

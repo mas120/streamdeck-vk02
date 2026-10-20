@@ -96,5 +96,13 @@ export function serializeNode(node) {
   // Widget "sống" (đồng hồ / thời tiết): lưu cấu hình để khôi phục đúng kiểu mặt / toạ độ.
   if (item.type === 'mini_clock') item.cfg = parseClockCfg(el);
   if (item.type === 'weather_widget') item.cfg = parseWeatherCfg(el);
+  if (item.type === 'multi_action') {
+    try {
+      const cfg = JSON.parse(el.dataset.cfg || '{}');
+      item.cfg = { actions: Array.isArray(cfg.actions) ? cfg.actions : [] };
+    } catch {
+      item.cfg = { actions: [] };
+    }
+  }
   return item;
 }

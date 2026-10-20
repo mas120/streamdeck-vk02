@@ -1,0 +1,62 @@
+.page-switch-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.18em;
+  width: 100%;
+  height: 100%;
+  padding: 0.5em;
+  color: var(--wx-ink, rgba(255, 255, 255, 0.92));
+  font-size: 16px;
+  user-select: none;
+}
+
+.page-switch-unit .ps-count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.05em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.page-switch-unit .ps-count strong {
+  font-size: clamp(13px, 1.9em, 34px);
+  font-weight: 800;
+}
+
+.page-switch-unit .ps-count span {
+  font-size: clamp(9px, 1.2em, 18px);
+  opacity: 0.6;
+}
+
+.page-switch-unit .ps-dots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.28em;
+  max-width: 90%;
+}
+
+.page-switch-unit .ps-dot {
+  width: 0.42em;
+  height: 0.42em;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.page-switch-unit .ps-dot.is-on {
+  background: var(--accent, #37d6f0);
+  box-shadow: 0 0 0.35em var(--accent, #37d6f0);
+}
+
+.page-switch-unit .ps-name {
+  font-size: clamp(7px, 0.85em, 12px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

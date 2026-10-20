@@ -10,6 +10,8 @@ const DEFAULT_ICONS = {
   media_player: '🎵',
   music_wave: '🎵',
   shutdown_widget: '⏻',
+  page_switch: '📄',
+  multi_action: '🔗',
 };
 
 /** Icon mặc định khi người dùng để trống ô Biểu tượng. */
