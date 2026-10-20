@@ -181,15 +181,15 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 
 ## Phase 3 — Widget registry (5 session)
 
-### P3-1 · Lõi registry
-- [ ] **Mục tiêu**: khai báo widget ở một nơi duy nhất.
-- **File**: tạo `src/core/widget-registry.js`, `src/core/widget-renderer.js`.
-- **Việc**:
-  - API `registerWidget({ type, label, icon, defaultSize, create(ctx) })`, `getWidget(type)`, `listWidgets()`.
-  - `create(ctx)` trả `{ markup, setup, destroy }` đúng pattern đang dùng.
-  - Renderer đọc từ registry; giữ nhánh fallback cho widget chưa migrate.
-- **Done**: `npm.cmd run check`; thêm unit test `widget-registry.test.js` (đăng ký/ghi đè/không tồn tại).
-- **Token**: ~22k.
+### P3-1 · Lõi registry ✅
+- [x] **Mục tiêu**: khai báo widget ở một nơi duy nhất.
+- **Kết quả**:
+  - `src/core/widget-registry.js`: `createWidgetRegistry()` với `registerWidget`, `getWidget`, `hasWidget`, `listWidgets`, `clear`; descriptor được chuẩn hoá + đóng băng; singleton `widgetRegistry`.
+  - `create(ctx) -> { markup, setup, destroy }`; ctx = `{ el, content, services }`.
+  - `widget-renderer.js`: ưu tiên widget đã đăng ký, giữ nguyên nhánh fallback cũ; instance lưu `WeakMap` để gọi `destroy`.
+  - Test: `widget-registry.test.js` (5) + 1 test renderer theo registry.
+- **Done**: `npm.cmd run check` pass (23 test).
+- **Token thực tế**: ~22k.
 
 ### P3-2 · Migrate 3 widget đơn giản
 - [ ] **File**: `src/widgets/shutdown.js`, `mic.js`, `music-wave.js`, `app.js`, `widget-renderer.js`.

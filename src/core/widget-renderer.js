@@ -24,7 +24,11 @@ export function createWidgetRenderer(services) {
     applyKeyTitle,
     registerLiveWidget,
     unregisterLiveWidget,
+    widgetRegistry,
   } = services;
+
+  /** Instance do registry tạo (để gọi destroy đúng đối tượng). */
+  const widgetInstances = new WeakMap();
 
   const widgetDefinitions = {
     volume_slider: {
@@ -127,6 +131,11 @@ export function createWidgetRenderer(services) {
   function destroyWidgetContent(el) {
     const type = el.__renderedWidgetType;
     unregisterLiveWidget(el);
+    const instance = widgetInstances.get(el);
+    if (instance) {
+      instance.destroy?.(el);
+      widgetInstances.delete(el);
+    }
     if (type) widgetDefinitions[type]?.widget?.destroy?.(el);
     delete el.__renderedWidgetType;
   }
@@ -134,6 +143,17 @@ export function createWidgetRenderer(services) {
   function renderWidgetBody(el) {
     const content = el.querySelector('.grid-stack-item-content') || el;
     const type = el.dataset.type;
+    const registered = widgetRegistry?.getWidget(type);
+    if (registered) {
+      const instance = registered.create({ el, content, services });
+      if (!instance || typeof instance.markup !== 'string') {
+        throw new Error('Widget "' + type + '" trả về markup không hợp lệ');
+      }
+      content.innerHTML = instance.markup;
+      instance.setup?.(el, content);
+      widgetInstances.set(el, instance);
+      return;
+    }
     const definition = widgetDefinitions[type];
     if (definition) {
       definition.render(el, content);
