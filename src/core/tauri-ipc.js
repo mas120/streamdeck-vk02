@@ -1,3 +1,5 @@
+import { ipcCounter } from './diagnostics.js';
+
 export const SYSTEM_VOLUME_ECHO_GUARD_MS = 1500;
 
 export function createTauriIpc() {
@@ -10,6 +12,7 @@ export function createTauriIpc() {
   }
 
   async function invokeCmd(cmd, args = {}) {
+    ipcCounter.record(cmd);
     const tauri = getTauri();
     if (!tauri) {
       console.log(`[Mock IPC] ${cmd}`, args);

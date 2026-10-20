@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createDiagnostics, installDiagnostics } from './diagnostics.js';
+import { createDiagnostics, createIpcCounter, installDiagnostics, installIpcCounter } from './diagnostics.js';
 
 test('ring buffer giữ tối đa `limit` bản ghi mới nhất', () => {
   const diag = createDiagnostics({ limit: 3, now: () => 1700000000000 });
@@ -37,8 +37,7 @@ test('Error và object được chuyển thành chuỗi an toàn', () => {
   assert.equal(objEntry.message, '[object Object]');
 });
 
-test('install bắt error, unhandledrejection và console.error', () => {
-  const handlers = new Map();
+test('install bắt error, unhandledrejection và console.error', () => {  const handlers = new Map();
   const calls = [];
   const fakeConsole = { error: (...args) => calls.push(args) };
   const fakeWindow = { addEventListener: (type, handler) => handlers.set(type, handler) };
@@ -57,4 +56,47 @@ test('install bắt error, unhandledrejection và console.error', () => {
   assert.match(text, /a\.js:3:7/);
   assert.match(text, /PROMISE: promise hỏng/);
   assert.match(text, /CONSOLE: lỗi chủ động \{"code":5\}/);
+});
+
+test('ipc counter đếm theo lệnh và trượt khỏi cửa sổ 60 giây', () => {
+  let now = 1000;
+  const counter = createIpcCounter({ windowMs: 60_000, now: () => now });
+
+  counter.record('get_master_volume');
+  counter.record('get_master_volume');
+  counter.record('get_audio_sessions');
+  assert.deepEqual(counter.counts(), { get_master_volume: 2, get_audio_sessions: 1 });
+
+  now += 59_000;
+  counter.record('get_master_volume');
+  assert.deepEqual(counter.summary(), {
+    windowMs: 60_000,
+    total: 4,
+    counts: { get_master_volume: 3, get_audio_sessions: 1 },
+  });
+
+  now += 2_000;   // các lệnh cũ đã ra khỏi cửa sổ
+  assert.deepEqual(counter.counts(), { get_master_volume: 1 });
+
+  counter.reset();
+  assert.deepEqual(counter.summary(), { windowMs: 60_000, total: 0, counts: {} });
+});
+
+test('installIpcCounter gắn window.__ipcCount và đọc counter dùng chung', () => {
+  const fakeWindow = {};
+
+  const counter = installIpcCounter({ window: fakeWindow });
+  assert.ok(counter);
+  assert.equal(typeof fakeWindow.__ipcCount, 'function');
+
+  counter.reset();
+  counter.record('get_master_volume');
+  assert.equal(fakeWindow.__ipcCount().total, 1);
+  assert.deepEqual(fakeWindow.__ipcCount.counts(), { get_master_volume: 1 });
+
+  fakeWindow.__ipcCount.reset();
+  assert.equal(fakeWindow.__ipcCount().total, 0);
+
+  // Không có window -> không gắn hook, trả null.
+  assert.equal(installIpcCounter({}), null);
 });

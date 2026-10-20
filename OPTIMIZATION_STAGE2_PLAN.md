@@ -4,16 +4,15 @@
 > chỉ mở 2–5 file, kết thúc bằng commit. Không bước nào phụ thuộc vào việc đọc lại
 > toàn bộ source.
 
-## Trạng thái hiện tại (cập nhật cuối: P1-2)
+## Trạng thái hiện tại (cập nhật cuối: P1-3)
 
-- **Đã xong**: P0-1, P0-2, P0-3, P0-4, P1-1, P1-2.
-- **Commit gần nhất**: `69aaf67` (nhánh `master`, working tree sạch).
+- **Đã xong**: P0-1, P0-2, P0-3, P0-4, P1-1, P1-2, P1-3, P2-1, P2-2, P2-3, P2-4.
+- **Commit gần nhất**: xem `git log --oneline -1` (working tree sạch).
 - **Gate dùng từ giờ**: `npm.cmd run check` (nhanh) và `npm.cmd run check:full` (thêm capsule + `cargo test`).
-- **Bước tiếp theo đề xuất**: **P2-1 · tách `src-tauri/src/audio.rs`** (không cần GUI).
-  Có thể thay bằng P1-3 (đo IPC) nếu muốn số liệu trước khi tối ưu tiếp.
+- **Bước tiếp theo đề xuất**: **P0-2b** (đưa smoke/preview vào gate) hoặc **P3-1** (lõi widget registry).
 - **Đang treo, làm bất cứ lúc nào**: P0-2b (sửa `smoke`/`preview`) và P0-2c (format toàn bộ).
-- **Lưu ý cho P2**: `scripts/check-capsule.mjs` và `scripts/smoke.mjs` đọc thẳng
-  `src-tauri/src/lib.rs`; sau mỗi lần tách module phải sửa script đọc file mới.
+- **Lưu ý cho P2**: `scripts/check-capsule.mjs` đọc cả `lib.rs` + `windows.rs`; `scripts/smoke.mjs`
+  vẫn đọc `lib.rs` cho assertion weather (đang fail, thuộc P0-2b).
 
 ## Quy ước chung cho mọi session
 
@@ -130,7 +129,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **Token thực tế**: ~16k.
 
 ### P1-3 · Đo lại và ghi số
-- [ ] **Mục tiêu**: có baseline định lượng, tránh tối ưu cảm tính về sau.
+- [x] **Mục tiêu**: có baseline định lượng, tránh tối ưu cảm tính về sau.
 - **File**: `src/core/diagnostics.js`, `OPTIMIZATION_STAGE2_PLAN.md`.
 - **Việc**:
   - Thêm hàm dev-only đếm số lần gọi IPC trong 60s (`window.__ipcCount`).
@@ -262,13 +261,33 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 
 ## Số đo (điền ở P1-3)
 
+Đo ngày **2026-10-19** trên layout đang lưu (có `music_wave` + `mic_widget`, **không** có
+`app_slider`), app chạy `npm.cmd run tauri dev`, CPU 12 nhân. Số IPC lấy từ
+`window.__ipcCount()` — cửa sổ trượt 60 giây, đếm tại lớp `tauri-ipc.js`
+(Tauri đóng băng `__TAURI_INTERNALS__.invoke` nên không bọc trực tiếp được).
+CPU lấy bằng `Get-Process` cho tiến trình app + toàn bộ tiến trình con WebView2,
+mẫu 62 giây; giữ deck thức bằng `pointermove` tổng hợp (3 giây/lần) khi đo "thức".
+
 | Chỉ số | Trước P1 | Sau P1 |
 |---|---|---|
-| IPC `get_master_volume` / 60s | | |
-| IPC `get_audio_sessions` / 60s | | |
-| `media.tick` / 60s | | |
-| CPU WebView (rảnh) | | |
-| CPU app (rảnh) | | |
+| IPC `get_master_volume` / 60s | ~30 (ước tính P1-2) | **26** |
+| IPC `get_audio_sessions` / 60s | ~30 (ước tính P1-2) | **0** (layout hiện tại không có `app_slider`) |
+| `media.tick` / 60s | 60 | **60** (không gọi IPC) |
+| IPC `get_media_state` / 60s | chưa đo | **26** |
+| IPC `get_mic_state` / 60s | chưa đo | **750** (poll 80 ms) |
+| IPC `get_output_peak` / 60s | chưa đo | **857** (`music_wave`, ~70 ms) |
+| **Tổng IPC khi deck thức / 60s** | chưa đo | **~1.665** |
+| CPU WebView (deck thức) | chưa đo | **~53% một nhân** (~4,4% / 12 nhân) |
+| CPU app .exe (deck thức) | chưa đo | **~1,3% một nhân** |
+| CPU WebView (idle/screensaver) | chưa đo | **~15–25% một nhân** (~1,2–2,0% / 12 nhân) |
+| CPU app .exe (idle/screensaver) | chưa đo | **~1,3% một nhân** |
+
+**Nhận xét**:
+- `get_mic_state` + `get_output_peak` chiếm **~96%** tổng IPC → đây là mục tiêu tối ưu
+  tiếp theo (giảm tần suất hoặc chỉ poll khi tile thực sự hiển thị).
+- Khi idle, mọi vòng poll đều dừng (IPC ~0/phút), nhưng WebView vẫn tốn CPU cho
+  animation/CSS → có thể đo lại sau khi tối ưu hiệu ứng.
+- Số CPU dao động theo animation nên chỉ dùng làm baseline tương đối.
 
 ## Trạng thái
 
@@ -280,7 +299,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - [x] P0-4 · Xuất chẩn đoán
 - [x] P1-1 · Scheduler đồng hồ
 - [x] P1-2 · Vòng quét audio/media
-- [ ] P1-3 · Đo lại
+- [x] P1-3 · Đo lại
 - [x] P2-1 · audio.rs
 - [x] P2-2 · windows_info.rs
 - [x] P2-3 · actions.rs

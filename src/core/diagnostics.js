@@ -4,6 +4,7 @@
  */
 
 const DEFAULT_LIMIT = 200;
+const IPC_WINDOW_MS = 60_000;
 
 /** Chuyển mọi kiểu giá trị sang chuỗi an toàn (không ném lỗi). */
 function stringifyValue(value) {
@@ -65,6 +66,62 @@ export function createDiagnostics({ limit = DEFAULT_LIMIT, now = () => Date.now(
 
 export const diagnostics = createDiagnostics();
 
+/**
+ * Đếm số lần gọi IPC trong cửa sổ trượt (mặc định 60 giây).
+ * Tách khỏi DOM/tauri để test được; phần gắn hook nằm ở `installIpcCounter`.
+ * @param {{ windowMs?: number, now?: () => number }} [options]
+ */
+export function createIpcCounter({ windowMs = IPC_WINDOW_MS, now = () => Date.now() } = {}) {
+  const calls = [];
+
+  function prune() {
+    const cutoff = now() - windowMs;
+    while (calls.length && calls[0].at <= cutoff) calls.shift();
+  }
+
+  function record(cmd) {
+    calls.push({ cmd: String(cmd || 'unknown'), at: now() });
+    prune();
+  }
+
+  function counts() {
+    prune();
+    const result = {};
+    for (const call of calls) result[call.cmd] = (result[call.cmd] || 0) + 1;
+    return result;
+  }
+
+  function summary() {
+    prune();
+    return { windowMs, total: calls.length, counts: counts() };
+  }
+
+  function reset() {
+    calls.length = 0;
+  }
+
+  return { record, counts, summary, reset, windowMs };
+}
+
+export const ipcCounter = createIpcCounter();
+
+/**
+ * Gắn API đếm IPC vào `window.__ipcCount` (dev-only). Trả về counter dùng chung.
+ * Tauri đóng băng `__TAURI_INTERNALS__.invoke` nên không thể bọc tại đây;
+ * các lệnh đi qua `tauri-ipc.js` sẽ tự gọi `ipcCounter.record(cmd)`.
+ * @param {object} [scope] giả lập được trong test: { window }
+ */
+export function installIpcCounter(scope = globalThis) {
+  const win = scope.window || (typeof scope.addEventListener === 'function' ? scope : null);
+  if (!win) return null;
+
+  const api = () => ipcCounter.summary();
+  api.counts = () => ipcCounter.counts();
+  api.reset = () => ipcCounter.reset();
+  win.__ipcCount = api;
+  return ipcCounter;
+}
+
 let installed = false;
 
 /**
@@ -74,6 +131,12 @@ let installed = false;
 export function installDiagnostics(scope = globalThis) {
   if (installed || !scope) return diagnostics;
   installed = true;
+
+  try {
+    installIpcCounter(scope);
+  } catch (_) {
+    /* Đếm IPC là tuỳ chọn; lỗi ở đây không được chặn app. */
+  }
 
   const win = scope.window || (typeof scope.addEventListener === 'function' ? scope : null);
   const con = scope.console;
