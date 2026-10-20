@@ -281,7 +281,8 @@ ok('cài đặt: vào Edit Mode bằng nhấn giữ trên ô trống (long-press
    của app -> nút "Xong" (close_todo_window) không chạy. */
 const viteCfg = readFileSync(path.join(root, 'vite.config.js'), 'utf8');
 const caps = JSON.parse(readFileSync(path.join(root, 'src-tauri', 'capabilities', 'default.json'), 'utf8'));
-const libRs = readFileSync(path.join(root, 'src-tauri', 'src', 'lib.rs'), 'utf8');
+const libRs = readFileSync(path.join(root, 'src-tauri', 'src', 'lib.rs'), 'utf8')
+  + readFileSync(path.join(root, 'src-tauri', 'src', 'windows.rs'), 'utf8');
 const todoHtml = readFileSync(path.join(root, 'todo.html'), 'utf8');
 ok('build: vite.config.js khai CẢ index.html lẫn todo.html (multi-page)',
   /input:\s*\{[\s\S]{0,240}?main:\s*'index\.html'/.test(viteCfg)

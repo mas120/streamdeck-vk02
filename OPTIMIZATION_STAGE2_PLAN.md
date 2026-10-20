@@ -167,7 +167,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **Token**: ~20k.
 
 ### P2-4 · `windows.rs` + làm mỏng `lib.rs`
-- [ ] **File**: `src-tauri/src/lib.rs`, tạo `windows.rs`.
+- [x] **File**: `src-tauri/src/lib.rs`, tạo `windows.rs`.
 - **Việc**: chuyển `open_todo_window`, `close_todo_window`, `close_app`, `shutdown_computer`; `lib.rs` chỉ còn `run()` + `generate_handler`. Mục tiêu < 150 dòng.
 - **Done**: `cargo build`; `npm.cmd run tauri dev` mở/đóng cửa sổ Todo 1 lần.
 - **Token**: ~20k.
@@ -284,7 +284,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - [x] P2-1 · audio.rs
 - [x] P2-2 · windows_info.rs
 - [x] P2-3 · actions.rs
-- [ ] P2-4 · windows.rs
+- [x] P2-4 · windows.rs
 - [ ] P3-1 · Lõi registry
 - [ ] P3-2 · Migrate 3 widget đơn giản
 - [ ] P3-3 · Migrate widget sống

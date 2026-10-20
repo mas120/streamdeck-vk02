@@ -1,6 +1,5 @@
-use std::os::windows::process::CommandExt;
-use std::process::Command;
 use std::time::Duration;
+use ::windows::Win32::System::Com::{CoInitializeEx, CoUninitialize, COINIT_MULTITHREADED};
 use tauri::Manager;
 
 mod actions;
@@ -13,13 +12,8 @@ mod layout;
 mod media;
 mod net;
 mod weather;
+mod windows;
 mod windows_info;
-
-use windows::Win32::System::Com::{CoInitializeEx, CoUninitialize, COINIT_MULTITHREADED};
-
-/* =========================================================================
-   1. TIỆN ÍCH COM (Windows Core Audio)
-   ========================================================================= */
 
 /// Khởi tạo COM (multithreaded) MỘT LẦN cho mỗi thread (giải phóng khi thread kết thúc) rồi
 /// chạy closure. Không init/uninit mỗi lần gọi vì slider gọi lệnh này ~50 lần/giây.
@@ -54,80 +48,14 @@ where
     f()
 }
 
-/* =========================================================================
-   2. THỜI TIẾT, MẠNG VÀ BONGO CAT đã tách ra weather.rs / net.rs / bongo.rs
-   ========================================================================= */
-
-/// Mở (hoặc đưa lên trước) cửa sổ soạn To-do trên MÀN HÌNH PC — không phải panel VK02.
-/// `async`: tạo cửa sổ từ command đồng bộ trên Windows có thể deadlock.
-#[tauri::command(async)]
-fn open_todo_window(app: tauri::AppHandle) -> Result<(), String> {
-    use tauri::{WebviewUrl, WebviewWindowBuilder};
-    if let Some(w) = app.get_webview_window("todo") {
-        let _ = w.unminimize();
-        let _ = w.show();
-        let _ = w.set_focus();
-        return Ok(());
-    }
-    let win = WebviewWindowBuilder::new(&app, "todo", WebviewUrl::App("todo.html".into()))
-        .title("Việc cần làm")
-        .inner_size(460.0, 640.0)
-        .min_inner_size(340.0, 420.0)
-        .resizable(true)
-        .build()
-        .map_err(|e| e.to_string())?;
-
-    // Chọn màn hình PC: ưu tiên màn chính; bỏ qua panel 1280x800.
-    let is_panel = |m: &tauri::Monitor| m.size().width == 1280 && m.size().height == 800;
-    let primary = win.primary_monitor().ok().flatten();
-    let target = primary
-        .filter(|m| !is_panel(m))
-        .or_else(|| win.available_monitors().unwrap_or_default().into_iter().find(|m| !is_panel(m)));
-    match (target, win.outer_size()) {
-        (Some(m), Ok(sz)) => {
-            let (p, s) = (m.position(), m.size());
-            let x = p.x + (s.width as i32 - sz.width as i32) / 2;
-            let y = p.y + (s.height as i32 - sz.height as i32) / 2;
-            let _ = win.set_position(tauri::PhysicalPosition::new(x, y));
-        }
-        _ => {
-            let _ = win.center();
-        }
-    }
-    let _ = win.set_focus();
-    Ok(())
-}
-
-#[tauri::command]
-fn close_todo_window(app: tauri::AppHandle) {
-    if let Some(w) = app.get_webview_window("todo") {
-        let _ = w.close();
-    }
-}
-
-#[tauri::command]
-fn close_app(app_handle: tauri::AppHandle) {
-    app_handle.exit(0);
-}
-
-#[tauri::command]
-fn shutdown_computer() -> Result<(), String> {
-        Command::new("shutdown.exe")
-                .args(["/s", "/t", "0"])
-                .creation_flags(0x08000000)
-                .spawn()
-                .map(|_| ())
-                .map_err(|error| format!("Không thể gửi lệnh tắt máy: {error}"))
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             actions::trigger_action,
-            close_app,
-            shutdown_computer,
+            windows::close_app,
+            windows::shutdown_computer,
             bongo::set_bongo_enabled,
             layout::load_layout,
             layout::save_layout,
@@ -150,8 +78,8 @@ pub fn run() {
             app_icons::get_app_icon,
             app_icons::get_favicon,
             app_icons::save_icon_pair,
-            open_todo_window,
-            close_todo_window
+            windows::open_todo_window,
+            windows::close_todo_window
         ])
         .setup(|app| {
             if let Some(window) = app.get_webview_window("main") {
@@ -184,7 +112,7 @@ pub fn run() {
                         // Giữ chuột trong màn chính để không trượt sang panel cảm ứng.
                         if let Some(main) = window.primary_monitor().ok().flatten() {
                             let (p, s) = (main.position(), main.size());
-                            let rect = windows::Win32::Foundation::RECT {
+                            let rect = ::windows::Win32::Foundation::RECT {
                                 left: p.x,
                                 top: p.y,
                                 right: p.x + s.width as i32,
@@ -193,7 +121,7 @@ pub fn run() {
                             // Lặp lại vì Windows có thể gỡ giới hạn khi đổi focus/hiển thị.
                             std::thread::spawn(move || loop {
                                 unsafe {
-                                    let _ = windows::Win32::UI::WindowsAndMessaging::ClipCursor(
+                                    let _ = ::windows::Win32::UI::WindowsAndMessaging::ClipCursor(
                                         Some(&rect),
                                     );
                                 }
