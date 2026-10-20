@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "streandeck-vk02",
+  "version": "0.1.0",
+  "identifier": "com.admin.streandeck-vk02",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Stream Deck VK02",
+        "width": 1280,
+        "height": 800,
+        "decorations": false,
+        "resizable": false,
+        "fullscreen": false,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: http: https: asset: http://asset.localhost https://asset.localhost; connect-src ipc: http://ipc.localhost; object-src 'none'; base-uri 'none'",
+      "devCsp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: http: https: asset: http://asset.localhost https://asset.localhost; connect-src 'self' ws://localhost:1420 ipc: http://ipc.localhost; object-src 'none'; base-uri 'none'",
+      "assetProtocol": {
+        "enable": true,
+        "scope": ["$APPLOCALDATA/icon-cache/**"]
+      }
+    }
+  }
+}

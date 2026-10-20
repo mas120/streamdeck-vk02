@@ -1,0 +1,67 @@
+[package]
+name = "streandeck-vk02"
+version = "0.1.0"
+description = "A Tauri App"
+authors = ["you"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "streandeck_vk02_lib"
+crate-type = ["rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-opener = "2"
+rdev = "0.5"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Icon thật của app / favicon / icon tải lên (app_icons.rs): giải mã ảnh + mã hoá
+# base64 cho lệnh save_icon_pair. Chỉ bật ĐÚNG các codec cần dùng để bản build
+# không phình thêm; tắt default-features để tránh kéo theo codec không dùng.
+image = { version = "0.25", default-features = false, features = [
+    "png",
+    "ico",
+    "jpeg",
+    "gif",
+    "webp",
+    "bmp"
+] }
+base64 = "0.22"
+# HTTP client cho widget Thời tiết (Open-Meteo). Dùng rustls (thuần Rust, không
+# phụ thuộc OpenSSL/schannel của hệ điều hành) để bản build luôn nhất quán.
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+windows = { version = "0.62.2", features = [
+    "Win32_Foundation",
+    "Win32_Media_Audio",
+    "Win32_Media_Audio_Endpoints",
+    "Win32_System_Com",
+    "Win32_System_ProcessStatus",
+    "Win32_System_Threading",
+    "Win32_UI_WindowsAndMessaging",
+    # app_icons.rs: IShellItemImageFactory/SHCreateItemFromParsingName để trích icon
+    # của .exe/.lnk, và GDI (GetDIBits...) để chuyển HBITMAP sang ảnh RGBA.
+    "Win32_UI_Shell",
+    "Win32_Graphics_Gdi",
+    # media.rs: GSMTC (phiên media của Windows)
+    "Media_Control",
+    "Foundation",
+    "Foundation_Collections",
+    "Storage_Streams"
+] }
+
+
+# Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true

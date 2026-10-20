@@ -1,0 +1,2426 @@
+﻿:root {
+  /* --- TOKENS: ngÃ´n ngá»¯ Cyber-Glass thá»‘ng nháº¥t -------------------------
+     Ná»n app gáº§n Ä‘en; keycap lÃ  "táº¥m kÃ­nh" 2 tÃ´ng + mÃ©p trÃªn pháº£n quang. */
+  --bg: #090a0f;
+  --slot-bg: #0b0d14;
+  --slot-border: rgba(255, 255, 255, 0.03);
+  --surface-strong: #10151d;
+  --surface-soft: rgba(18, 22, 29, 0.82);
+  --panel-glow: rgba(103, 183, 255, 0.10);
+  --key-surface: linear-gradient(180deg, #141a22, #0d1117 55%, #090d12);
+  --key-border: rgba(255, 255, 255, 0.05);
+  --key-border-top: rgba(255, 255, 255, 0.08);   /* mÃ©p trÃªn pháº£n quang */
+  --radius-key: 16px;                            /* bo gÃ³c chuáº©n keycap */
+  --radius-chip: 12px;                           /* squircle cho icon app */
+  --key-bevel: inset 0 1px 1px rgba(255, 255, 255, 0.25), inset 0 -2px 4px rgba(0, 0, 0, 0.8);
+  /* Hiá»‡u á»©ng cÆ¡ há»c khi NHáº¤N: lÃºn xuá»‘ng + bÃ³ng lÃµm vÃ o trong */
+  --press-transform: scale(0.96) translateY(2px);
+  --press-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.8);
+  /* Dáº£i gradient cá»§a Capsule Fader (kiá»ƒu iOS) */
+  --fill-from: #00c6ff;
+  --fill-to: #0072ff;
+  --fill-glow: rgba(0, 198, 255, 0.45);
+  --accent: #7dc8ff;
+  --accent-glow: rgba(125, 200, 255, 0.20);
+  --danger: #ff6b73;
+  --warn: #f4c86a;
+  --text-soft: rgba(232, 238, 246, 0.90);
+  --text-muted: rgba(166, 182, 203, 0.78);
+  --pomo-work: #ff8a75;
+  --pomo-break: #66c68a;
+  --track-bg: #090d15;
+  --track-edge: rgba(255, 255, 255, 0.05);
+  --screen-brightness: 1;
+    /* --- FONT THUáº¦N VIá»†T -------------------------------------------------
+     --font-ui : Æ°u tiÃªn font Há»† THá»NG Windows cÃ³ Äáº¦Y Äá»¦ Dáº¤U TIáº¾NG VIá»†T
+                 (Segoe UI Variable Text trÃªn Win 11, Segoe UI trÃªn Win 10),
+                 rá»“i má»›i tá»›i Inter / Noto Sans / Roboto / Arial / Tahoma.
+                 ÄÃƒ Bá»Ž "-apple-system" / "BlinkMacSystemFont": hai tÃªn nÃ y chá»‰
+                 tá»“n táº¡i trÃªn macOS nÃªn trÃªn panel VK02 chÃºng chá»‰ gÃ¢y khÃ³ Ä‘oÃ¡n
+                 font tháº­t sá»± Ä‘Æ°á»£c dÃ¹ng.
+     --font-num: mono cho DÃƒY Sá» (giá», mm:ss, %) + tabular-nums Ä‘á»ƒ sá»‘ KHÃ”NG
+                 "nháº£y" khi giÃ¡ trá»‹ Ä‘á»•i. Cascadia Mono / Consolas Ä‘á»u cÃ³ Ä‘á»§
+                 dáº¥u tiáº¿ng Viá»‡t nÃªn nhÃ£n cÃ³ dáº¥u lá»t vÃ o Ã´ sá»‘ váº«n hiá»ƒn thá»‹ Ä‘Ãºng. */
+  --font-ui: "Segoe UI Variable Text", "Segoe UI", "Inter", "Noto Sans",
+             "Roboto", "Arial", "Tahoma", sans-serif;
+  --font-num: "Cascadia Mono", "Consolas", "Roboto Mono", ui-monospace, monospace;
+  }
+  * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-drag: none;
+  }
+  html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: var(--font-ui);   /* font thuáº§n Viá»‡t â€” xem token á»Ÿ :root */
+  }
+  /* Khung chá»©a toÃ n bá»™ deck â€” khoÃ¡ cá»©ng 100% viewport (<=> 1280x800 khi cá»­a sá»• 1280x800) */
+  .deck-viewport {
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  }
+  /* Container chá»©a cÃ¡c Ã´ ná»n tÄ©nh: Ä‘á»“ng bá»™ 100% há»‡ toáº¡ Ä‘á»™ vá»›i .grid-stack (cÃ¹ng gá»‘c 0,0) */
+  .deck-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  }
+  .slot-cell {
+  position: absolute;
+  background: var(--slot-bg);
+  border: 1px solid var(--slot-border);
+  border-radius: var(--radius-key);
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.92);
+  box-sizing: border-box;
+  }
+  /* Khung GridStack náº±m Ä‘Ã¨ lÃªn, cÃ¹ng gá»‘c toáº¡ Ä‘á»™ vá»›i .deck-backdrop */
+  .grid-stack {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+  }
+  /* Ã” bao ngoÃ i do GridStack quáº£n lÃ½ (bounding box = w*cellWidth x h*cellHeight) */
+  .grid-stack-item {
+  padding: 0;
+  box-sizing: border-box;
+  /* Cho phÃ©p kÃ©o tháº£ cáº£m á»©ng mÆ°á»£t, khÃ´ng bá»‹ WebView2/Windows cÆ°á»›p gesture */
+  touch-action: none;
+  }
+  /* PhÃ­m báº¥m 3D â€” lá»t lÃ²ng chÃ­nh xÃ¡c bÃªn trong bounding box (GridStack tá»± inset theo margin) */
+  .grid-stack-item-content {
+  background: var(--key-surface) !important;
+  border: 1px solid var(--key-border) !important;
+  border-top: 1px solid var(--key-border-top) !important;   /* mÃ©p trÃªn pháº£n quang */
+  border-radius: var(--radius-key) !important;
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    var(--key-bevel) !important;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  cursor: grab;
+  overflow: hidden !important;
+  transition: transform 0.18s cubic-bezier(0.2, 1.6, 0.3, 1), border-color 0.15s, box-shadow 0.15s;
+  touch-action: none;
+  }
+  .grid-stack-item-content:active {
+  cursor: grabbing;
+  }
+  .grid-stack-item-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 26%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 14px 14px 80% 80% / 14px 14px 20% 20%;
+  pointer-events: none;
+  z-index: 3;
+  }
+  /* Widget "mÃ n hÃ¬nh" (LCD) KHÃ”NG nháº­n lá»›p gloss máº¡nh nhÆ° keycap trÆ¡n: giáº£m Ä‘á»™
+   sÃ¡ng Ä‘á»ƒ máº·t LCD khÃ´ng bá»‹ "báº¹t" vÃ  khÃ´ng lá»™ dáº£i sÃ¡ng cong trÃªn Ã´ rá»™ng. */
+  .grid-stack-item[data-type="volume_slider"] .grid-stack-item-content::before,
+  .grid-stack-item[data-type="app_slider"] .grid-stack-item-content::before,
+  .grid-stack-item[data-type="pomodoro"] .grid-stack-item-content::before,
+  .grid-stack-item[data-type="mini_clock"] .grid-stack-item-content::before,
+  .grid-stack-item[data-type="weather_widget"] .grid-stack-item-content::before,
+  .grid-stack-item[data-type="bongo_cat"] .grid-stack-item-content::before {
+  opacity: 0.5;
+  }
+  /* Cá» Ã KHÃ”NG cÃ³ rule hover cho keycap (.grid-stack-item-content):
+   trÃªn panel cáº£m á»©ng VK02, WebView2 Ã¡p tráº¡ng thÃ¡i hover ngay khi cháº¡m vÃ 
+   GIá»® NGUYÃŠN cho tá»›i khi cháº¡m chá»— khÃ¡c -> phÃ­m vá»«a cháº¡m bá»‹ "dÃ­nh" viá»n
+   cyan sÃ¡ng mÃ£i. Pháº£n há»“i cháº¡m Ä‘Ã£ cÃ³ :active + .keycap-pressed. */
+  .deck-icon-core {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;   /* icon tá»± canh theo cqw/cqh; khÃ´ng chá»«a mÃ©p ná»¯a Ä‘á»ƒ chiáº¿m ~65% phÃ­m */
+  position: relative;
+  z-index: 2;
+  container-type: size;   /* báº­t cqw/cqh cho icon squircle */
+  }
+  .settings-core { padding: 10px; }   /* phÃ­m âš™ï¸ giá»¯ nguyÃªn bá»‘ cá»¥c cÅ© */
+  /* Icon app 1x1: chiáº¿m ~72% bá» rá»™ng "mÃ n hÃ¬nh" (â‰ˆ 62â€“66% phÃ­m), squircle 12px.
+   TrÆ°á»›c Ä‘Ã¢y 56px / 46cqw â‰ˆ 1/3 phÃ­m nÃªn icon trÃ´ng nhá» vÃ  láº¡c lÃµng. */
+  .icon-chip {
+  width: 92px;
+  width: min(72cqw, 72cqh);
+  height: min(72cqw, 72cqh);
+  border-radius: var(--radius-chip);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  }
+  .deck-icon-core img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+  }
+  .deck-icon-core .icon-emoji {
+  font-size: 64px;
+  font-size: min(52cqw, 52cqh);
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+  }
+  /* --- Tuá»³ chá»n khá»›p áº£nh: data-fit="contain" (Vá»«a khung, máº·c Ä‘á»‹nh) | "cover" (Phá»§ kÃ­n) ---
+   Phá»§ kÃ­n: áº£nh tráº£i háº¿t máº·t phÃ­m (bá» khung LCD 10px), cáº¯t theo bo gÃ³c keycap. */
+  .deck-icon-core[data-fit="cover"] {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  }
+  .deck-icon-core[data-fit="cover"] .icon-chip {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  }
+  .deck-icon-core[data-fit="cover"] img {
+  object-fit: cover;
+  filter: none;
+  }
+  .deck-icon-core[data-fit="cover"] .icon-emoji { font-size: min(78cqw, 78cqh); }
+  /* --- Icon dá»± phÃ²ng khi áº£nh bá»‹ vá»¡: glyph trung tÃ­nh + tÃªn app --- */
+  .icon-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: 8%;
+  color: #8d9ab0;
+  background: linear-gradient(145deg, #1b1f2c, #10131c);
+  pointer-events: none;
+  }
+  .icon-fallback-glyph { width: 50%; height: auto; max-height: 56%; flex: none; }
+  .icon-fallback-name {
+  max-width: 100%;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #b4bfd1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  }
+  /* NÃºt icon nhá» cá»§a slider: chá»‰ hiá»‡n glyph (tÃªn app Ä‘Ã£ náº±m á»Ÿ hÃ ng tÃªn) */
+  .app-icon-btn .icon-fallback { padding: 18%; gap: 0; }
+  .app-icon-btn .icon-fallback-name { display: none; }
+  .app-deck-unit.is-mini .app-icon-btn .icon-fallback { padding: 10%; gap: 2px; }
+  .app-deck-unit.is-mini .app-icon-btn .icon-fallback-name { display: block; font-size: 9px; }
+  /* ÄÃ£ cÃ³ nhÃ£n chá»“ng lÃªn thÃ¬ khÃ´ng láº·p tÃªn app á»Ÿ icon dá»± phÃ²ng */
+  .grid-stack-item-content:has(.key-title) .icon-fallback-name { display: none; }
+  /* --- NHÃƒN (title) chá»“ng lÃªn icon, giá»‘ng Stream Deck ---
+   Vá»‹ trÃ­: data-pos = top | middle | bottom; cá»¡ chá»¯: --title-size; Ä‘á»• bÃ³ng: data-shadow="1". */
+  .key-title {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  z-index: 5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-align: center;
+  font-size: 14px;
+  font-size: var(--title-size, 14px);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: 0.01em;
+  color: rgba(240, 244, 250, 0.84);
+  word-break: break-word;
+  pointer-events: none;
+  }
+  .key-title[data-pos="top"]    { top: 8px; }
+  .key-title[data-pos="middle"] { top: 50%; transform: translateY(-50%); }
+  .key-title[data-pos="bottom"] { bottom: 8px; }
+  .key-title[data-shadow="1"] {
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.95),
+    0 0 6px rgba(0, 0, 0, 0.9),
+    0 2px 10px rgba(0, 0, 0, 0.7);
+  }
+  /* =====================================================================
+   FADER CAPSULE THá»NG NHáº¤T (dÃ¹ng cho Cáº¢ Ã¢m lÆ°á»£ng há»‡ thá»‘ng láº«n per-app).
+   ---------------------------------------------------------------------
+   - .volume-deck-unit: "mÃ n hÃ¬nh" LCD cá»§a phÃ­m Ã¢m lÆ°á»£ng há»‡ thá»‘ng; bá»‘ cá»¥c
+     dá»c gá»“m hÃ ng Ä‘áº§u (.volume-core) + thanh capsule (.volume-track).
+     HÃ¬nh khá»‘i/ná»n/viá»n láº¥y tá»« rule LCD dÃ¹ng chung á»Ÿ cuá»‘i file.
+   - .volume-fill : lá»›p tiáº¿n Ä‘á»™ bÃªn trong capsule, rá»™ng theo --fill-percent,
+     gradient cyan #00C6FF -> #0072FF, "nÃºm" sÃ¡ng á»Ÿ mÃ©p fill.
+   - --fill-percent (0..100): JS ghi trá»±c tiáº¿p khi vuá»‘t (throttle 20ms).
+   - data-orient="v" (Ã´ CAO hÆ¡n rá»™ng): capsule chuyá»ƒn Dá»ŒC, fill tá»« ÄÃY.
+   ===================================================================== */
+  .volume-deck-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 8px;
+  gap: min(5cqw, 4cqh);
+  padding: 10px 14px;
+  padding: min(6cqw, 5cqh) min(8cqw, 7cqh);
+  container-type: size;
+  cursor: pointer;
+  touch-action: none;
+  z-index: 2;
+  }
+  /* Thanh CAPSULE cá»§a Ã´ Ã¢m lÆ°á»£ng há»‡ thá»‘ng: bo trÃ²n 999px, lÃ²ng tá»‘i + viá»n máº£nh.
+   Chiá»u cao khá»›p .app-track -> hai loáº¡i fader nhÃ¬n nhÆ° Má»˜T thÃ nh pháº§n. */
+  .volume-track {
+  position: relative;
+  width: 100%;
+  height: min(26px, 20cqh);
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(5, 8, 14, 0.9), rgba(16, 20, 28, 0.96));
+  border: 1px solid var(--track-edge);
+  overflow: hidden;
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  }
+  .volume-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: calc(var(--fill-percent, 50) * 1%);
+  background: linear-gradient(90deg, rgba(93, 225, 255, 0.96), rgba(56, 112, 255, 0.96));
+  border-radius: 999px;
+  pointer-events: none;
+  transition: width 0.06s linear;
+  box-shadow: inset 0 0 12px rgba(130, 215, 255, 0.32), 0 0 14px rgba(102, 217, 255, 0.22);
+  }
+  /* NÃºm (thumb) kiá»ƒu iOS á»Ÿ MÃ‰P fill: vá»«a lÃ  "váº¡ch má»©c", vá»«a lÃ  Ä‘iá»ƒm máº¯t bÃ¡m
+   theo khi vuá»‘t. CÃ¹ng ngÃ´n ngá»¯ vá»›i .app-fill::after. */
+  .volume-fill::after {
+  content: "";
+  position: absolute;
+  top: 14%;
+  bottom: 14%;
+  right: 3px;
+  width: 5px;
+  border-radius: 999px;
+  background: #eaf7ff;
+  box-shadow: 0 0 10px var(--fill-glow), 0 0 22px var(--fill-glow);
+  }
+  /* Ã” CAO (h > w): capsule chuyá»ƒn Dá»ŒC â€” fill dÃ¢ng tá»« ÄÃY, nÃºm á»Ÿ Äá»ˆNH fill */
+  .volume-deck-unit[data-orient="v"] {
+  flex-direction: row;
+  align-items: center;
+  gap: min(5cqw, 6cqh);
+  }
+  .volume-deck-unit[data-orient="v"] .volume-core {
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: min(4cqw, 5cqh);
+  }
+  .volume-deck-unit[data-orient="v"] .volume-track {
+  width: min(26px, 20cqw);
+  height: 100%;
+  }
+  .volume-deck-unit[data-orient="v"] .volume-fill {
+  left: 0;
+  right: 0;
+  top: auto;
+  bottom: 0;
+  width: 100%;
+  height: calc(var(--fill-percent, 50) * 1%);
+  background: linear-gradient(0deg, var(--fill-to), var(--fill-from));
+  transition: height 0.06s linear;
+  }
+  .volume-deck-unit[data-orient="v"] .volume-fill::after {
+  top: 3px;
+  left: 14%;
+  right: 14%;
+  bottom: auto;
+  width: auto;
+  height: 5px;
+  }
+  /* --- ÄANG VUá»T slider (cá» data-dragging do wireCapsuleDrag báº­t/táº¯t) --------
+   1. Bá» transition: fill bÃ¡m Ä‘Ãºng ngÃ³n tay, háº¿t cáº£m giÃ¡c "trá»… tay" (má»—i bÆ°á»›c
+      throttle 20ms trÆ°á»›c Ä‘Ã¢y cÃ²n bá»‹ trÆ°á»£t thÃªm 60ms).
+   2. "MÃ n hÃ¬nh" sÃ¡ng lÃªn + viá»n cyan: cÃ³ pháº£n há»“i ráº±ng thao tÃ¡c Ä‘ang sá»‘ng. */
+  .grid-stack-item[data-dragging="1"] .volume-fill,
+  .grid-stack-item[data-dragging="1"] .app-fill {
+  transition: none;
+  }
+  .grid-stack-item[data-dragging="1"] .volume-deck-unit,
+  .grid-stack-item[data-dragging="1"] .app-deck-unit {
+  filter: brightness(1.18);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 229, 255, 0.45),
+    inset 0 3px 14px rgba(0, 0, 0, 0.9);
+  }
+  /* HÃ ng Ä‘áº§u: icon squircle (báº¥m = táº¯t/báº­t tiáº¿ng) + sá»‘ % */
+  .volume-core {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  }
+  /* Icon squircle cá»§a Ã´ Ã¢m lÆ°á»£ng dÃ¹ng CHUNG hÃ¬nh khá»‘i vá»›i .app-icon-btn
+   (nÃªn khÃ´ng tá»± Ä‘áº·t width/height Ä‘á»ƒ khá»i ghi Ä‘Ã¨) â€” chá»‰ giá»¯ vai trÃ² nÃºt. */
+  .vol-icon {
+  flex: 0 0 auto;
+  padding: 0;
+  cursor: pointer;
+  touch-action: none;
+  }
+  /* Tráº¡ng thÃ¡i Táº®T TIáº¾NG: icon viá»n Ä‘á» + má» (nhÆ° .app-icon-btn.muted),
+   track xÃ¡m vÃ  máº¥t nÃºm -> nháº­n ra ngay cáº£ khi Ä‘á»©ng xa panel. */
+  .volume-deck-unit.is-muted .vol-number {
+  color: #8b949e;
+  text-shadow: none;
+  }
+  .volume-deck-unit.is-muted .volume-fill {
+  background: linear-gradient(90deg, #444b5e, #7a8399);
+  box-shadow: none;
+  }
+  .volume-deck-unit.is-muted .volume-fill::after { opacity: 0; }
+  .volume-deck-unit.is-muted .volume-track {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 71, 87, 0.45),
+    inset 0 3px 10px rgba(0, 0, 0, 0.95);
+  }
+  .vol-number {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-size: 20px;
+  font-size: min(30cqw, 20cqh);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--text-soft);
+  text-shadow: 0 0 12px rgba(102, 217, 255, 0.18);
+  pointer-events: none;
+  }
+  /* ===== Slider Ã‚m lÆ°á»£ng PER-APP (Windows Core Audio) =====
+   Ã” >= 2x1: icon squircle (báº¥m = táº¯t/báº­t tiáº¿ng) + tÃªn app + sá»‘ % + thanh gáº¡t.
+   Ã” 1x1  : chá»‰ icon squircle 56px + sá»‘ % + CHáº¤M LED tráº¡ng thÃ¡i á»Ÿ Ä‘Ã¡y keycap.
+   ToÃ n bá»™ bá» máº·t Ã´ Ä‘á»u vuá»‘t Ä‘Æ°á»£c (xem wireCapsuleDrag trong main.js). */
+  .app-deck-unit {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  container-type: size;
+  z-index: 2;
+  }
+  .app-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  }
+  /* Icon app á»Ÿ Äáº¦U thanh trÆ°á»£t, báº¥m vÃ o Ä‘á»ƒ báº­t/táº¯t tiáº¿ng */
+  .app-icon-btn {
+  width: 40px;    /* vÃ¹ng cháº¡m >= 40px (trÆ°á»›c Ä‘Ã¢y 30px, khÃ³ báº¥m báº±ng ngÃ³n tay) */
+  height: 40px;
+  flex: 0 0 auto;
+  padding: 0;
+  border-radius: var(--radius-chip);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, #181d27, #10151d);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 3px 8px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  touch-action: none;
+  -webkit-user-drag: none;
+  }
+  /* Hiá»‡u á»©ng hover CHá»ˆ báº­t khi thiáº¿t bá»‹ tháº­t sá»± cÃ³ chuá»™t (hover: hover).
+   Panel cáº£m á»©ng khÃ´ng cÃ³ hover -> trÃ¡nh tráº¡ng thÃ¡i "dÃ­nh" sau khi cháº¡m. */
+  @media (hover: hover) and (pointer: fine) {
+  .app-icon-btn:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow), var(--key-bevel);
+  }
+  .edit-done-btn:hover { background: rgba(0, 34, 42, 0.96); }
+  }
+  .app-icon-btn:active {
+  transform: scale(0.94);
+  }
+  .app-icon-btn img {
+  max-width: 74%;
+  max-height: 74%;
+  object-fit: contain;
+  pointer-events: none;
+  }
+  .app-icon-btn .icon-emoji {
+  font-size: 22px;
+  pointer-events: none;
+  }
+  /* TÃªn app / tÃªn web Ä‘ang phÃ¡t (suy ra tá»« tiÃªu Ä‘á» cá»­a sá»•) */
+  .app-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-soft);
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  }
+  /* Tráº¡ng thÃ¡i Ä‘ang táº¯t tiáº¿ng: viá»n Ä‘á» + icon tá»‘i Ä‘i */
+  .app-icon-btn.muted {
+  border-color: var(--danger);
+  box-shadow: 0 0 14px rgba(255, 71, 87, 0.55), var(--key-bevel);
+  filter: grayscale(0.4) brightness(0.8);
+  }
+  .app-percent {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-soft);
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 10px rgba(102, 217, 255, 0.16);
+  transition: color 0.15s, text-shadow 0.15s;
+  }
+  .app-deck-unit.is-muted .app-percent {
+  color: #8b949e;
+  text-shadow: none;
+  }
+  /* Thanh CAPSULE per-app: cÃ¹ng hÃ¬nh khá»‘i + cÃ¹ng chiá»u cao vá»›i .volume-track
+   -> hai loáº¡i fader (há»‡ thá»‘ng / per-app) trÃ´ng nhÆ° Má»˜T thÃ nh pháº§n duy nháº¥t. */
+  .app-track {
+  width: 100%;
+  height: min(26px, 20cqh);   /* pháº£i khá»›p .volume-track */
+  background: linear-gradient(180deg, rgba(5, 8, 14, 0.9), rgba(16, 20, 28, 0.96));
+  border: 1px solid var(--track-edge);
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  touch-action: none;
+  }
+  .app-fill {
+  position: relative;
+  height: 100%;
+  width: calc(var(--fill-percent, 0) * 1%);
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(95, 219, 255, 0.96), rgba(77, 125, 255, 0.96));
+  box-shadow: inset 0 0 14px rgba(137, 216, 255, 0.2), 0 0 14px rgba(102, 217, 255, 0.18);
+  transition: width 0.05s linear;
+  pointer-events: none;
+  }
+  /* NÃºm á»Ÿ MÃ‰P fill â€” cÃ¹ng ngÃ´n ngá»¯ vá»›i .volume-fill::after */
+  .app-fill::after {
+  content: "";
+  position: absolute;
+  top: 14%;
+  bottom: 14%;
+  right: 3px;
+  width: 5px;
+  border-radius: 999px;
+  background: #eaf7ff;
+  box-shadow: 0 0 10px var(--fill-glow);
+  }
+  .app-deck-unit.is-muted .app-fill {
+  background: linear-gradient(90deg, #444b5e, #7a8399);
+  box-shadow: none;
+  }
+  .app-deck-unit.is-muted .app-fill::after { opacity: 0; }
+  /* Ã” per-app CHÆ¯A gáº¯n Ä‘Æ°á»£c app nÃ o (data-state="off"): lÃ m má» cáº£ khá»‘i Ä‘á»ƒ Ä‘á»c
+   ra "Ã´ nÃ y Ä‘ang trá»‘ng" thay vÃ¬ "Ã´ bá»‹ lá»—i/Ä‘ang táº£i". */
+  .app-deck-unit[data-state="off"] .app-track { opacity: 0.2; }
+  /* Ã” trá»‘ng: bá» "--" vÃ´ nghÄ©a, thay báº±ng cÃ¢u gá»£i Ã½ (.app-hint) */
+  .app-deck-unit[data-state="off"] .app-percent { display: none; }
+  .app-hint {
+  display: none;
+  flex: 0 1 auto;
+  min-width: 0;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #8f9bb0;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  }
+  .app-deck-unit[data-state="off"] .app-hint { display: block; }
+  .app-deck-unit[data-state="off"] .app-icon-btn {
+  filter: grayscale(1) brightness(0.7);
+  opacity: 0.7;
+  }
+  /* --- CHáº¤M LED 4px á»Ÿ ÄÃY keycap: tráº¡ng thÃ¡i á»©ng dá»¥ng -------------------
+   active = app Ä‘ang phÃ¡t Â· muted = Ä‘ang táº¯t tiáº¿ng Â· idle/off = Ä‘á»©ng yÃªn */
+  .app-led {
+  display: none;
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  background: #55617a;
+  pointer-events: none;
+  }
+  .app-deck-unit[data-state="active"] .app-led {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
+  }
+  .app-deck-unit[data-state="muted"] .app-led {
+  background: var(--danger);
+  box-shadow: 0 0 8px rgba(255, 71, 87, 0.7);
+  }
+  .app-deck-unit[data-state="idle"] .app-led { background: #7a8399; }
+  /* --- Ã” 1x1: icon squircle giá»¯a Ã´ + sá»‘ % + LED (áº©n tÃªn app & thanh gáº¡t) --- */
+  .app-deck-unit.is-mini { padding: 8px; gap: 4px; }
+  .app-deck-unit.is-mini .app-head { flex-direction: column; gap: 5px; }
+  .app-deck-unit.is-mini .app-name,
+  .app-deck-unit.is-mini .app-track { display: none; }
+  .app-deck-unit.is-mini .app-icon-btn {
+  width: min(56px, 52cqw);
+  height: min(56px, 52cqw);
+  }
+  .app-deck-unit.is-mini .app-percent { font-size: 13px; font-size: 9cqh; }
+  .app-deck-unit.is-mini .app-hint {
+  font-size: 9cqh;
+  max-width: 100%;
+  text-align: center;
+  white-space: normal;
+  color: #9fb0c8;
+  }
+  .app-deck-unit.is-mini .app-led { display: block; }
+  /* =====================================================================
+   PHÃM POMODORO / TIMER â€” GLANCEABLE: khÃ´ng cÃ¢u chá»¯, chá»‰ Sá» Lá»šN + MÃ€U pha
+   + glyph tráº¡ng thÃ¡i + Ä‘áº§u cung tiáº¿n Ä‘á»™ (Ä‘á»c hiá»ƒu trong < 200ms).
+   ---------------------------------------------------------------------
+   - PHA (LÃ€M VIá»†C / NGHá»ˆ): Ä‘á»•i MÃ€U á»Ÿ Ä‘Ãºng 1 chá»— (.pomodoro-unit color)
+     -> vÃ²ng LED + sá»‘ giá» + Ä‘áº§u cung Äƒn theo báº±ng currentColor.
+   - TRáº NG THÃI: running = â–¶ + vÃ²ng "thá»Ÿ"; paused = âšâš (vÃ²ng má»);
+     idle = â–¶ má» nhÃ¡y (má»i cháº¡m). NhÃ£n chá»¯ náº±m á»Ÿ .pomo-sr + tooltip.
+   ===================================================================== */
+  .pomodoro-unit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  container-type: size;   /* báº­t cqw/cqh cho sá»‘ giá» + glyph */
+  color: var(--pomo-work);   /* pha LÃ€M VIá»†C (Ä‘á» cam) */
+  z-index: 2;
+  }
+  .pomodoro-unit[data-mode="break"] { color: var(--pomo-break); }   /* pha NGHá»ˆ */
+  .pomodoro-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88%;
+  height: 88%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  overflow: visible;
+  }
+  .timer-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 6;
+  }
+  .timer-progress {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s linear, opacity 0.4s ease, filter 0.4s ease;
+  }
+  .timer-progress.work  { filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 15px rgba(255, 90, 77, 0.5)); }
+  .timer-progress.break { filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 15px rgba(70, 217, 119, 0.5)); }
+  /* Cháº¥m sÃ¡ng á»Ÿ Ä‘áº§u cung: cÃ²n bao nhiÃªu thá»i gian = nhÃ¬n 1 cÃ¡i lÃ  biáº¿t */
+  .timer-head {
+  fill: #ffffff;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transform: rotate(calc(var(--pomo-ratio, 1) * 360deg));
+  transition: transform 0.3s linear;
+  filter: drop-shadow(0 0 3px currentColor) drop-shadow(0 0 7px currentColor);
+  }
+  .pomodoro-center {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  gap: min(2cqw, 1.2cqh);
+  text-align: center;
+  padding: 6px;
+  pointer-events: none;
+  }
+  .timer-time {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  font-size: 32px;                /* sá»‘ mm:ss hero á»Ÿ Ã´ 2x2 */
+  font-size: min(17cqw, 22cqh);   /* 1x1 / 2x1 / 2x2 Ä‘á»u lá»t lÃ²ng vÃ²ng LED */
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: #fff;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+  /* Sá»‘ giá» Äƒn mÃ u pha -> nháº­n ra LÃ€M VIá»†C / NGHá»ˆ NGAY, khÃ´ng cáº§n Ä‘á»c chá»¯ */
+  .pomodoro-unit[data-mode="work"] .timer-time {
+  color: #ffe2de;
+  text-shadow: 0 0 14px rgba(255, 90, 77, 0.8);
+  }
+  .pomodoro-unit[data-mode="break"] .timer-time {
+  color: #d8ffe4;
+  text-shadow: 0 0 14px rgba(70, 217, 119, 0.8);
+  }
+  /* Glyph tráº¡ng thÃ¡i: â–¶ Ä‘ang cháº¡y Â· âšâš táº¡m dá»«ng Â· â–¶ má» nhÃ¡y khi chá» cháº¡m */
+  .pomodoro-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  width: min(7.4cqw, 9cqh);
+  height: min(7.4cqw, 9cqh);
+  color: #ffffff;
+  transition: color 0.3s ease, opacity 0.3s ease;
+  }
+  .pomo-glyph { width: 100%; height: 100%; fill: currentColor; }
+  .pomodoro-mark .glyph-pause { display: none; }
+  .pomodoro-unit[data-state="paused"] .glyph-play { display: none; }
+  .pomodoro-unit[data-state="paused"] .glyph-pause { display: block; }
+  /* Ã” 1x1: bá» glyph tráº¡ng thÃ¡i -> nhÆ°á»ng trá»n diá»‡n tÃ­ch cho sá»‘ mm:ss + vÃ²ng LED
+   (tráº¡ng thÃ¡i váº«n Ä‘á»c Ä‘Æ°á»£c qua mÃ u vÃ²ng + animation thá»Ÿ). */
+  .pomodoro-unit.is-mini .pomodoro-mark { display: none; }
+  .pomodoro-unit[data-state="idle"] .pomodoro-mark { opacity: 0.42; animation: pomoReady 2.2s ease-in-out infinite; }
+  .pomodoro-unit[data-state="idle"] .timer-progress { opacity: 0.55; }
+  .pomodoro-unit[data-state="running"] .pomodoro-mark { opacity: 0.95; }
+  .pomodoro-unit[data-state="running"] .timer-progress { animation: pomoBreathe 2.6s ease-in-out infinite; }
+  .pomodoro-unit[data-state="running"] .timer-head { animation: pomoBreathe 2.6s ease-in-out infinite; }
+  .pomodoro-unit[data-state="paused"] .pomodoro-mark { color: var(--warn); }
+  .pomodoro-unit[data-state="paused"] .timer-progress,
+  .pomodoro-unit[data-state="paused"] .timer-head { opacity: 0.4; }
+  /* Nhá»‹p "thá»Ÿ" ráº¥t nháº¹: máº¯t nháº­n ra Ä‘á»“ng há»“ ÄANG cháº¡y mÃ  khÃ´ng gÃ¢y nhiá»…u */
+  @keyframes pomoBreathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.68; } }
+  @keyframes pomoReady { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.85; } }
+  /* TÃ´n trá»ng cÃ i Ä‘áº·t giáº£m chuyá»ƒn Ä‘á»™ng cá»§a há»‡ Ä‘iá»u hÃ nh */
+  @media (prefers-reduced-motion: reduce) {
+  .pomodoro-unit .timer-progress,
+  .pomodoro-unit .timer-head,
+  .pomodoro-unit .pomodoro-mark { animation: none !important; }
+  }
+  /* Chá»›p nhÃ¡y viá»n LED ~1.5s khi háº¿t giá» */
+  .grid-stack-item-content.pomo-finish .pomodoro-unit {
+  animation: pomoFinishBlink 1.5s ease-in-out;
+  }
+  @keyframes pomoFinishBlink {
+  0%, 100% {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+                inset 0 3px 14px rgba(0, 0, 0, 0.9);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    box-shadow: inset 0 0 0 3px #FF3B30, 0 0 26px rgba(255, 59, 48, 0.85);
+  }
+  20%, 40%, 60%, 80% {
+    box-shadow: inset 0 0 0 3px #34C759, 0 0 26px rgba(52, 199, 89, 0.85);
+  }
+  }
+  /* =====================================================================
+   PHÃM "CÃ€I Äáº¶T DECK" â€” PHÃM 1x1 náº±m TRONG lÆ°á»›i.
+   Máº¶T PHÃM KHÃ”NG CÃ“ CHá»®: Ã´ 1x1 ráº¥t nhá», chá»¯ "NHáº¤P ÄÃ”I" trÆ°á»›c Ä‘Ã¢y náº±m Ä‘Ã¨ á»Ÿ
+   Ä‘Ã¡y nÃªn bÃ¡nh rÄƒng pháº£i thu nhá» -> chá»‰ giá»¯ bÃ¡nh rÄƒng + vÃ²ng tráº¡ng thÃ¡i.
+   NHáº¤P ÄÃ”I Ä‘á»ƒ Báº¬T/Táº®T Cháº¿ Ä‘á»™ Chá»‰nh sá»­a (nháº¥p 1 láº§n khÃ´ng lÃ m gÃ¬).
+   VÃ²ng quanh bÃ¡nh rÄƒng sÃ¡ng Ä‘áº§y khi Ä‘ang á»Ÿ Cháº¿ Ä‘á»™ Chá»‰nh sá»­a.
+   Gá»£i Ã½ cá»­ chá»‰ náº±m trong modal "CÃ i Äáº·t Deck" (chuá»™t pháº£i phÃ­m âš™ï¸).
+   ===================================================================== */
+  .grid-stack-item[data-type="settings"] .grid-stack-item-content {
+  border-color: rgba(0, 229, 255, 0.35) !important;
+  }
+  .settings-unit {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  }
+  .settings-ring {
+  position: absolute;
+  inset: 10%;
+  transform: rotate(-90deg);
+  overflow: visible;
+  }
+  .settings-ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.09);
+  stroke-width: 6;
+  }
+  .settings-ring-progress {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 282.743;    /* 2 * pi * 45 */
+  stroke-dashoffset: 282.743;   /* áº©n hoÃ n toÃ n khi chÆ°a giá»¯ */
+  filter: drop-shadow(0 0 6px var(--accent-glow));
+  /* KhÃ´ng dÃ¹ng transition: cáº­p nháº­t má»—i frame báº±ng rAF cho khá»›p tay giá»¯ */
+  }
+  /* BÃ¡nh rÄƒng TO HÆ N má»™t chÃºt vÃ¬ máº·t phÃ­m KHÃ”NG cÃ²n chá»¯ á»Ÿ Ä‘Ã¡y: trÆ°á»›c Ä‘Ã¢y chá»¯
+   "NHáº¤P ÄÃ”I" chiáº¿m chá»— Ä‘Ã¡y nÃªn bÃ¡nh rÄƒng pháº£i nhá» cho khá»i cháº¡m chá»¯. */
+  .settings-core .icon-emoji {
+  position: relative;
+  z-index: 2;
+  font-size: min(44px, 38cqw);
+  filter: drop-shadow(0 0 10px var(--accent-glow));
+  }
+  body.edit-mode .grid-stack-item[data-type="settings"] .grid-stack-item-content {
+  border-color: var(--accent) !important;
+  box-shadow:
+    0 0 16px var(--accent-glow),
+    0 6px 14px rgba(0, 0, 0, 0.6),
+    var(--key-bevel) !important;
+  }
+  /* DÃ²ng gá»£i Ã½ nhá» trong modal */
+  .modal-hint {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #8b949e;
+  font-weight: 600;
+  }
+  .modal-hint strong { color: var(--accent); }
+  /* NÃºt ná»•i "âœ“ Xong": chá»‰ hiá»‡n khi á»Ÿ Cháº¿ Ä‘á»™ Chá»‰nh sá»­a (thoÃ¡t nhanh) */
+  .edit-done-btn {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: rgba(0, 22, 28, 0.92);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 0 18px var(--accent-glow), 0 6px 16px rgba(0, 0, 0, 0.6);
+  -webkit-user-select: none;
+  user-select: none;
+  }
+  .edit-done-btn:active { transform: translateX(-50%) scale(0.94); }
+  body.edit-mode .edit-done-btn { display: inline-flex; }
+  /* LÆ°á»›i ná»n rÃµ hÆ¡n khi á»Ÿ Edit Mode (dá»… canh vá»‹ trÃ­) */
+  body.edit-mode .slot-cell {
+  border-color: rgba(0, 229, 255, 0.2);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.85),
+              inset 0 0 0 1px rgba(0, 229, 255, 0.08);
+  }
+  /* Cháº¿ Ä‘á»™ CHáº Y: áº©n háº³n viá»n/lÃ²ng Ã´ trá»‘ng Ä‘á»ƒ deck trÃ´ng nhÆ° thiáº¿t bá»‹ tháº­t;
+   chá»‰ hiá»‡n lÆ°á»›i á»Ÿ Cháº¿ Ä‘á»™ Chá»‰nh sá»­a (dá»… canh vá»‹ trÃ­). */
+  .slot-cell { transition: opacity 0.2s ease; }
+  body:not(.edit-mode) .slot-cell { opacity: 0; }
+  /* Run Mode: con trá» "báº¥m Ä‘Æ°á»£c"; Edit Mode: con trá» "kÃ©o Ä‘Æ°á»£c" */
+  body:not(.edit-mode) .grid-stack-item-content { cursor: pointer; }
+  body.edit-mode .grid-stack-item-content { cursor: grab; }
+  /* áº¨n tay cáº§m resize khi á»Ÿ Run Mode */
+  body:not(.edit-mode) .ui-resizable-handle { display: none !important; }
+  /* =====================================================================
+   HIá»†U á»¨NG PHÃM 3D: NHáº¤N / RIPPLE / STATUS RING
+   ===================================================================== */
+  /* 1. Nháº¥n phÃ­m: lÃºn xuá»‘ng + nÃ©n bÃ³ng + sÃ¡ng viá»n LED (pháº£n há»“i tá»©c thÃ¬)
+   Hiá»‡u á»©ng cÆ¡ há»c chuáº©n: --press-transform + bÃ³ng lÃµm --press-shadow. */
+  .grid-stack-item-content.keycap-pressed,
+  body:not(.edit-mode) .grid-stack-item-content:active {
+  transform: var(--press-transform);
+  border-color: var(--accent) !important;
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.7),
+    0 0 18px var(--accent-glow),
+    inset 0 3px 8px rgba(0, 0, 0, 0.8) !important;
+  transition: transform 0.05s ease, box-shadow 0.05s ease,
+              border-color 0.05s ease;
+  }
+  /* 2. Ripple: sÃ³ng neon quÃ©t tá»« tÃ¢m icon ra viá»n trong 120ms */
+  .key-ripple {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 160%;
+  height: 160%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+  transform: translate(-50%, -50%) scale(0.05);
+  background: radial-gradient(circle,
+    rgba(0, 229, 255, 0.65) 0%,
+    rgba(0, 229, 255, 0.28) 40%,
+    rgba(0, 229, 255, 0) 72%);
+  opacity: 0.95;
+  animation: keyRipple 120ms ease-out forwards;
+  }
+  @keyframes keyRipple {
+  from { transform: translate(-50%, -50%) scale(0.05); opacity: 0.95; }
+  to   { transform: translate(-50%, -50%) scale(1);    opacity: 0; }
+  }
+  /* 3. Status Ring: lá»›p viá»n chá»›p tráº¡ng thÃ¡i náº±m trÃªn cÃ¹ng */
+  .grid-stack-item-content::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-key);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 4;
+  }
+  .grid-stack-item-content.status-success::after {
+  animation: ringSuccess 300ms ease-out;
+  }
+  .grid-stack-item-content.status-error::after {
+  animation: ringError 400ms ease-out;
+  }
+  @keyframes ringSuccess {
+  0% {
+    opacity: 1;
+    box-shadow: inset 0 0 0 3px rgba(46, 204, 113, 0.95),
+                inset 0 0 16px rgba(46, 204, 113, 0.75);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: inset 0 0 0 3px rgba(46, 204, 113, 0),
+                inset 0 0 0 rgba(46, 204, 113, 0);
+  }
+  }
+  @keyframes ringError {
+  0% {
+    opacity: 1;
+    box-shadow: inset 0 0 0 3px rgba(255, 71, 87, 0.95),
+                inset 0 0 16px rgba(255, 71, 87, 0.75);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: inset 0 0 0 3px rgba(255, 71, 87, 0),
+                inset 0 0 0 rgba(255, 71, 87, 0);
+  }
+  }
+  /* =====================================================================
+   P1 â€” DIá»†N Máº O "STREAM DECK THáº¬T"
+   (1) MÃ n hÃ¬nh LCD cho má»—i phÃ­m   (2) bá»‡ liá»n khá»‘i + vignette
+   (3) mÃ n "sÃ¡ng lÃªn" khi báº¥m      (4) nháº£ lÃ² xo (spring) khi tháº£
+   (5) tá»± tá»‘i khi ráº£nh             (6) Ã´ "CÃ i Ä‘áº·t Deck" (Cháº¿ Ä‘á»™ Cháº¡y/Edit + Äá»™ sÃ¡ng)
+   "MÃ n hÃ¬nh" = lá»›p ná»™i dung cá»§a phÃ­m (icon, hoáº·c Ä‘Æ¡n vá»‹ slider).
+   ===================================================================== */
+  /* (2) Bá»‡ liá»n khá»‘i: viá»n nhÃ´m máº£nh + tá»‘i dáº§n vá» 4 gÃ³c */
+  .deck-viewport::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.055),
+    inset 0 0 32px rgba(0, 0, 0, 0.6);
+  }
+  .deck-viewport::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(135% 115% at 50% 45%,
+    rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.5) 100%);
+  }
+  /* =====================================================================
+   PHÃM Äá»’NG Há»’ (mini_clock) â€” thiáº¿t káº¿ "LCD + watch face"
+   ---------------------------------------------------------------------
+   MÃ n hÃ¬nh tháº­t theo lÆ°á»›i 8x5 (panel 1280x800): 1x1 -> ~128x128 px,
+   2x1 -> ~288x128 px, 2x2 -> ~288x288 px. VÃ¬ váº­y má»i cá»¡ chá»¯ dÃ¹ng Ä‘Æ¡n vá»‹
+   container query (cqw/cqh) + fallback px -> widget luÃ´n cÃ¢n Ä‘á»‘i á»Ÿ Má»ŒI
+   kÃ­ch thÆ°á»›c Ã´ mÃ  khÃ´ng cáº§n Ä‘o báº±ng JS.
+   - .keycap-clock-digital : giá» hero + chip giÃ¢y + thanh quÃ©t giÃ¢y + ngÃ y
+   - .keycap-clock-analog  : máº·t sá»‘ SVG (vÃ nh, 60 váº¡ch, sá»‘ 12/3/6/9, cung
+                             giÃ¢y cháº¡y quanh vÃ nh, 3 kim)
+   - .keycap-clock-flip    : 4 táº¥m THáºº Láº¬T HH MM máº·t 24 GIá»œ (khÃ´ng AM/PM)
+   ===================================================================== */
+  .clock-unit {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 8px;
+  overflow: hidden;
+  container-type: size;   /* báº­t Ä‘Æ¡n vá»‹ cqw/cqh cho cÃ¡c pháº§n tá»­ con */
+  z-index: 2;
+  }
+  /* Quáº§ng sÃ¡ng phÃ­a sau sá»‘/kim: mÃ n hÃ¬nh "phÃ¡t sÃ¡ng" thay vÃ¬ pháº³ng */
+  .clock-unit::before {
+  content: "";
+  position: absolute;
+  left: -14%;
+  right: -14%;
+  top: -28%;
+  height: 120%;
+  background: radial-gradient(58% 55% at 50% 45%,
+    rgba(0, 229, 255, 0.14) 0%, rgba(0, 229, 255, 0.06) 38%, rgba(0, 229, 255, 0) 74%);
+  pointer-events: none;
+  }
+  .clock-unit > * { position: relative; z-index: 1; }
+  .clock-label {
+  font-size: 9px;
+  font-size: min(5.4cqw, 9.4cqh);
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #6d7a90;
+  text-align: center;
+  line-height: 1;
+  max-width: 96%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  }
+  /* Máº·t sá»‘ analog á»Ÿ Ã´ 1x1: nhÆ°á»ng chá»— cho máº·t sá»‘ -> áº©n nhÃ£n */
+  .keycap-clock-analog.is-mini .clock-label { display: none; }
+  /* --- (a) DIGITAL: giá» hero (TRáº®NG TUYáº¾T, mono) + ngÃ y á»Ÿ gÃ³c + chip giÃ¢y --- */
+  .keycap-clock-digital { color: #f4f8ff; }
+  .clock-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  padding: 0 2px;
+  line-height: 1;
+  color: #7d879b;
+  font-size: 9px;
+  font-size: min(6cqw, 10cqh);
+  }
+  .keycap-clock-digital.is-mini .clock-top { font-size: 10px; font-size: 8cqw; }
+  .keycap-clock-digital.is-big .clock-top { font-size: 15px; font-size: 6.4cqw; }
+  .clock-date {
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(195, 210, 230, 0.9);
+  }
+  .clock-secs-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42em;
+  padding: 0.24em 0.62em;
+  border-radius: 999px;
+  background: rgba(0, 229, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(0, 229, 255, 0.16), 0 0 12px rgba(0, 229, 255, 0.08);
+  color: #8ef2ff;
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  /* LÃ m dá»‹u chip giÃ¢y: giá» hero váº«n lÃ  Ä‘iá»ƒm nháº¥n sá»‘ 1 trÃªn Ã´ */
+  opacity: 0.75;
+  }
+  /* Cháº¥m nháº¥p nhÃ¡y trong chip giÃ¢y (nhá»‹p 1 giÃ¢y) */
+  .clock-pulse {
+  width: 0.42em;
+  height: 0.42em;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  animation: clockPulse 1s ease-in-out infinite;
+  }
+  @keyframes clockPulse {
+  0%, 100% { opacity: 0.25; transform: scale(0.78); }
+  50% { opacity: 1; transform: scale(1); }
+  }
+  .clock-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  line-height: 1;
+  }
+  .clock-time {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: #f3f8ff;
+  filter: drop-shadow(0 0 10px rgba(129, 208, 255, 0.18))
+          drop-shadow(0 0 22px rgba(190, 214, 240, 0.18));
+  font-size: 60px;
+  font-size: 21cqw;
+  }
+  /* Chá»¯ hero: gradient tráº¯ng -> tráº¯ng xanh ráº¥t nháº¡t (giá»¯ tÃ´ng "tráº¯ng tuyáº¿t").
+   Chá»‰ báº­t khi trÃ¬nh duyá»‡t há»— trá»£ background-clip:text. */
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+  .clock-time {
+    background: linear-gradient(180deg, #ffffff 0%, #f2f8ff 52%, #cfe4f7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  }
+  .keycap-clock-digital.is-mini .clock-time { font-size: 34px; font-size: 27cqw; }
+  .keycap-clock-digital.is-big .clock-time { font-size: 84px; font-size: 29cqw; }
+  .clock-bar {
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  }
+  .keycap-clock-digital.is-big .clock-bar { height: 5px; }
+  .clock-bar-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(0, 229, 255, 0.35), var(--accent));
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.75);
+  }
+  /* Chá»‰ báº­t transition SAU khung hÃ¬nh Ä‘áº§u (thanh quÃ©t khÃ´ng "cháº¡y khá»Ÿi Ä‘á»™ng") */
+  .keycap-clock-digital.is-animating .clock-bar-fill { transition: width 1s linear; }
+  /* --- (b) ANALOG: máº·t sá»‘ watch-face (vÃ nh, váº¡ch, sá»‘, cung giÃ¢y, 3 kim) --- */
+  .keycap-clock-analog { padding: 7px 7px 5px; }
+  .clock-bezel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  }
+  .clock-face {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+  }
+  .clock-rim { fill: none; stroke: url(#clockRimGrad); stroke-width: 2.2; }
+  .clock-dial { fill: url(#clockDialGrad); stroke: rgba(255, 255, 255, 0.07); stroke-width: 0.6; }
+  .clock-glare { fill: url(#clockGlareGrad); }
+  /* 60 váº¡ch phÃºt + 12 váº¡ch giá»; 12/3/6/9 Ä‘áº­m neon */
+  .clock-tick {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 0.7;
+  stroke-linecap: round;
+  }
+  .clock-tick.is-major { stroke: rgba(255, 255, 255, 0.42); stroke-width: 1.5; }
+  .clock-tick.is-quarter {
+  stroke: var(--accent);
+  stroke-width: 1.9;
+  filter: drop-shadow(0 0 2.4px rgba(0, 229, 255, 0.85));
+  }
+  /* Sá»‘ 12 / 3 / 6 / 9 trÃªn máº·t sá»‘ */
+  .clock-num {
+  fill: rgba(233, 246, 255, 0.8);
+  font-family: var(--font-num);
+  font-size: 10.5px;
+  font-weight: 800;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  }
+  /* Cung giÃ¢y cháº¡y quanh vÃ nh: 1 vÃ²ng Ä‘áº§y = 1 phÃºt (JS ghi --sec-offset) */
+  .clock-arc-track {
+  fill: none;
+  stroke: rgba(0, 229, 255, 0.13);
+  stroke-width: 1.1;
+  stroke-dasharray: 286.51;    /* 2 * pi * 45.6 */
+  }
+  .clock-arc {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-dasharray: 286.51;
+  /* JS ghi --sec-offset (0..286.51) Ä‘á»ƒ cung cháº¡y Ä‘Ãºng tiáº¿n Ä‘á»™ trong phÃºt */
+  stroke-dashoffset: var(--sec-offset, 286.51);
+  filter: drop-shadow(0 0 3px rgba(0, 229, 255, 0.9));
+  }
+  /* Kim: xoay quanh tÃ¢m (50,50) theo biáº¿n --angle do JS ghi vÃ o */
+  .clock-hand {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transform: rotate(var(--angle, 0deg));
+  }
+  /* Chá»‰ báº­t transition SAU khung hÃ¬nh Ä‘áº§u Ä‘á»ƒ kim khÃ´ng "quay khá»Ÿi Ä‘á»™ng" */
+  .keycap-clock-analog.is-animating .clock-hand { transition: transform 0.1s linear; }
+  .hand-hour { fill: #eaf6ff; filter: drop-shadow(0 0 3px rgba(234, 246, 255, 0.45)); }
+  .hand-minute { fill: #bfeaff; filter: drop-shadow(0 0 3.5px rgba(0, 229, 255, 0.5)); }
+  /* Kim giÃ¢y Ä‘á» neon + Ä‘á»‘i trá»ng â€” Ä‘iá»ƒm nháº¥n cá»§a máº·t sá»‘ */
+  .hand-second {
+  stroke: #ff4d6d;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 5px rgba(255, 77, 109, 0.85));
+  }
+  .hand-second circle { fill: #ff4d6d; stroke: none; }
+  /* Cá»­a sá»• ngÃ y trÃªn máº·t sá»‘ */
+  .clock-date-mini {
+  fill: var(--accent);
+  font-family: var(--font-num);
+  font-size: 6.4px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  }
+  .clock-center-cap { fill: #0a1120; stroke: rgba(0, 229, 255, 0.45); stroke-width: 0.8; }
+  .clock-center-dot { fill: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
+  /* ---------------------------------------------------------------------
+   (c) THáºº Láº¬T (flip) 24 GIá»œ: 4 táº¥m HH MM, má»—i táº¥m 2 ná»­a TÄ¨NH + 2 LÃ Láº¬T
+   - Máº·t 24 GIá»œ (0h..23h) nÃªn KHÃ”NG cÃ³ nhÃ£n AM/PM: 4 táº¥m sá»‘ lÃ  toÃ n bá»™
+     ná»™i dung nhÃ¬n tháº¥y, khÃ´ng chá»¯ nÃ o chen vÃ o.
+   - Ã” khuyáº¿n nghá»‹ 2x1. Má»—i .flip-card Tá»° lÃ  container (container-type:
+     size) nÃªn sá»‘ Ä‘o theo CHÃNH bá» ngang táº¥m -> 4 táº¥m luÃ´n Ä‘á»u nhau á»Ÿ
+     má»i cá»¡ Ã´ (1x1 / 2x1 / 3x1 / 2x2), khÃ´ng phá»¥ thuá»™c bá» ngang cáº£ Ã´.
+   --------------------------------------------------------------------- */
+  .keycap-clock-flip {
+  --flip-ink: #f4f8ff;         /* mÃ u sá»‘ (ná»­a tÄ©nh + lÃ¡ láº­t) */
+  --flip-gap: 4px;             /* khe giá»¯a 4 táº¥m (dáº¥u hai cháº¥m cÃ³ khe riÃªng) */
+  gap: 2px;
+  padding: 6px 6px 4px;
+  }
+  .flip-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--flip-gap);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  perspective: 260px;          /* chiá»u sÃ¢u cho lÃ¡ láº­t rotateX */
+  }
+  .flip-card {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  border-radius: 7px;
+  background: #0b0e15;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+              0 2px 6px rgba(0, 0, 0, 0.55);
+  container-type: size;        /* sá»‘ bÃªn trong Ä‘o theo bá» ngang Táº¤M */
+  transform-style: preserve-3d;
+  overflow: hidden;
+  }
+  /* Dáº¥u hai cháº¥m giá»¯a giá» vÃ  phÃºt: 2 cháº¥m trÃ²n, KHÃ”NG pháº£i chá»¯ */
+  .flip-colon {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: min(18cqw, 12cqh);
+  height: 100%;
+  padding: 0 min(4cqw, 5cqh);
+  }
+  .flip-colon i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--flip-ink);
+  opacity: 0.55;
+  }
+  /* 2 ná»­a TÄ¨NH (.flip-half) + 2 LÃ Láº¬T (.flip-fold) Ä‘á»u chiáº¿m ná»­a táº¥m; má»—i
+   khá»‘i cáº¯t 1 ná»­a con sá»‘ (sá»‘ cao gáº¥p Ä‘Ã´i ná»­a táº¥m -> xem .flip-digit). */
+  .flip-half,
+  .flip-fold {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  overflow: hidden;
+  backface-visibility: hidden;
+  }
+  .flip-top,
+  .flip-fold-top {
+  top: 0;
+  border-radius: 7px 7px 0 0;
+  background: linear-gradient(180deg, #202634 0%, #141a26 100%);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.7);
+  }
+  .flip-bottom,
+  .flip-fold-bottom {
+  bottom: 0;
+  border-radius: 0 0 7px 7px;
+  background: linear-gradient(180deg, #0f141d 0%, #05070b 100%);
+  }
+  /* LÃ¡ láº­t lÃºc NGHá»ˆ náº±m vuÃ´ng gÃ³c (khuáº¥t) -> chá»‰ tháº¥y 2 ná»­a tÄ©nh. */
+  .flip-fold-top {
+  transform: rotateX(-90deg);
+  transform-origin: 50% 100%;
+  z-index: 3;
+  }
+  .flip-fold-bottom {
+  transform: rotateX(90deg);
+  transform-origin: 50% 0%;
+  z-index: 4;
+  }
+  .flip-digit {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 200%;                /* gáº¥p Ä‘Ã´i ná»­a táº¥m -> sá»‘ náº±m Ä‘Ãºng tÃ¢m táº¥m */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--flip-ink);
+  text-shadow: 0 0 10px rgba(190, 214, 240, 0.22);
+  font-size: min(150cqw, 92cqh);
+  }
+  /* Ná»­a TRÃŠN láº¥y pháº§n trÃªn cá»§a sá»‘, ná»­a DÆ¯á»šI láº¥y pháº§n dÆ°á»›i (khá»›p á»Ÿ khe giá»¯a) */
+  .flip-top > .flip-digit,
+  .flip-fold-top > .flip-digit { top: 0; }
+  .flip-bottom > .flip-digit,
+  .flip-fold-bottom > .flip-digit { bottom: 0; }
+  /* 2 NHá»ŠP Láº¬T: lÃ¡ TRÃŠN láº­t xuá»‘ng (0-300ms) Rá»’I lÃ¡ DÆ¯á»šI Ä‘Ã¡p xuá»‘ng (300-600ms).
+   JS gá»¡ .is-flipping khi animationend cá»§a lÃ¡ dÆ°á»›i -> animation cháº¡y láº¡i. */
+  .flip-card.is-flipping > .flip-fold-top {
+  animation: flipFoldTop 300ms ease-in;
+  }
+  .flip-card.is-flipping > .flip-fold-bottom {
+  animation: flipFoldBottom 300ms ease-out 300ms;
+  }
+  @keyframes flipFoldTop {
+  0% { transform: rotateX(0deg); }
+  100% { transform: rotateX(-90deg); }
+  }
+  @keyframes flipFoldBottom {
+  0% { transform: rotateX(90deg); }
+  100% { transform: rotateX(0deg); }
+  }
+  /* Cá»¡ Ã´: 1x1 (is-mini) bá» dáº¥u hai cháº¥m cho 4 táº¥m rá»™ng ra; Ã´ rá»™ng (is-short/
+   is-big) ná»›i khe giá»¯a cÃ¡c táº¥m cho thoÃ¡ng. */
+  .keycap-clock-flip.is-mini { --flip-gap: 2px; padding: 4px; }
+  .keycap-clock-flip.is-mini .flip-colon { display: none; }
+  .keycap-clock-flip.is-mini .flip-card { border-radius: 4px; }
+  .keycap-clock-flip.is-short { --flip-gap: 6px; }
+  .keycap-clock-flip.is-big { --flip-gap: 8px; padding: 8px; }
+  /* =====================================================================
+   PHÃM THá»œI TIáº¾T (weather_widget) â€” 3x1 Máº¶C Äá»ŠNH, CO THEO Cá»  Ã”
+   ---------------------------------------------------------------------
+   2 SKIN (data-skin, chá»n trong modal "CÃ i Äáº·t PhÃ­m Báº¥m"):
+     Â· soft (MÃ€U Dá»ŠU â€” máº·c Ä‘á»‹nh): ná»n GRADIENT full-bleed Ä‘á»•i theo tráº¡ng
+       thÃ¡i trá»i (data-tint) + ngÃ y/Ä‘Ãªm (data-night="1" -> tÃ­m navy); má»™t
+       lá»›p scrim tá»‘i 30% phá»§ trÃªn gradient -> "lÃ m dá»‹u 30% Ä‘á»™ chÃ³i".
+     Â· flat (PHáº²NG): ná»n #111317; mÃ u CHá»ˆ cÃ²n á»Ÿ cá»¥m minh hoáº¡ SVG.
+   Bá» Cá»¤C â€” 4 vÃ¹ng trong .wx-body:
+     [.weather-hero: tÃ¬nh tráº¡ng trá»i + nhiá»‡t Ä‘á»™ Lá»šN] | [.wx-divider 1px/60%]
+     | [.wx-meta: "T5, 08/10" + ðŸ“tÃªn TP (+ giÃ³/Ä‘á»™ áº©m á»Ÿ Ã´ 2x2)]
+     | [.wx-art: minh hoáº¡ SVG trÃ n mÃ©p pháº£i ~15%]
+     Â· 3x1 (is-short.is-wide3): Ä‘á»§ 4 cá»™t;
+     Â· 2x1 (is-short): bá» váº¡ch ngÄƒn, ngÃ y + TP gom 1 dÃ²ng nhá» DÆ¯á»šI sá»‘ Â°C;
+     Â· 2x2 (is-big): minh hoáº¡ Lá»šN phÃ­a trÃªn, dÆ°á»›i lÃ  Â°C + text + giÃ³/Ä‘á»™ áº©m;
+     Â· 1x1 (is-mini): chá»‰ minh hoáº¡ thu nhá» + sá»‘ Â°C.
+   Cá»¡ chá»¯/icon dÃ¹ng cqw/cqh nÃªn cÃ¢n Ä‘á»‘i á»Ÿ má»i cá»¡ Ã´.
+   ===================================================================== */
+  .bongo-cat-widget {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  overflow: hidden;
+  border-radius: 9px;
+  background: #d7d9d7;
+  color: #252a31;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -2px 5px rgba(27, 34, 42, 0.08);
+  }
+  .bongo-cat-widget.hide-kps .bongo-kps {
+  display: none;
+  }
+  .bongo-kps {
+  position: absolute;
+  top: 5px;
+  right: 7px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(37, 42, 49, 0.62);
+  font-family: var(--font-num);
+  line-height: 1;
+  }
+  .bongo-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  }
+  .bongo-svg {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+  }
+  .bongo-trackpad {
+  fill: #b8bcbd;
+  stroke: #252a31;
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  }
+  .bongo-trackpad-mark {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.42);
+  stroke-width: 1;
+  }
+  .bongo-cat-shape {
+  fill: #fff;
+  stroke: #111;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform: translate(var(--look-x, 0px), var(--look-y, 0px));
+  transition: transform 0.12s ease-out;
+  }
+  .bongo-ear-inner {
+  fill: #f07d8c;
+  }
+  .bongo-eyes {
+  fill: #111;
+  stroke: #111;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  }
+  .bongo-eyes path,
+  .bongo-whiskers {
+  fill: none;
+  stroke: #111;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  }
+  .bongo-keyboard-case {
+  fill: #d9dcda;
+  stroke: #17191c;
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  }
+  .bongo-keyboard-row,
+  .bongo-keyboard-cols {
+  fill: none;
+  stroke: #202328;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  }
+  .bongo-key path {
+  fill: #f1f2ef;
+  stroke: #202328;
+  stroke-width: 1;
+  stroke-linejoin: round;
+  transition: fill 0.08s ease, transform 0.08s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+  }
+  .bongo-key.is-lit path {
+  fill: #f17f8d;
+  transform: translateY(1.5px);
+  }
+  .bongo-spacebar {
+  fill: #eff0ed;
+  stroke: #202328;
+  stroke-width: 1;
+  stroke-linejoin: round;
+  }
+  .bongo-key.is-lit {
+  filter: drop-shadow(0 0 3px rgba(239, 97, 117, 0.45));
+  }
+  .bongo-arm {
+  transition: transform 0.11s ease-out;
+  transform-box: fill-box;
+  transform-origin: center;
+  pointer-events: none;
+  }
+  .bongo-paw {
+  fill: #fff;
+  stroke: #111;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  }
+  .bongo-paw-line {
+  fill: none;
+  stroke: #111;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  }
+  .bongo-paw-pad {
+  fill: #f17f8d;
+  stroke: #e9697a;
+  stroke-width: 0.8;
+  }
+  .bongo-cat-widget[data-action="down"][data-hand="left"] .bongo-arm-left {
+  transform: translate(3px, 7px) rotate(9deg);
+  }
+  .bongo-cat-widget[data-action="down"][data-hand="right"] .bongo-arm-right {
+  transform: translate(-3px, 7px) rotate(-9deg);
+  }
+  .bongo-cat-widget[data-action="up"] .bongo-arm {
+  transform: translate(0, 0) rotate(0deg);
+  }
+  body.idle .bongo-cat-widget {
+  filter: brightness(0.62) saturate(0.8);
+  }
+  body.idle .weather-unit.keycap-weather {
+  opacity: 0.4;
+  filter: brightness(0.4) saturate(0.8);
+  }
+  .weather-unit.keycap-weather {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  container-type: size;      /* báº­t Ä‘Æ¡n vá»‹ cqw/cqh cho cÃ¡c pháº§n tá»­ con */
+  z-index: 2;
+  --wx-ink: rgba(255, 255, 255, 0.94);
+  --wx-ink-2: rgba(255, 255, 255, 0.85);
+  --wx-ink-3: rgba(255, 255, 255, 0.6);
+  --wx-bg: linear-gradient(145deg, #18222d 0%, #11171e 100%);
+  --wx-scrim: 0.3;           /* lÃ m dá»‹u 30% Ä‘á»™ chÃ³i cá»§a gradient */
+  background: linear-gradient(180deg, rgba(14, 19, 26, 0.82), rgba(9, 13, 18, 0.95)), var(--wx-bg);
+  color: var(--wx-ink);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), inset 0 -1px 1px rgba(0, 0, 0, 0.4), 0 4px 10px rgba(0, 0, 0, 0.35);
+  }
+  /* Lá»›p LÃ€M Dá»ŠU: tá»‘i 30% + tá»‘i dáº§n vá» Ä‘Ã¡y -> gradient khÃ´ng bá»‹ "chÃ¡y" */
+  .weather-unit.keycap-weather::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0%,
+      rgba(0, 0, 0, calc(0.52 * var(--wx-scrim))) 100%),
+    rgba(0, 0, 0, calc(0.62 * var(--wx-scrim)));
+  }
+  /* --- 6 Ná»€N theo báº£ng mÃ u spec (náº¯ng / nhiá»u mÃ¢y / mÆ°a / dÃ´ng / Ä‘Ãªm / lá»—i)
+   + 4 tÃ´ng phá»¥ (Ã­t mÃ¢y, mÆ°a phÃ¹n, tuyáº¿t, sÆ°Æ¡ng mÃ¹) Äƒn cÃ¹ng thang mÃ u ---- */
+  .keycap-weather[data-tint="sun"]     { --wx-bg: linear-gradient(145deg, #152b3c 0%, #0f1c27 100%); }
+  .keycap-weather[data-tint="partly"]  { --wx-bg: linear-gradient(145deg, #1d2d3c 0%, #111c29 100%); }
+  .keycap-weather[data-tint="cloud"]   { --wx-bg: linear-gradient(145deg, #18222d 0%, #11171e 100%); }
+  .keycap-weather[data-tint="fog"]     { --wx-bg: linear-gradient(145deg, #1b242e 0%, #121a21 100%); }
+  .keycap-weather[data-tint="drizzle"] { --wx-bg: linear-gradient(145deg, #102624 0%, #0b1a18 100%); }
+  .keycap-weather[data-tint="rain"]    { --wx-bg: linear-gradient(145deg, #102624 0%, #0b1a18 100%); }
+  .keycap-weather[data-tint="snow"]    { --wx-bg: linear-gradient(145deg, #1a2433 0%, #101920 100%); }
+  .keycap-weather[data-tint="storm"]   { --wx-bg: linear-gradient(145deg, #1c1d2d 0%, #121722 100%); }
+  .keycap-weather[data-tint="error"]   { --wx-bg: linear-gradient(145deg, #282021 0%, #181315 100%); }
+  /* Ban Ä‘Ãªm (is_day = 0): má»i tráº¡ng thÃ¡i dÃ¹ng tÃ­m navy cho dá»‹u máº¯t */
+  .keycap-weather[data-night="1"]      { --wx-bg: linear-gradient(135deg, #1b1642, #392873); }
+  .keycap-weather[data-night="1"] .wx-art { opacity: 0.9; }
+  /* Skin PHáº²NG: ná»n Ä‘en; mÃ u giá»¯ nguyÃªn á»Ÿ minh hoáº¡ nÃªn Ã´ váº«n "cÃ³ mÃ u" */
+  .keycap-weather[data-skin="flat"]    { --wx-bg: #111317; }
+  .keycap-weather[data-skin="flat"]::after { display: none; }
+  /* Ná»™i dung luÃ´n náº±m TRÃŠN lá»›p lÃ m dá»‹u */
+  .keycap-weather > * { position: relative; z-index: 1; }
+  /* --- 4 VÃ™NG Bá» Cá»¤C (máº·c Ä‘á»‹nh 3x1 = 4 cá»™t: 1fr | 1px | 1.04fr | 1.02fr) --- */
+  .wx-body {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  align-items: center;
+  gap: min(1.8cqw, 3.8cqh);
+  padding: min(2.8cqw, 6.2cqh) min(2.8cqw, 6cqh);
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1.04fr) minmax(0, 1.02fr);
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "hero divider meta art";
+  }
+  /* Cá»™t TRÃI: tÃ¬nh tráº¡ng trá»i + sá»‘ nhiá»‡t Ä‘á»™ cá»±c lá»›n */
+  .weather-hero {
+  grid-area: hero;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: min(0.8cqw, 2.4cqh);
+  min-width: 0;
+  }
+  /* Váº¡ch ngÄƒn: 1px rgba(255,255,255,.2), cao 60% â€” chá»‰ hiá»‡n á»Ÿ Ã´ >= 3 cá»™t */
+  .wx-divider {
+  display: none;
+  grid-area: divider;
+  align-self: center;
+  width: 1px;
+  height: 60%;
+  background: rgba(255, 255, 255, 0.2);
+  }
+  /* Cá»™t GIá»®A: thá»©/ngÃ y + ghim Ä‘á»‹nh vá»‹ tÃªn thÃ nh phá»‘ (+ chá»‰ sá»‘ á»Ÿ Ã´ 2x2) */
+  .wx-meta {
+  grid-area: meta;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: min(1.2cqw, 2.6cqh);
+  min-width: 0;
+  }
+  /* Cá»™t PHáº¢I: khá»‘i minh hoáº¡ â€” tá»± cáº¯t vÃ  Ä‘áº©y trÃ n mÃ©p pháº£i ~15% */
+  .wx-art {
+  grid-area: art;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+  }
+  .wx-art .weather-icon {
+  width: min(112cqw, 132cqh);
+  height: min(112cqw, 132cqh);
+  transform: translateX(15%);
+  }
+  /* TÃŒNH TRáº NG TRá»œI: chá»¯ PhÃ¡pâ€“Viá»‡t 13px, hÆ¡i má» (85%) */
+  .weather-cond {
+  font-size: 13px;
+  font-size: min(10.6cqw, 8.8cqh);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  line-height: 1.1;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  }
+  .weather-temp { display: inline-flex; align-items: flex-start; min-width: 0; }
+  .weather-value {
+  font-family: var(--font-num);
+  font-weight: 700;
+  font-size: 48px;
+  font-size: min(13cqw, 31cqh);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  }
+  /* KÃ½ hiá»‡u Â°C NHá»Ž + má», nÃ¢ng lÃªn Ä‘á»‰nh sá»‘ Ä‘á»ƒ sá»‘ váº«n lÃ  "hero" cá»§a Ã´ */
+  .weather-degree {
+  font-size: 20px;
+  font-size: min(6.2cqw, 13.5cqh);
+  font-weight: 600;
+  margin-top: 0.1em;
+  margin-left: 0.08em;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0;
+  }
+  /* HÃŒNH MINH HOáº : mÃ u gradient náº±m NGAY TRONG <svg> (fill="url(#wxg-â€¦)"),
+   CSS chá»‰ cÃ²n glow/Ä‘á»™ má» -> Ã´ 2 skin Ä‘á»u giá»¯ Ä‘Æ°á»£c "cá»¥m minh hoáº¡ cÃ³ mÃ u". */
+  .weather-icon { display: block; flex: none; }
+  .weather-icon svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .wx-halo { filter: blur(0.7px); }
+  .wx-sun, .wx-moon, .wx-bolt, .wx-ray { filter: drop-shadow(0 0 4px rgba(255, 209, 102, 0.45)); }
+  .wx-flake, .wx-star { opacity: 0.95; }
+  .wx-drop { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35)); }
+  /* --- ANIMATION VI MÃ”: má»—i icon Tá»I ÄA 2 Lá»šP (má»i lá»›p Ä‘á»u gáº¯n .wx-anim) --- */
+  .wx-anim { animation-iteration-count: infinite; animation-timing-function: ease-in-out; }
+  .wx-anim-spin { transform-box: fill-box; transform-origin: center; animation: wxSpin 20s linear infinite; }
+  .wx-anim-drift { animation: wxDrift 7s ease-in-out infinite; }
+  .wx-anim-fall { animation: wxFall 1.6s linear infinite; }
+  .wx-anim-sway { animation: wxSway 6s ease-in-out infinite; }
+  .wx-anim-twinkle { animation: wxTwinkle 2.6s ease-in-out infinite; }
+  .wx-anim-breathe { animation: wxBreathe 6s ease-in-out infinite; }
+  .wx-anim-blink { animation: wxBlink 2.4s steps(1, end) infinite; }
+  @keyframes wxSpin { to { transform: rotate(360deg); } }
+  @keyframes wxDrift { 0%, 100% { transform: translateX(-1.4%); } 50% { transform: translateX(1.4%); } }
+  @keyframes wxFall { 0% { transform: translateY(-1.6px); opacity: 0.5; } 100% { transform: translateY(2.6px); opacity: 1; } }
+  @keyframes wxSway { 0%, 100% { transform: translateY(-0.9px); opacity: 0.75; } 50% { transform: translateY(1.5px); opacity: 1; } }
+  @keyframes wxTwinkle { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+  @keyframes wxBreathe { 0%, 100% { opacity: 0.1; } 50% { opacity: 0.24; } }
+  @keyframes wxBlink { 0%, 62% { opacity: 1; } 63%, 100% { opacity: 0.3; } }
+  /* ÄANG Táº¢I: minh hoáº¡ XOAY Má»œ (sá»‘ cÅ© váº«n giá»¯ náº¿u Ä‘Ã£ cÃ³ cache -> khÃ´ng nhÃ¡y) */
+  .keycap-weather.is-loading .weather-icon { opacity: 0.45; animation: wxSpin 1.4s linear infinite; }
+  /* --- Cá»™t GIá»®A: thá»©/ngÃ y "T5, 08/10" + ghim Ä‘á»‹nh vá»‹ tÃªn thÃ nh phá»‘ --- */
+  .weather-date, .weather-place {
+  font-size: 13px;
+  font-size: min(8cqw, 8.4cqh);
+  line-height: 1.15;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  }
+  .weather-place { display: flex; align-items: center; gap: 0.28em; }
+  .wx-glyph-pin { width: 1.05em; height: 1.05em; flex: none; }
+  .weather-city { min-width: 0; font-weight: 700; letter-spacing: 0.02em; }
+  /* Ã” NGANG (3x1 / 2x1) dÃ¹ng tÃªn RÃšT Gá»ŒN ("TP.HCM"); Ã´ 2x2 hiá»‡n tÃªn Ä‘áº§y Ä‘á»§ */
+  .wx-meta .wc-full { display: none; }
+  .wx-meta .wc-short { display: inline; }
+  .keycap-weather.is-big .wc-full { display: inline; }
+  .keycap-weather.is-big .wc-short { display: none; }
+  /* --- Chá»‰ sá»‘ phá»¥: GLYPH MÃ€U + Sá» (bá» emoji + chá»¯ "km/h" + tÃªn chá»‰ sá»‘) ---
+   Chá»‰ hiá»‡n á»Ÿ Ã´ lá»›n >= 2x2; má»—i chá»‰ sá»‘ má»™t mÃ u nÃªn nháº­n ra tá»©c thÃ¬. */
+  .weather-stats {
+  display: none;
+  align-items: center;
+  gap: min(4.4cqw, 5.6cqh);
+  line-height: 1;
+  }
+  .keycap-weather.is-big .weather-stats { display: inline-flex; }
+  .weather-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28em;
+  font-size: 17px;
+  font-size: min(4.4cqw, 4.4cqh);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.93);
+  text-shadow: 0 0 10px rgba(255,255,255,0.12);
+  }
+  .weather-stat .wx-glyph { width: 1.2em; height: 1.2em; flex: none; }
+  .weather-stat[data-stat="hum"] .wx-glyph   { color: #6fd8ff; }
+  .weather-stat[data-stat="feels"] .wx-glyph { color: #ffb067; }
+  .weather-stat[data-stat="wind"] .wx-glyph  { color: #8ce0b4; }
+  /* --- BADGE "Dá»® LIá»†U CÅ¨": chá»‰ hiá»‡n khi Máº¤T Máº NG + cache quÃ¡ 30 phÃºt --- */
+  .wx-badge {
+  position: absolute;
+  top: min(2.4cqw, 6cqh);
+  right: min(2.4cqw, 6cqh);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 209, 102, 0.94);
+  color: #2a1c00;
+  font-size: 11px;
+  font-size: max(9px, min(3.2cqw, 8cqh));
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  pointer-events: none;
+  }
+  .wx-badge[hidden] { display: none; }
+  .wx-badge-icon { width: 1.15em; height: 1.15em; flex: none; }
+  .wx-badge-text { letter-spacing: 0.04em; }
+  /* ===================== TIER: 2x1 / 2x2 / 1x2 / 1x1 ===================== */
+  /* 3x1 (máº·c Ä‘á»‹nh): 4 cá»™t + váº¡ch ngÄƒn cao 60% */
+  .keycap-weather.is-wide3 .wx-divider { display: block; }
+  /* 2x1: Bá»Ž váº¡ch ngÄƒn; ngÃ y + TP gom 1 dÃ²ng nhá» DÆ¯á»šI sá»‘ Â°C; minh hoáº¡ gÃ³c pháº£i */
+  .keycap-weather.is-short:not(.is-wide3) .wx-body {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.86fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas: "hero art" "meta art";
+  gap: min(1.4cqw, 2.6cqh) min(2.4cqw, 5cqh);
+  padding: min(3cqw, 6.5cqh) min(3.2cqw, 6cqh);
+  }
+  .keycap-weather.is-short .weather-hero { justify-content: flex-end; gap: min(0.9cqw, 2cqh); }
+  .keycap-weather.is-short .wx-meta { flex-direction: row; align-items: center; gap: min(2.4cqw, 5cqh); }
+  .keycap-weather.is-short:not(.is-wide3) .wx-art .weather-icon {
+  width: min(80cqw, 128cqh);
+  height: min(80cqw, 128cqh);
+  transform: translateX(14%);
+  }
+  /* 2x2: minh hoáº¡ Lá»šN phÃ­a trÃªn; dÆ°á»›i lÃ  Â°C + text + giÃ³/Ä‘á»™ áº©m */
+  .keycap-weather.is-big .wx-body {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas: "art art" "hero meta";
+  gap: min(1.8cqw, 2.6cqh) min(3cqw, 4.4cqh);
+  padding: min(3cqw, 5cqh) min(3.4cqw, 6cqh);
+  }
+  .keycap-weather.is-big .wx-art { justify-content: center; }
+  .keycap-weather.is-big .wx-art .weather-icon {
+  width: min(58cqw, 58cqh);
+  height: min(58cqw, 58cqh);
+  transform: none;
+  }
+  .keycap-weather.is-big .wx-meta { justify-content: center; }
+  .keycap-weather.is-big .weather-cond { font-size: max(13px, min(6.8cqw, 7cqh)); }
+  .keycap-weather.is-big .weather-value { font-size: max(30px, min(15cqw, 15cqh)); }
+  .keycap-weather.is-big .weather-degree { font-size: max(14px, min(7.2cqw, 7cqh)); }
+  .keycap-weather.is-big .weather-date,
+  .keycap-weather.is-big .weather-place { font-size: max(13px, min(6.4cqw, 6.6cqh)); }
+  /* 1x1: CHá»ˆ minh hoáº¡ thu nhá» + sá»‘ Â°C */
+  .keycap-weather.is-mini .wx-body {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1.02fr) auto;
+  grid-template-areas: "art" "hero";
+  gap: 0;
+  padding: min(3.4cqw, 4cqh);
+  }
+  .keycap-weather.is-mini .wx-divider,
+  .keycap-weather.is-mini .wx-meta,
+  .keycap-weather.is-mini .weather-cond { display: none; }
+  .keycap-weather.is-mini .wx-art { justify-content: center; }
+  .keycap-weather.is-mini .wx-art .weather-icon {
+  width: min(62cqw, 62cqh);
+  height: min(62cqw, 62cqh);
+  transform: none;
+  }
+  .keycap-weather.is-mini .weather-hero { align-items: center; }
+  .keycap-weather.is-mini .weather-value { font-size: min(32cqw, 26cqh); }
+  .keycap-weather.is-mini .weather-degree { font-size: min(14cqw, 12cqh); margin-top: 0.1em; }
+  /* 1x2 (Ã´ cao háº¹p): minh hoáº¡ trÃªn, Â°C giá»¯a, ngÃ y + TP á»Ÿ Ä‘Ã¡y */
+  .keycap-weather.is-tall .wx-body {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1.06fr) auto auto;
+  grid-template-areas: "art" "hero" "meta";
+  gap: min(1.4cqw, 1.6cqh) 0;
+  padding: min(3cqw, 3.4cqh) min(4cqw, 4cqh);
+  }
+  .keycap-weather.is-tall .wx-divider { display: none; }
+  .keycap-weather.is-tall .wx-art { justify-content: center; }
+  .keycap-weather.is-tall .wx-art .weather-icon {
+  width: min(64cqw, 30cqh);
+  height: min(64cqw, 30cqh);
+  transform: none;
+  }
+  .keycap-weather.is-tall .wx-meta { align-items: center; }
+  .keycap-weather.is-tall .weather-value { font-size: min(30cqw, 14cqh); }
+  /* --- Ã” CHá»œ / Lá»–I: tÃ´ng Ä‘á» + icon cáº£nh bÃ¡o; .weather-cond nÃ³i rÃµ lÃ½ do --- */
+  .weather-unit.is-error .weather-value { color: #ffd7db; }
+  .weather-unit.is-error .weather-degree { color: #ffb3ba; }
+  .weather-unit.is-error .weather-place,
+  .weather-unit.is-error .weather-date { color: #ffd7db; }
+  .weather-unit.is-error .weather-cond { color: #ffb3ba; }
+  .weather-unit.is-error .wx-svg-warn {
+  color: #ff8a95;
+  filter: drop-shadow(0 0 7px rgba(255, 107, 122, 0.75));
+  }
+  .weather-unit.is-error .weather-stats { display: none !important; }
+  /* --- GIáº¢M CHUYá»‚N Äá»˜NG: táº¯t Háº¾T animation vi mÃ´ cá»§a Ã´ thá»i tiáº¿t --- */
+  @media (prefers-reduced-motion: reduce) {
+  .weather-unit .wx-anim,
+  .weather-unit .weather-icon { animation: none !important; }
+  }
+  /* --- DECK Ráº¢NH (screensaver): háº¡ sÃ¡ng cÃ²n 40% + Äá»¨NG má»i animation --- */
+  body.idle .weather-unit.keycap-weather { filter: brightness(0.4) saturate(0.72); }
+  body.idle .weather-unit .wx-anim,
+  body.idle .weather-unit .weather-icon { animation: none !important; }
+  /* =====================================================================
+   Lá»šP CHá»® áº¨N THá»Š GIÃC (.wx-sr / .pomo-sr)
+   ---------------------------------------------------------------------
+   NguyÃªn táº¯c "glanceable": KHÃ”NG Ä‘áº·t cÃ¢u chá»¯ tÄ©nh lÃªn máº·t Ã´. ToÃ n bá»™ nhÃ£n
+   mÃ´ táº£ (tÃªn thÃ nh phá»‘ Ä‘áº§y Ä‘á»§, tráº¡ng thÃ¡i trá»i, pha pomodoro, "Ä‘ang cháº¡y")
+   váº«n náº±m trong DOM Ä‘á»ƒ screen-reader Ä‘á»c Ä‘Æ°á»£c; khi rÃª chuá»™t thÃ¬ hiá»‡n á»Ÿ
+   tooltip (title) cá»§a widget.
+   ===================================================================== */
+  .wx-sr,
+  .pomo-sr {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  pointer-events: none;
+  }
+  /* (1) MÃ n hÃ¬nh LCD: khung tá»‘i lá»t lÃ²ng keycap (chá»«a mÃ©p ~10px má»—i bÃªn).
+   .volume-deck-unit Náº°M TRONG danh sÃ¡ch nÃ y: Ã´ Ã¢m lÆ°á»£ng há»‡ thá»‘ng dÃ¹ng Ä‘Ãºng
+   "mÃ n hÃ¬nh" chuáº©n nhÆ° má»i widget khÃ¡c (thá»‘ng nháº¥t ngÃ´n ngá»¯ Cyber-Glass). */
+  :is(.deck-icon-core, .volume-deck-unit, .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit) {
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
+  border-radius: 11px;
+  background: radial-gradient(120% 130% at 50% 0%, #0d111b 0%, #05070c 72%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    inset 0 3px 14px rgba(0, 0, 0, 0.9);
+  filter: brightness(var(--screen-brightness, 1));
+  transition: filter 0.15s ease, box-shadow 0.15s ease;
+  }
+  /* (3) Nháº¥n phÃ­m: mÃ n hÃ¬nh "sÃ¡ng lÃªn" + viá»n neon */
+  .grid-stack-item-content.keycap-pressed :is(.deck-icon-core, .volume-deck-unit, .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit),
+  body:not(.edit-mode) .grid-stack-item-content:active :is(.deck-icon-core, .volume-deck-unit, .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit) {
+  filter: brightness(1.42) saturate(1.15);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 229, 255, 0.55),
+    inset 0 0 18px rgba(0, 229, 255, 0.28),
+    0 0 16px var(--accent-glow);
+  }
+  /* (5) Tá»± tá»‘i "mÃ n hÃ¬nh" khi deck ráº£nh (screensaver) */
+  body.idle :is(.deck-icon-core, .volume-deck-unit, .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit) {
+  filter: brightness(0.4) saturate(0.6);
+  }
+  body.idle .grid-stack-item-content {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.6),
+    var(--key-bevel) !important;
+  }
+  /* ===== Äiá»u khiá»ƒn bÃªn trong modal "CÃ i Äáº·t Deck" ===== */
+  /* Segmented control: Cháº¡y / Chá»‰nh sá»­a */
+  .seg-control {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 10px;
+  background: #0e1120;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .seg-btn {
+  flex: 1;
+  padding: 11px 8px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: #9aa4b2;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, color 0.15s;
+  }
+  .seg-btn.active {
+  background: var(--accent);
+  color: #001018;
+  }
+  /* HÃ ng thanh trÆ°á»£t Ä‘á»™ sÃ¡ng */
+  .settings-range-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  }
+  .settings-range-row input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0066ff, var(--accent));
+  outline: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  }
+  .settings-range-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
+  }
+  .settings-range-val {
+  font-family: var(--font-num);
+  min-width: 54px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  }
+  /* HÃ ng nháº­p thá»i lÆ°á»£ng Pomodoro trong modal CÃ i Ä‘áº·t phÃ­m */
+  .pomo-duration-row {
+  display: flex;
+  gap: 10px;
+  }
+  .pomo-duration-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  }
+  .pomo-duration-tag {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  }
+  .pomo-duration-tag.work { color: var(--pomo-work); }
+  .pomo-duration-tag.break { color: var(--pomo-break); }
+  /* Modal Form */
+  .modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 99999;
+  justify-content: center;
+  align-items: center;
+  }
+  .modal-overlay.active {
+  display: flex;
+  }
+  .modal-box {
+  background: #141724;
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  width: 420px;
+  max-height: 94vh;
+  overflow-y: auto;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  }
+  .modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 10px;
+  }
+  .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  }
+  .form-group label {
+  font-size: 12px;
+  color: #8b949e;
+  font-weight: 600;
+  }
+  .form-group input, .form-group select {
+  background: #090a0f;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  }
+  .form-group input:focus, .form-group select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
+  }
+  .form-group .check-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #c9d1d9;
+  font-weight: 600;
+  cursor: pointer;
+  }
+  .form-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  accent-color: var(--accent);
+  }
+  .icon-input-row {
+  display: flex;
+  gap: 8px;
+  }
+  .icon-input-row input {
+  flex: 1;
+  }
+  .btn-browse {
+  background: #1d2235;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  }
+  .modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  }
+  .btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  font-weight: 700;
+  }
+  .btn-save { background: var(--accent); color: #000; }
+  .btn-cancel { background: #22283a; color: #fff; }
+  .btn-delete { background: var(--danger); color: #fff; }
+  /* NÃºt phÃ¡ huá»· Ä‘ang CHá»œ xÃ¡c nháº­n (cháº¡m láº§n 2) -> Ä‘á»•i sang mÃ u cáº£nh bÃ¡o */
+  .btn-delete.is-armed { background: var(--warn); color: #1a1200; }
+  /* =======================================================================
+   SD-LOOK â€” giao diá»‡n phÃ­m giá»‘ng Stream Deck THáº¬T
+   (dÃ¡n tá»« deck-keys-streamdeck.css, GIá»® nguyÃªn ná»™i dung, chá»‰ Ä‘á»•i header)
+   -----------------------------------------------------------------------
+   - Má»i rule Ä‘á»u cÃ³ tiá»n tá»‘ body.sd-look nÃªn tháº¯ng cÃ¡c !important á»Ÿ trÃªn.
+   - Báº­t á»Ÿ main.js: document.body.classList.add('sd-look');
+   - Gá»¡ lá»—i / so sÃ¡nh: bá» class 'sd-look' khá»i <body> lÃ  vá» giao diá»‡n cÅ©.
+   ======================================================================= */
+  body.sd-look {
+  --radius-key: 12px;
+  --sd-body: #000;            /* thÃ¢n phÃ­m: Ä‘en thuáº§n nhÆ° nhá»±a Stream Deck */
+  }
+  /* ---- 1. THÃ‚N PHÃM: pháº³ng, Ä‘en, khÃ´ng viá»n 3 lá»›p, khÃ´ng bevel/gloss ------- */
+  body.sd-look .grid-stack-item-content {
+  background: var(--sd-body) !important;
+  border: 0 !important;                                  /* áº£nh Ä‘Æ°á»£c trÃ n Ä‘á»§ 144px */
+  border-radius: var(--radius-key) !important;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),                 /* mÃ©p nhá»±a máº£nh */
+    0 4px 10px rgba(0, 0, 0, 0.55) !important;
+  transition: transform 0.12s ease-out;                  /* bá» overshoot "lÃ² xo" */
+  }
+  /* Gloss cÅ© (14% tráº¯ng, náº±m TRÃŠN áº£nh) lÃ m báº¡c ná»­a trÃªn icon -> chá»‰ cÃ²n
+   má»™t vá»‡t pháº£n chiáº¿u kÃ­nh ráº¥t nháº¹ */
+  body.sd-look .grid-stack-item-content::before {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 45%);
+  }
+  body.sd-look .grid-stack-item[data-type] .grid-stack-item-content::before { opacity: 1; }
+  /* Bá»‡ viá»n sÃ¡ng + tá»‘i 4 gÃ³c lÃ m cáº£ hÃ ng phÃ­m ngoÃ i rÃ¬a tá»‘i hÆ¡n phÃ­m giá»¯a;
+   mÃ n LCD tháº­t thÃ¬ Ä‘á»u sÃ¡ng nhÆ° nhau */
+  body.sd-look .deck-viewport::before { box-shadow: none; }
+  /* ---- 2. MÃ€N HÃŒNH LCD: trÃ n kÃ­n máº·t phÃ­m (bá» khung 10px) ------------------ */
+  body.sd-look :is(.deck-icon-core, .volume-deck-unit, .app-deck-unit,
+                 .pomodoro-unit, .clock-unit, .weather-unit) {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;                /* thÃ¢n phÃ­m Ä‘Ã£ bo + cáº¯t (overflow: hidden) */
+  background: #000;
+  box-shadow: none;
+  }
+  body.sd-look .settings-core { padding: 0; }
+  /* Ã” THá»œI TIáº¾T: giá»¯ Ná»€N GRADIENT cá»§a skin Ä‘ang chá»n (khÃ´ng bá»‹ Ã©p vá» #000) */
+  body.sd-look .weather-unit.keycap-weather { background: var(--wx-bg); }
+  /* ---- 3. ICON: áº£nh/icon app láº¥p Ä‘áº§y phÃ­m nhÆ° áº£nh 144x144 cá»§a Elgato ------- */
+  body.sd-look .icon-chip {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  }
+  body.sd-look .deck-icon-core img { filter: none; object-fit: contain; }
+  body.sd-look .deck-icon-core .icon-emoji { font-size: min(56cqw, 56cqh); filter: none; }
+  /* Glyph/logo vector: chá»«a ~20% mÃ©p Ä‘á»ƒ chiáº¿m ~58% phÃ­m (báº£n vector khÃ´ng
+   cÃ³ áº£nh ná»n nÃªn khÃ´ng Ä‘Æ°á»£c trÃ n kÃ­n). Khai bÃ¡o láº¡i kÃ­ch thÆ°á»›c á»Ÿ Ä‘Ã¢y cho
+   cháº¯c, khÃ´ng phá»¥ thuá»™c thá»© tá»± náº¡p cá»§a icons.css. */
+  body.sd-look .icon-chip:has(> .icon-vec) { padding: 21%; }
+  body.sd-look .icon-chip > .icon-vec { width: 100%; height: 100%; display: flex; }
+  body.sd-look .icon-chip > .icon-vec svg { width: 100%; height: 100%; }
+    /* ---- 4. NHáº¤N PHÃM: lÃºn nháº¹ + tá»‘i Ä‘i, KHÃ”NG neon/ripple ------------------- */
+  body.sd-look .grid-stack-item-content.keycap-pressed,
+  body.sd-look:not(.edit-mode) .grid-stack-item-content:active {
+  transform: scale(0.95);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.8) !important;
+  transition: transform 0.06s ease-out, box-shadow 0.06s ease-out;
+  }
+  body.sd-look .grid-stack-item-content.keycap-pressed :is(.deck-icon-core, .volume-deck-unit,
+    .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit),
+  body.sd-look:not(.edit-mode) .grid-stack-item-content:active :is(.deck-icon-core,
+    .volume-deck-unit, .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit) {
+  filter: brightness(0.72);
+  box-shadow: none;
+  }
+  body.sd-look .key-ripple { display: none; }
+  /* ---- 5. PHÃM TRá»NG: váº«n lÃ  phÃ­m Ä‘en (mÃ n táº¯t), khÃ´ng biáº¿n máº¥t ------------- */
+  body.sd-look:not(.edit-mode) .slot-cell {
+  opacity: 1;
+  background: #050506;
+  border: 0;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.035);
+  }
+  body.sd-look:not(.edit-mode) .slot-cell.is-filled { opacity: 0; }
+  /* ---- 6. Káº¾T QUáº¢: dáº¥u âœ“ xanh / âš  vÃ ng nhÆ° Stream Deck (thay vÃ²ng viá»n) ---- */
+  body.sd-look .grid-stack-item-content.status-success::after,
+  body.sd-look .grid-stack-item-content.status-error::after {
+  background-color: rgba(0, 0, 0, 0.55);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 44%;
+  box-shadow: none;
+  animation: sdResult 900ms ease-out forwards;   /* khá»›p setTimeout 930ms á»Ÿ flashKeycap */
+  }
+  body.sd-look .grid-stack-item-content.status-success::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2334d27b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12.5l5 5L20 6.5'/%3E%3C/svg%3E");
+  }
+  body.sd-look .grid-stack-item-content.status-error::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffc247' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5 22 20.5H2z'/%3E%3Cpath d='M12 10v5'/%3E%3Cpath d='M12 18h.01'/%3E%3C/svg%3E");
+  }
+  @keyframes sdResult {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
+  }
+  /* ---- 7. NHÃƒN: sÃ¡t mÃ©p hÆ¡n má»™t chÃºt, Ä‘áº­m vá»«a ------------------------------ */
+  body.sd-look .key-title { left: 4px; right: 4px; font-weight: 700; }
+  body.sd-look .key-title[data-pos="top"]    { top: 6px; }
+  body.sd-look .key-title[data-pos="bottom"] { bottom: 6px; }
+  /* =======================================================================
+   NGÃ”N NGá»® THá»Š GIÃC THá»NG NHáº¤T (Ä‘áº·t SAU sd-look nÃªn tháº¯ng theo thá»© tá»±)
+   -----------------------------------------------------------------------
+   Vai trÃ² mÃ u â€” má»—i mÃ u nháº¥n chá»‰ lÃ m Má»˜T viá»‡c:
+     Â· CYAN  (--accent)  : thao tÃ¡c / tÆ°Æ¡ng tÃ¡c â€” fader, vÃ²ng giá»¯ phÃ­m,
+                           pha LÃ€M VIá»†C Ä‘ang cháº¡y, phÃ­m Ä‘Æ°á»£c chá»n.
+     Â· XANH LÃ (--ok)    : tráº¡ng thÃ¡i tá»‘t â€” pha NGHá»ˆ.
+     Â· Äá»Ž    (--danger)  : táº¯t tiáº¿ng, lá»—i.
+     Â· VÃ€NG  (--warn)    : táº¡m dá»«ng / cáº£nh bÃ¡o.
+     Â· CÃ²n láº¡i lÃ  THANG XÃM trung tÃ­nh (chá»¯ phá»¥, glyph chá»‰ sá»‘, thanh giÃ¢y).
+   KhÃ´ng cÃ²n: gradient tint á»Ÿ Ä‘á»“ng há»“/thá»i tiáº¿t, glow Ä‘á»-cam cá»§a Pomodoro,
+   chip cyan cá»§a giÃ¢y, glyph chá»‰ sá»‘ 3 mÃ u, bÃ¡nh rÄƒng tráº¯ng chÃ³i.
+   Cá»¡ chá»¯ tá»‘i thiá»ƒu trÃªn Ã´ 2x1: 13px (panel cáº£m á»©ng, nhÃ¬n tá»« xa).
+   ======================================================================= */
+  body.sd-look {
+  --ok: #46d977;
+  --txt-1: #f2f6fc;           /* chá»¯ chÃ­nh */
+  --txt-2: #aab4c5;           /* chá»¯ phá»¥ */
+  --txt-3: #7d879b;           /* nhÃ£n má» */
+  --pomo-work: var(--accent); /* LÃ€M VIá»†C = cyan (tÆ°Æ¡ng tÃ¡c), khÃ´ng cÃ²n Ä‘á» cam */
+  --pomo-break: var(--ok);
+  --fill-from: #19e3ff;       /* fader: má»™t tÃ´ng cyan, bá»›t glow */
+  --fill-to: #00b4d8;
+  --fill-glow: rgba(0, 229, 255, 0.28);
+  }
+  /* ---- 1. Bá»Ž TINT / QUáº¦NG GRADIENT cÅ© cá»§a Äá»’NG Há»’ ------------------------ */
+  body.sd-look .clock-unit::before { display: none; }
+  /* Ã” thá»i tiáº¿t GIá»® lá»›p scrim ::after â€” Ä‘Ã³ chÃ­nh lÃ  "lÃ m dá»‹u 30% Ä‘á»™ chÃ³i" */
+  body.sd-look .clock-time { filter: none; }
+  /* ---- 1b. THáºº Láº¬T: bá» quáº§ng sÃ¡ng -> chá»‰ cÃ²n "mÃ n hÃ¬nh" pháº³ng nhÆ° cÃ¡c widget */
+  body.sd-look .flip-digit { text-shadow: none; }
+  body.sd-look .flip-card { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18); }
+  body.sd-look .flip-colon i { opacity: 0.4; }
+  /* ---- 2. Äá»’NG Há»’: bá» chip giÃ¢y (giÃ¢y Ä‘Ã£ cÃ³ thanh quÃ©t), ngÃ y to hÆ¡n ------- */
+  body.sd-look .clock-secs-chip { display: none; }
+  body.sd-look .keycap-clock-digital:not(.is-mini):not(.is-big) .clock-top {
+  font-size: max(13px, min(7cqw, 12cqh));
+  color: var(--txt-2);
+  }
+  body.sd-look .clock-bar { height: 4px; background: rgba(255, 255, 255, 0.08); box-shadow: none; }
+  body.sd-look .keycap-clock-digital.is-big .clock-bar { height: 6px; }
+  body.sd-look .clock-bar-fill { background: rgba(255, 255, 255, 0.6); box-shadow: none; }
+  /* ---- 3. THá»œI TIáº¾T: giá»¯ nguyÃªn Bá» Cá»¤C 4 VÃ™NG cá»§a skin ---------------------
+   Chá»‰ tinh chá»‰nh cho panel cáº£m á»©ng nhÃ¬n tá»« xa: chá»¯ phá»¥ tá»‘i thiá»ƒu 13px vÃ 
+   glyph chá»‰ sá»‘ vá» thang xÃ¡m (háº¿t 3 mÃ u) cho Ä‘Ãºng ngÃ´n ngá»¯ giao diá»‡n. */
+  body.sd-look .keycap-weather.is-short .weather-cond,
+  body.sd-look .keycap-weather.is-short .weather-date,
+  body.sd-look .keycap-weather.is-short .weather-place { font-size: max(13px, min(6.6cqw, 9cqh)); }
+  body.sd-look .keycap-weather.is-short .weather-value { font-size: max(28px, min(13cqw, 33cqh)); }
+  body.sd-look .keycap-weather.is-big .weather-stat { font-size: max(13px, min(4.8cqw, 6cqh)); }
+  body.sd-look .weather-stat { color: var(--txt-2); }
+  body.sd-look .weather-stat .wx-glyph { color: var(--txt-3) !important; }  /* háº¿t 3 mÃ u glyph */
+  body.sd-look .weather-degree { color: rgba(255, 255, 255, 0.62); }
+  /* ---- 4. FADER Há»† THá»NG: glyph loa + nhÃ£n + sá»‘ % to --------------------- */
+  body.sd-look .vol-glyph { width: 26px; height: 26px; color: var(--txt-1); pointer-events: none; }
+  body.sd-look .vol-glyph .vg-x { display: none; }
+  body.sd-look .volume-deck-unit[data-level="0"] .vg-w1,
+  body.sd-look .volume-deck-unit[data-level="0"] .vg-w2,
+  body.sd-look .volume-deck-unit[data-level="1"] .vg-w2,
+  body.sd-look .volume-deck-unit.is-muted .vg-w1,
+  body.sd-look .volume-deck-unit.is-muted .vg-w2 { display: none; }
+  body.sd-look .volume-deck-unit[data-level="0"] .vg-x,
+  body.sd-look .volume-deck-unit.is-muted .vg-x { display: block; }
+  body.sd-look .volume-deck-unit.is-muted .vol-glyph,
+  body.sd-look .vol-icon.muted .vol-glyph { color: #ff6b7a; }
+  body.sd-look .vol-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--txt-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  }
+  body.sd-look .volume-deck-unit[data-orient="v"] .vol-label { display: none; }
+  body.sd-look .volume-deck-unit .vol-number {
+  font-size: clamp(18px, 20cqh, 28px) !important;   /* trÆ°á»›c Ä‘Ã³ chá»‰ ~10px trÃªn Ã´ 2x1 */
+  color: var(--txt-1);
+  text-shadow: none;
+  }
+  body.sd-look .volume-deck-unit[data-orient="v"] .vol-number { font-size: clamp(15px, 14cqw, 22px) !important; }
+  body.sd-look .volume-fill::after,
+  body.sd-look .app-fill::after { box-shadow: 0 0 6px var(--fill-glow); }
+  /* ---- 5. CHIP ICON: pháº³ng, bá» bevel; to hÆ¡n á»Ÿ Ã´ >= 2x1 ----------------- */
+  body.sd-look .app-icon-btn {
+  border: 0;
+  background: #15171f;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+  body.sd-look .app-icon-btn.muted {
+  box-shadow: inset 0 0 0 2px var(--danger);
+  filter: grayscale(0.4) brightness(0.85);
+  }
+  body.sd-look .app-deck-unit:not(.is-mini) .app-icon-btn,
+  body.sd-look .volume-deck-unit[data-orient="h"] .vol-icon { width: 48px; height: 48px; }
+  /* ---- 6. Ã” APP: tÃªn (Ä‘áº­m) trÃªn, gá»£i Ã½ (má») ngay dÆ°á»›i; tráº¡ng thÃ¡i trá»‘ng rÃµ rÃ ng */
+  body.sd-look .app-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  }
+  body.sd-look .app-name { flex: none; font-size: 14px; font-weight: 700; color: var(--txt-1); }
+  body.sd-look .app-hint { font-size: 12px; text-align: left; color: var(--txt-3); }
+  body.sd-look .app-percent { font-size: 20px; color: var(--txt-1); text-shadow: none; }
+  body.sd-look .app-deck-unit.is-mini .app-percent { font-size: 13px; font-size: 9cqh; }
+  body.sd-look .app-deck-unit.is-mini .app-text { flex: none; align-items: center; }
+  body.sd-look .app-deck-unit[data-state="off"] .app-track {
+  opacity: 0.4;
+  border: 1px dashed rgba(255, 255, 255, 0.22);
+  box-shadow: none;
+  background: transparent;
+  }
+  /* ---- 7. POMODORO: bá»›t glow, sá»‘ tráº¯ng, glyph pha (khÃ´ng chá»‰ dá»±a vÃ o mÃ u) -- */
+  body.sd-look .pomodoro-unit { color: var(--pomo-work); }
+  body.sd-look .pomodoro-unit[data-mode="break"] { color: var(--pomo-break); }
+  body.sd-look .timer-progress.work,
+  body.sd-look .timer-progress.break { filter: drop-shadow(0 0 4px currentColor); }
+  body.sd-look .timer-head { filter: drop-shadow(0 0 3px currentColor); }
+  body.sd-look .pomodoro-unit[data-mode="work"] .timer-time,
+  body.sd-look .pomodoro-unit[data-mode="break"] .timer-time { color: var(--txt-1); text-shadow: none; }
+  body.sd-look .pomo-meta {
+  display: flex;
+  align-items: center;
+  gap: min(2.6cqw, 3.2cqh);
+  color: var(--txt-1);
+  }
+  body.sd-look .pomo-phase {
+  width: min(8cqw, 10cqh);
+  height: min(8cqw, 10cqh);
+  color: var(--pomo-work);
+  opacity: 0.9;
+  }
+  body.sd-look .pomodoro-unit[data-mode="break"] .pomo-phase { color: var(--pomo-break); }
+  body.sd-look .pomo-phase.phase-break { display: none; }
+  body.sd-look .pomodoro-unit[data-mode="break"] .phase-break { display: block; }
+  body.sd-look .pomodoro-unit[data-mode="break"] .phase-work { display: none; }
+  body.sd-look .pomodoro-unit.is-mini .pomo-meta { display: none; }
+  body.sd-look .pomodoro-mark { width: min(9cqw, 11cqh); height: min(9cqw, 11cqh); }
+  /* ---- 8. PHÃM CÃ€I Äáº¶T: háº¡ xuá»‘ng xÃ¡m â€” phÃ­m Ã­t dÃ¹ng khÃ´ng Ä‘Æ°á»£c lÃ  thá»© sÃ¡ng nháº¥t */
+  body.sd-look .settings-core .icon-emoji {
+  filter: grayscale(1) brightness(0.55);
+  transition: filter 0.2s ease;
+  }
+  body.sd-look .settings-ring-track { stroke: rgba(255, 255, 255, 0.05); }
+  body.sd-look .settings-ring-progress { filter: none; }       /* vÃ²ng giá»¯ phÃ­m = cyan (tÆ°Æ¡ng tÃ¡c) */
+  body.sd-look.edit-mode .settings-core .icon-emoji { filter: grayscale(1) brightness(1); }
+  body.sd-look.edit-mode .grid-stack-item[data-type="settings"] .grid-stack-item-content {
+  box-shadow: 0 0 0 2px var(--accent) !important;           /* viá»n cyan máº£nh, bá» glow */
+  }
+  /* =======================================================================
+   WIDGET TO-DO (todo_list) â€” cÃ¹ng ngÃ´n ngá»¯ thá»‘ng nháº¥t: xÃ¡m trung tÃ­nh,
+   xanh lÃ¡ CHá»ˆ khi xong háº¿t. Sá»‘ dÃ²ng hiá»‡n ra theo chiá»u cao Ã´ (má»—i dÃ²ng 34px).
+   ======================================================================= */
+  .todo-unit {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background: #000;
+  overflow: hidden;
+  container-type: size;
+  z-index: 2;
+  }
+  .todo-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex: none; }
+  .todo-title { font-size: 13px; font-weight: 700; color: var(--txt-2, #aab4c5); letter-spacing: 0.02em;
+              white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .todo-count { font-family: var(--font-num); font-size: 13px; font-weight: 700; color: var(--txt-2, #aab4c5);
+              font-variant-numeric: tabular-nums; }
+  .todo-unit[data-state="clear"] .todo-count { color: var(--ok, #46d977); }
+  .todo-list { list-style: none; display: flex; flex-direction: column; gap: 4px; min-height: 0; overflow: hidden; }
+  .todo-item { display: flex; align-items: center; gap: 8px; height: 30px; flex: none;
+             font-size: 14px; color: var(--txt-2, #aab4c5); }
+  .todo-item span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .todo-item:not(.done):first-child span { color: var(--txt-1, #f2f6fc); font-weight: 700; }
+  .todo-box { position: relative; flex: none; width: 20px; height: 20px; border-radius: 6px;
+            border: 2px solid var(--txt-3, #7d879b); background: rgba(255,255,255,0.02); }
+  .todo-item.done span { color: var(--txt-3, #7d879b); text-decoration: line-through; }
+  .todo-item.done .todo-box { background: #5ee3a0; border-color: #5ee3a0; box-shadow: 0 0 12px rgba(94, 227, 160, 0.35); }
+  .todo-item.done .todo-box::after { content: ""; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px;
+            border: solid #081510; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .todo-empty { display: none; margin: auto; font-size: 13px; color: var(--txt-3, #7d879b); text-align: center; }
+  .todo-unit[data-state="empty"] .todo-list { display: none; }
+  .todo-unit[data-state="empty"] .todo-empty { display: block; }
+  .todo-mini { display: none; }
+  .todo-unit.is-mini .todo-head, .todo-unit.is-mini .todo-list, .todo-unit.is-mini .todo-empty { display: none; }
+  .todo-unit.is-mini .todo-mini { display: flex; flex-direction: column; align-items: center; justify-content: center; margin: auto; gap: 2px; }
+  .todo-mini b { font-family: var(--font-num); font-size: min(40cqw, 40cqh); line-height: 1; color: var(--txt-1, #f2f6fc); }
+  .todo-mini span { font-size: 13px; color: var(--txt-3, #7d879b); }
+  .todo-unit[data-state="clear"] .todo-mini b { color: var(--ok, #46d977); }
+  @container (max-height: 115px) { .todo-item:nth-child(n+2) { display: none; } }
+  @container (max-height: 149px) { .todo-item:nth-child(n+3) { display: none; } }
+  @container (max-height: 183px) { .todo-item:nth-child(n+4) { display: none; } }
+  @container (max-height: 217px) { .todo-item:nth-child(n+5) { display: none; } }
+  @container (max-height: 251px) { .todo-item:nth-child(n+6) { display: none; } }
+  @container (max-height: 285px) { .todo-item:nth-child(n+7) { display: none; } }
+  @container (max-height: 319px) { .todo-item:nth-child(n+8) { display: none; } }
+

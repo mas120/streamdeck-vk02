@@ -1,0 +1,21 @@
+# Chuẩn hoá line-ending: lưu LF trong repo và checkout cũng ra LF, để diff
+# không nhiễu giữa máy Windows và CI/Linux. Git vẫn tự nhận file nhị phân.
+* text=auto eol=lf
+
+*.js    text
+*.mjs   text
+*.css   text
+*.html  text
+*.json  text
+*.md    text
+*.rs    text
+*.toml  text
+*.svg   text
+
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.ico   binary
+*.bmp   binary

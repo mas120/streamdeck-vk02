@@ -1,0 +1,386 @@
+  body.sd-look {
+  --sd-body: #141a22;
+  --sd-tile-border: rgba(211, 224, 241, 0.15);
+  --sd-tile-hover: rgba(211, 224, 241, 0.4);
+  }
+  /* ---- 1. THÃ‚N PHÃM: pháº³ng, Ä‘en, khÃ´ng viá»n 3 lá»›p, khÃ´ng bevel/gloss ------- */
+  body.sd-look .grid-stack-item-content {
+  background: var(--sd-body) !important;
+  border: 1px solid var(--sd-tile-border) !important;
+  border-top-color: rgba(235, 242, 252, 0.22) !important;
+  border-radius: var(--radius-key) !important;
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+  transition: transform 0.12s ease-out;                  /* bá» overshoot "lÃ² xo" */
+  }
+  @media (hover: hover) and (pointer: fine) {
+  body.sd-look:not(.edit-mode) .grid-stack-item:not(.ui-draggable-dragging) .grid-stack-item-content:hover:not(:active):not(.keycap-pressed),
+  body.sd-look.edit-mode .grid-stack-item:not(.ui-draggable-dragging) .grid-stack-item-content:hover {
+  border-color: var(--sd-tile-hover) !important;
+  box-shadow: 0 0 0 1px rgba(211, 224, 241, 0.12), 0 8px 20px rgba(0, 0, 0, 0.46) !important;
+  }
+  }
+  body.sd-look .grid-stack-item-content:focus-within {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 1px var(--accent-glow), 0 0 0 3px rgba(125, 200, 255, 0.12) !important;
+  }
+  /* Gloss cÅ© (14% tráº¯ng, náº±m TRÃŠN áº£nh) lÃ m báº¡c ná»­a trÃªn icon -> chá»‰ cÃ²n
+   má»™t vá»‡t pháº£n chiáº¿u kÃ­nh ráº¥t nháº¹ */
+  body.sd-look .grid-stack-item-content::before {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 45%);
+  }
+  body.sd-look .grid-stack-item[data-type] .grid-stack-item-content::before { opacity: 1; }
+  /* Bá»‡ viá»n sÃ¡ng + tá»‘i 4 gÃ³c lÃ m cáº£ hÃ ng phÃ­m ngoÃ i rÃ¬a tá»‘i hÆ¡n phÃ­m giá»¯a;
+   mÃ n LCD tháº­t thÃ¬ Ä‘á»u sÃ¡ng nhÆ° nhau */
+  body.sd-look .deck-viewport::before { box-shadow: none; }
+  /* ---- 2. MÃ€N HÃŒNH LCD: trÃ n kÃ­n máº·t phÃ­m (bá» khung 10px) ------------------ */
+  body.sd-look :is(.deck-icon-core, .volume-deck-unit, .app-deck-unit,
+                 .pomodoro-unit, .clock-unit, .weather-unit, .media-unit,
+                 .mic-deck-unit, .shutdown-unit) {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;                /* thÃ¢n phÃ­m Ä‘Ã£ bo + cáº¯t (overflow: hidden) */
+  background: var(--sd-body);
+  box-shadow: none;
+  }
+  /* Ã” THá»œI TIáº¾T: giá»¯ Ná»€N GRADIENT cá»§a skin Ä‘ang chá»n (khÃ´ng bá»‹ Ã©p vá» #000) */
+  body.sd-look .weather-unit.keycap-weather { background: var(--wx-bg); }
+  /* ---- 3. ICON: áº£nh/icon app láº¥p Ä‘áº§y phÃ­m nhÆ° áº£nh 144x144 cá»§a Elgato ------- */
+  body.sd-look .icon-chip {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  }
+  body.sd-look .deck-icon-core img { filter: none; object-fit: contain; }
+  body.sd-look .deck-icon-core .icon-emoji { font-size: min(56cqw, 56cqh); filter: none; }
+  /* Glyph/logo vector: chá»«a ~20% mÃ©p Ä‘á»ƒ chiáº¿m ~58% phÃ­m (báº£n vector khÃ´ng
+   cÃ³ áº£nh ná»n nÃªn khÃ´ng Ä‘Æ°á»£c trÃ n kÃ­n). Khai bÃ¡o láº¡i kÃ­ch thÆ°á»›c á»Ÿ Ä‘Ã¢y cho
+   cháº¯c, khÃ´ng phá»¥ thuá»™c thá»© tá»± náº¡p cá»§a icons.css. */
+  body.sd-look .icon-chip:has(> .icon-vec) { padding: 21%; }
+  body.sd-look .icon-chip > .icon-vec { width: 100%; height: 100%; display: flex; }
+  body.sd-look .icon-chip > .icon-vec svg { width: 100%; height: 100%; }
+  body.sd-look .mic-deck-unit .icon-chip:has(> .icon-vec) {
+  width: min(72cqw, 72cqh);
+  height: min(72cqw, 72cqh);
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  }
+  body.sd-look .mic-deck-unit .icon-chip > .icon-vec svg {
+  width: 80%;
+  height: 80%;
+  filter: none;
+  }
+  body.sd-look .grid-stack-item[data-type="launch_app"] .deck-icon-core:not([data-fit="cover"]) .icon-chip {
+  width: min(72cqw, 72cqh);
+  height: min(72cqw, 72cqh);
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  }
+    /* ---- 4. NHáº¤N PHÃM: lÃºn nháº¹ + tá»‘i Ä‘i, KHÃ”NG neon/ripple ------------------- */
+  body.sd-look .grid-stack-item-content.keycap-pressed,
+  body.sd-look:not(.edit-mode) .grid-stack-item-content:active {
+  transform: scale(0.95);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.8) !important;
+  transition: transform 0.06s ease-out, box-shadow 0.06s ease-out;
+  }
+  body.sd-look .grid-stack-item-content.keycap-pressed :is(.deck-icon-core, .volume-deck-unit,
+    .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit),
+  body.sd-look:not(.edit-mode) .grid-stack-item-content:active :is(.deck-icon-core,
+    .volume-deck-unit, .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit) {
+  filter: brightness(0.72);
+  box-shadow: none;
+  }
+  body.sd-look .key-ripple { display: none; }
+  /* ---- 5. PHÃM TRá»NG: váº«n lÃ  phÃ­m Ä‘en (mÃ n táº¯t), khÃ´ng biáº¿n máº¥t ------------- */
+  body.sd-look:not(.edit-mode) .slot-cell {
+  opacity: 0.12;
+  background: #050506;
+  border: 0;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.035);
+  }
+  body.sd-look:not(.edit-mode) .slot-cell.is-filled { opacity: 0; }
+  body.sd-look.edit-mode .slot-cell::after {
+  content: "+";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgba(6, 182, 212, 0.65);
+  font: 600 20px/1 var(--font-ui);
+  }
+  /* ---- 6. Káº¾T QUáº¢: dáº¥u âœ“ xanh / âš  vÃ ng nhÆ° Stream Deck (thay vÃ²ng viá»n) ---- */
+  body.sd-look .grid-stack-item-content.status-success::after,
+  body.sd-look .grid-stack-item-content.status-error::after {
+  background-color: rgba(0, 0, 0, 0.55);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 44%;
+  box-shadow: none;
+  animation: sdResult 900ms ease-out forwards;   /* khá»›p setTimeout 930ms á»Ÿ flashKeycap */
+  }
+  body.sd-look .grid-stack-item-content.status-success::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2334d27b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12.5l5 5L20 6.5'/%3E%3C/svg%3E");
+  }
+  body.sd-look .grid-stack-item-content.status-error::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffc247' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5 22 20.5H2z'/%3E%3Cpath d='M12 10v5'/%3E%3Cpath d='M12 18h.01'/%3E%3C/svg%3E");
+  }
+  @keyframes sdResult {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
+  }
+  /* ---- 7. NHÃƒN: sÃ¡t mÃ©p hÆ¡n má»™t chÃºt, Ä‘áº­m vá»«a ------------------------------ */
+  body.sd-look .key-title { left: 4px; right: 4px; font-weight: 700; }
+  body.sd-look .key-title[data-pos="top"]    { top: 6px; }
+  body.sd-look .key-title[data-pos="bottom"] { bottom: 6px; }
+  /* =======================================================================
+   NGÃ”N NGá»® THá»Š GIÃC THá»NG NHáº¤T (Ä‘áº·t SAU sd-look nÃªn tháº¯ng theo thá»© tá»±)
+   -----------------------------------------------------------------------
+   Vai trÃ² mÃ u â€” má»—i mÃ u nháº¥n chá»‰ lÃ m Má»˜T viá»‡c:
+     Â· CYAN  (--accent)  : thao tÃ¡c / tÆ°Æ¡ng tÃ¡c â€” fader, vÃ²ng giá»¯ phÃ­m,
+                           pha LÃ€M VIá»†C Ä‘ang cháº¡y, phÃ­m Ä‘Æ°á»£c chá»n.
+     Â· XANH LÃ (--ok)    : tráº¡ng thÃ¡i tá»‘t â€” pha NGHá»ˆ.
+     Â· Äá»Ž    (--danger)  : táº¯t tiáº¿ng, lá»—i.
+     Â· VÃ€NG  (--warn)    : táº¡m dá»«ng / cáº£nh bÃ¡o.
+     Â· CÃ²n láº¡i lÃ  THANG XÃM trung tÃ­nh (chá»¯ phá»¥, glyph chá»‰ sá»‘, thanh giÃ¢y).
+   KhÃ´ng cÃ²n: gradient tint á»Ÿ Ä‘á»“ng há»“/thá»i tiáº¿t, glow Ä‘á»-cam cá»§a Pomodoro,
+   chip cyan cá»§a giÃ¢y, glyph chá»‰ sá»‘ 3 mÃ u, bÃ¡nh rÄƒng tráº¯ng chÃ³i.
+   Cá»¡ chá»¯ tá»‘i thiá»ƒu trÃªn Ã´ 2x1: 13px (panel cáº£m á»©ng, nhÃ¬n tá»« xa).
+   ======================================================================= */
+  body.sd-look {
+  --ok: #46d977;
+  --txt-1: #f2f6fc;           /* chá»¯ chÃ­nh */
+  --txt-2: #aab4c5;           /* chá»¯ phá»¥ */
+  --txt-3: #7d879b;           /* nhÃ£n má» */
+  --accent: #06b6d4;
+  --accent-glow: rgba(6, 182, 212, 0.22);
+  --pomo-work: #83b96f;
+  --pomo-break: #58bd91;
+  --fill-from: #22d3ee;
+  --fill-to: #0891b2;
+  --fill-glow: rgba(6, 182, 212, 0.28);
+  }
+  /* LCD media remains edge-to-edge; album art is content, not a nested card. */
+  body.sd-look .media-unit { border-radius: 0; }
+  body.sd-look .media-play { color: var(--accent); }
+  body.sd-look .media-play::before {
+  background: rgba(6, 182, 212, 0.16);
+  border-color: rgba(6, 182, 212, 0.5);
+  box-shadow: 0 0 12px var(--accent-glow);
+  }
+  body.sd-look .media-btn:active::before { background: var(--accent-glow); }
+  body.sd-look .volume-fill {
+  background: linear-gradient(90deg, var(--fill-from), var(--fill-to));
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.14), 0 0 10px var(--fill-glow);
+  }
+  body.sd-look .grid-stack-item[data-dragging="1"] :is(.volume-deck-unit, .app-deck-unit) {
+  box-shadow: inset 0 0 0 1px rgba(6, 182, 212, 0.45), inset 0 3px 14px rgba(0, 0, 0, 0.9);
+  }
+  body.sd-look .pomodoro-unit .timer-bg,
+  body.sd-look .pomodoro-unit .timer-progress { stroke-width: 4; }
+  /* Keep the LCD face full-size; normalize shortcut artwork inside its screen. */
+  body.sd-look .grid-stack-item[data-type="open_url"] .deck-icon-core .icon-chip {
+  width: min(64cqw, 64cqh);
+  height: min(64cqw, 64cqh);
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  }
+  body.sd-look .grid-stack-item[data-type="open_url"] .deck-icon-core img { object-fit: contain; }
+  body.sd-look .grid-stack-item[data-type="open_url"] .icon-chip:has(> .icon-vec) { padding: 0; }
+  /* Weather color belongs in the illustration, not a saturated purple panel. */
+  body.sd-look .weather-unit.keycap-weather {
+  --wx-bg: linear-gradient(145deg, #151a22 0%, #090d13 100%);
+  --wx-scrim: 0.08;
+  border: 0;
+  box-shadow: none;
+  }
+  /* Preserve the Forest tree, but make its tile a neutral LCD face. */
+  body.sd-look .pomodoro-unit.forest-theme,
+  body.sd-look .pomodoro-unit.forest-theme.is-tall {
+  background: #090d13 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  }
+  body.sd-look .pomodoro-unit.forest-theme .forest-plate {
+  background: transparent !important;
+  border-radius: 0;
+  box-shadow: none !important;
+  }
+  body.sd-look .pomodoro-unit.forest-theme .timer-progress {
+  stroke: var(--pomo-work) !important;
+  stroke-width: 4 !important;
+  filter: drop-shadow(0 0 3px var(--accent-glow)) !important;
+  }
+  body.sd-look .pomodoro-unit.forest-theme[data-mode="break"] .timer-progress {
+  stroke: var(--pomo-break) !important;
+  filter: drop-shadow(0 0 3px rgba(70, 217, 119, 0.24)) !important;
+  }
+  body.sd-look .pomodoro-unit.forest-theme.is-tall .pomodoro-perimeter .timer-bg {
+  stroke: rgba(255, 255, 255, 0.14) !important;
+  stroke-width: 1.5px !important;
+  }
+  body.sd-look .pomodoro-unit.forest-theme.is-tall .pomodoro-perimeter .timer-progress {
+  stroke: var(--pomo-work) !important;
+  stroke-width: 1.5px !important;
+  filter: drop-shadow(0 0 3px var(--accent-glow)) !important;
+  }
+  body.sd-look .pomodoro-unit.forest-theme.is-tall[data-mode="break"] .pomodoro-perimeter .timer-progress {
+  stroke: var(--pomo-break) !important;
+  filter: drop-shadow(0 0 3px rgba(70, 217, 119, 0.24)) !important;
+  }
+  /* Keep the mono clock, remove the simulated mechanical split and hinge. */
+  body.sd-look .keycap-clock-flip .flip-card {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  }
+  body.sd-look .keycap-clock-flip .flip-card::after {
+  display: block;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: none;
+  }
+  body.sd-look .keycap-clock-flip .flip-half {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  }
+  body.sd-look .keycap-clock-flip .flip-fold { opacity: 0; }
+  body.sd-look .keycap-clock-flip .flip-digit {
+  font-family: var(--font-num);
+  font-weight: 700;
+  color: var(--txt-1);
+  text-shadow: 0 0 12px rgba(6, 182, 212, 0.14);
+  }
+  /* ---- 1. Bá»Ž TINT / QUáº¦NG GRADIENT cÅ© cá»§a Äá»’NG Há»’ ------------------------ */
+  body.sd-look .clock-unit::before { display: none; }
+  /* Ã” thá»i tiáº¿t GIá»® lá»›p scrim ::after â€” Ä‘Ã³ chÃ­nh lÃ  "lÃ m dá»‹u 30% Ä‘á»™ chÃ³i" */
+  body.sd-look .clock-time { filter: none; }
+  /* ---- 1b. THáºº Láº¬T: bá» quáº§ng sÃ¡ng -> chá»‰ cÃ²n "mÃ n hÃ¬nh" pháº³ng nhÆ° cÃ¡c widget */
+  body.sd-look .flip-digit { text-shadow: none; }
+  body.sd-look .flip-card { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18); }
+  body.sd-look .flip-colon i { opacity: 0.4; }
+  /* ---- 2. Äá»’NG Há»’: bá» chip giÃ¢y (giÃ¢y Ä‘Ã£ cÃ³ thanh quÃ©t), ngÃ y to hÆ¡n ------- */
+  body.sd-look .clock-secs-chip { display: none; }
+  body.sd-look .keycap-clock-digital:not(.is-mini):not(.is-big) .clock-top {
+  font-size: max(13px, min(7cqw, 12cqh));
+  color: var(--txt-2);
+  }
+  body.sd-look .clock-bar { height: 4px; background: rgba(255, 255, 255, 0.08); box-shadow: none; }
+  body.sd-look .keycap-clock-digital.is-big .clock-bar { height: 6px; }
+  body.sd-look .clock-bar-fill { background: rgba(255, 255, 255, 0.6); box-shadow: none; }
+  /* ---- 3. THá»œI TIáº¾T: giá»¯ nguyÃªn Bá» Cá»¤C 4 VÃ™NG cá»§a skin ---------------------
+   Chá»‰ tinh chá»‰nh cho panel cáº£m á»©ng nhÃ¬n tá»« xa: chá»¯ phá»¥ tá»‘i thiá»ƒu 13px vÃ 
+   glyph chá»‰ sá»‘ vá» thang xÃ¡m (háº¿t 3 mÃ u) cho Ä‘Ãºng ngÃ´n ngá»¯ giao diá»‡n. */
+  body.sd-look .keycap-weather.is-short:not(.is-wide3) .weather-cond,
+  body.sd-look .keycap-weather.is-short:not(.is-wide3) .weather-date,
+  body.sd-look .keycap-weather.is-short:not(.is-wide3) .weather-place { font-size: max(13px, min(6.6cqw, 9cqh)); }
+  body.sd-look .keycap-weather.is-short .weather-value { font-size: max(28px, min(13cqw, 33cqh)); }
+  body.sd-look .keycap-weather.is-big .weather-stat { font-size: max(13px, min(4.8cqw, 6cqh)); }
+  body.sd-look .weather-stat { color: var(--txt-2); }
+  body.sd-look .weather-stat .wx-glyph { color: var(--txt-3) !important; }  /* háº¿t 3 mÃ u glyph */
+  body.sd-look .weather-degree { color: rgba(255, 255, 255, 0.62); }
+  /* ---- 4. FADER Há»† THá»NG: glyph loa + nhÃ£n + sá»‘ % to --------------------- */
+  body.sd-look .vol-glyph { width: 26px; height: 26px; color: var(--txt-1); pointer-events: none; }
+  body.sd-look .vol-glyph .vg-x { display: none; }
+  body.sd-look .volume-deck-unit[data-level="0"] .vg-w1,
+  body.sd-look .volume-deck-unit[data-level="0"] .vg-w2,
+  body.sd-look .volume-deck-unit[data-level="1"] .vg-w2,
+  body.sd-look .volume-deck-unit.is-muted .vg-w1,
+  body.sd-look .volume-deck-unit.is-muted .vg-w2 { display: none; }
+  body.sd-look .volume-deck-unit[data-level="0"] .vg-x,
+  body.sd-look .volume-deck-unit.is-muted .vg-x { display: block; }
+  body.sd-look .volume-deck-unit.is-muted .vol-glyph,
+  body.sd-look .vol-icon.muted .vol-glyph { color: #ff6b7a; }
+  body.sd-look .vol-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--txt-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  }
+  body.sd-look .volume-deck-unit[data-orient="v"] .vol-label { display: none; }
+  body.sd-look .volume-deck-unit .vol-number {
+  font-size: clamp(18px, 20cqh, 28px) !important;   /* trÆ°á»›c Ä‘Ã³ chá»‰ ~10px trÃªn Ã´ 2x1 */
+  color: var(--txt-1);
+  text-shadow: none;
+  }
+  body.sd-look .volume-deck-unit[data-orient="v"] .vol-number { font-size: clamp(15px, 14cqw, 22px) !important; }
+  body.sd-look .volume-fill::after,
+  body.sd-look .app-fill::after { box-shadow: 0 0 6px var(--fill-glow); }
+  /* ---- 5. CHIP ICON: pháº³ng, bá» bevel; to hÆ¡n á»Ÿ Ã´ >= 2x1 ----------------- */
+  body.sd-look .app-icon-btn {
+  border: 0;
+  background: #15171f;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+  body.sd-look .app-icon-btn.muted {
+  box-shadow: inset 0 0 0 2px var(--danger);
+  filter: grayscale(0.4) brightness(0.85);
+  }
+  body.sd-look .app-deck-unit:not(.is-mini) .app-icon-btn,
+  body.sd-look .volume-deck-unit[data-orient="h"] .vol-icon { width: 48px; height: 48px; }
+  /* ---- 6. Ã” APP: tÃªn (Ä‘áº­m) trÃªn, gá»£i Ã½ (má») ngay dÆ°á»›i; tráº¡ng thÃ¡i trá»‘ng rÃµ rÃ ng */
+  body.sd-look .app-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  }
+  body.sd-look .app-name { flex: none; font-size: 14px; font-weight: 700; color: var(--txt-1); }
+  body.sd-look .app-hint { font-size: 12px; text-align: left; color: var(--txt-3); }
+  body.sd-look .app-percent { font-size: 20px; color: var(--txt-1); text-shadow: none; }
+  body.sd-look .app-deck-unit.is-mini .app-percent { font-size: max(12px, 9cqh); }
+  body.sd-look .app-deck-unit.is-mini .app-text { flex: none; align-items: center; }
+  body.sd-look .app-deck-unit[data-state="off"] .app-track {
+  opacity: 0.4;
+  border: 1px dashed rgba(255, 255, 255, 0.22);
+  box-shadow: none;
+  background: transparent;
+  }
+  /* ---- 7. POMODORO: bá»›t glow, sá»‘ tráº¯ng, glyph pha (khÃ´ng chá»‰ dá»±a vÃ o mÃ u) -- */
+  body.sd-look .pomodoro-unit { color: var(--pomo-work); }
+  body.sd-look .pomodoro-unit[data-mode="break"] { color: var(--pomo-break); }
+  body.sd-look .timer-progress.work,
+  body.sd-look .timer-progress.break { filter: drop-shadow(0 0 4px currentColor); }
+  body.sd-look .timer-head { filter: drop-shadow(0 0 3px currentColor); }
+  body.sd-look .pomodoro-unit[data-mode="work"] .timer-time,
+  body.sd-look .pomodoro-unit[data-mode="break"] .timer-time { color: var(--txt-1); text-shadow: none; }
+  body.sd-look .pomo-meta {
+  display: flex;
+  align-items: center;
+  gap: min(2.6cqw, 3.2cqh);
+  color: var(--txt-1);
+  }
+  body.sd-look .pomo-phase {
+  width: min(8cqw, 10cqh);
+  height: min(8cqw, 10cqh);
+  color: var(--pomo-work);
+  opacity: 0.9;
+  }
+  body.sd-look .pomodoro-unit[data-mode="break"] .pomo-phase { color: var(--pomo-break); }
+  body.sd-look .pomo-phase.phase-break { display: none; }
+  body.sd-look .pomodoro-unit[data-mode="break"] .phase-break { display: block; }
+  body.sd-look .pomodoro-unit[data-mode="break"] .phase-work { display: none; }
+  body.sd-look .pomodoro-unit.is-mini .pomo-meta { display: none; }
+  body.sd-look .pomodoro-mark { width: min(9cqw, 11cqh); height: min(9cqw, 11cqh); }
+  /* =======================================================================
+   WIDGET TO-DO (todo_list) â€” cÃ¹ng ngÃ´n ngá»¯ thá»‘ng nháº¥t: xÃ¡m trung tÃ­nh,
+   xanh lÃ¡ CHá»ˆ khi xong háº¿t. Sá»‘ dÃ²ng hiá»‡n ra theo chiá»u cao Ã´ (má»—i dÃ²ng 34px).
+   ======================================================================= */

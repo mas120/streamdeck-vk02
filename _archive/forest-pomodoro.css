@@ -1,0 +1,290 @@
+﻿/* =====================================================================
+   WIDGET POMODORO — FOREST THEME (trồng cây kiểu Forest app)
+   ---------------------------------------------------------------------
+   Theme: Tông xanh ngọc (#3a8570), đĩa đất be nhạt (#e8e6b8), đất nâu (#6e4726).
+   Vòng tiến trình: SVG tròn bao quanh, xám nền + xanh sáng (#88c242) với chấm tròn indicator.
+   Typography: Segoe UI Light (300), đồng hồ đếm ngược lớn (36-44px), dạng mm:ss.
+   Layout: 2x2 (dọc chuẩn), 2x1 (ngang compact).
+   ===================================================================== */
+
+/* Container chính - Theme xanh ngọc mềm */
+.forest-pomo-unit {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #3a8570 0%, #2d6b59 100%);
+  overflow: hidden;
+  container-type: size;
+  padding: min(4cqw, 5cqh);
+  gap: min(2cqw, 2.5cqh);
+}
+
+/* Vòng tiến trình tròn SVG - bao quanh đĩa cây */
+.forest-progress-ring {
+  position: absolute;
+  inset: 8%;
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.forest-ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 8;
+}
+
+.forest-ring-progress {
+  fill: none;
+  stroke: #88c242;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s linear;
+  filter: drop-shadow(0 0 6px rgba(136, 194, 66, 0.6));
+}
+
+/* Chấm tròn indicator ở đầu tiến trình */
+.forest-ring-dot {
+  fill: #88c242;
+  filter: drop-shadow(0 0 4px rgba(136, 194, 66, 0.8));
+  transition: cx 0.3s linear, cy 0.3s linear;
+}
+
+/* Đĩa tròn sinh thái chứa cây */
+.forest-plate {
+  position: relative;
+  width: min(45cqw, 50cqh);
+  height: min(45cqw, 50cqh);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  background: radial-gradient(circle at center, #e8e6b8 0%, #d4d2a6 60%, #6e4726 100%);
+  border-radius: 50%;
+  box-shadow: 
+    inset 0 4px 12px rgba(0, 0, 0, 0.25),
+    0 6px 20px rgba(0, 0, 0, 0.4);
+  padding-bottom: 12%;
+  z-index: 2;
+}
+
+/* SVG cây phát triển theo tiến độ */
+.forest-tree {
+  position: absolute;
+  bottom: 30%;
+  width: 60%;
+  height: 60%;
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.forest-tree svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* 3 giai đoạn cây - ẩn mặc định */
+.tree-sprout, .tree-growing, .tree-full, .tree-dead {
+  display: none;
+}
+
+.forest-pomo-unit[data-tree="sprout"] .tree-sprout { display: block; }
+.forest-pomo-unit[data-tree="growing"] .tree-growing { display: block; }
+.forest-pomo-unit[data-tree="full"] .tree-full { display: block; }
+.forest-pomo-unit[data-tree="dead"] .tree-dead { display: block; }
+
+/* Cây héo khi "Give Up" */
+.tree-dead {
+  filter: grayscale(1) brightness(0.6) !important;
+  opacity: 0.7;
+}
+
+/* Metadata cluster - Tag + Timer + Button */
+.forest-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: min(2cqw, 2.5cqh);
+  z-index: 3;
+  width: 100%;
+}
+
+/* Tag nhãn pill capsule */
+.forest-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  font-size: min(3.2cqw, 3.8cqh);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.forest-tag-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Đồng hồ đếm ngược - Font mảnh Segoe UI Light */
+.forest-timer {
+  font-family: "Segoe UI Light", "Segoe UI", var(--font-num);
+  font-size: min(11cqw, 13cqh);
+  font-weight: 300;
+  color: #ffffff;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.05em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Nút bấm 3D kính */
+.forest-btn {
+  padding: min(2.2cqw, 2.8cqh) min(5cqw, 6cqh);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  font-size: min(3.6cqw, 4.2cqh);
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.forest-btn:hover {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.15));
+  transform: translateY(-1px);
+  box-shadow: 
+    0 6px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.forest-btn:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Nút "Give Up" - viền mỏng mờ khi đang chạy */
+.forest-btn.give-up {
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: none;
+}
+
+.forest-btn.give-up:hover {
+  background: rgba(255, 77, 77, 0.15);
+  border-color: rgba(255, 77, 77, 0.6);
+}
+
+/* Trạng thái ẩn nút */
+.forest-btn[hidden] {
+  display: none;
+}
+
+/* Layout 2x1 (ngang) - Responsive Gridstack */
+@container (max-width: 320px) {
+  .forest-pomo-unit {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: min(3cqw, 4cqh);
+  }
+  
+  .forest-progress-ring {
+    inset: 5%;
+  }
+  
+  .forest-plate {
+    width: min(35cqw, 80cqh);
+    height: min(35cqw, 80cqh);
+  }
+  
+  .forest-meta {
+    align-items: flex-start;
+    gap: min(1.5cqw, 2cqh);
+  }
+  
+  .forest-timer {
+    font-size: min(9cqw, 10cqh);
+  }
+  
+  .forest-btn {
+    padding: min(1.8cqw, 2.2cqh) min(4cqw, 5cqh);
+    font-size: min(3cqw, 3.5cqh);
+  }
+}
+
+/* Cỡ 1x1 mini - chỉ hiện timer + vòng */
+@container (max-width: 160px) {
+  .forest-tag,
+  .forest-btn {
+    display: none;
+  }
+  
+  .forest-plate {
+    width: min(50cqw, 55cqh);
+    height: min(50cqw, 55cqh);
+  }
+  
+  .forest-timer {
+    font-size: min(10cqw, 12cqh);
+  }
+}
+
+/* Animation khi hoàn thành - cây lớn lung linh */
+@keyframes forestComplete {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+  }
+  25% {
+    transform: scale(1.08) translateY(-4px);
+  }
+  50% {
+    transform: scale(1.05) translateY(-2px);
+  }
+  75% {
+    transform: scale(1.08) translateY(-4px);
+  }
+}
+
+.forest-pomo-unit[data-state="complete"] .forest-tree {
+  animation: forestComplete 1.2s ease-in-out;
+}
+
+.forest-pomo-unit[data-state="complete"] .forest-plate {
+  box-shadow: 
+    inset 0 4px 12px rgba(0, 0, 0, 0.25),
+    0 6px 20px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(136, 194, 66, 0.6);
+}
+
+/* Screen reader only - tooltip sẽ hiện đầy đủ info */
+.forest-sr {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

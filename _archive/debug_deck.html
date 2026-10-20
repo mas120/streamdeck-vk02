@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Debug Stream Deck</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #1e1e1e; color: #d4d4d4; }
+    button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; }
+    pre { background: #2d2d2d; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    .success { color: #4ec9b0; }
+    .error { color: #f48771; }
+  </style>
+</head>
+<body>
+  <h1>Stream Deck VK02 - Debug Tool</h1>
+  
+  <h2>1. Check localStorage</h2>
+  <button onclick="checkStorage()">Check Storage</button>
+  <pre id="storageOutput"></pre>
+  
+  <h2>2. Clear All Data</h2>
+  <button onclick="clearAll()" style="background: #d32f2f; color: white;">Clear & Reload</button>
+  
+  <h2>3. Force Reset to Defaults</h2>
+  <button onclick="forceDefaults()" style="background: #388e3c; color: white;">Set Default Layout</button>
+  
+  <script>
+    function checkStorage() {
+      const output = document.getElementById('storageOutput');
+      const data = localStorage.getItem('STREAMDECK_VK02_LAYOUT');
+      
+      if (!data) {
+        output.innerHTML = '<span class="error">✗ No layout data found (will use defaults)</span>';
+        return;
+      }
+      
+      try {
+        const parsed = JSON.parse(data);
+        output.innerHTML = `<span class="success">✓ Layout data found: ${parsed.length} widgets</span>\n\n${JSON.stringify(parsed, null, 2)}`;
+      } catch (err) {
+        output.innerHTML = `<span class="error">✗ Layout data CORRUPT:\n${err.message}\n\nRaw data:\n${data}</span>`;
+      }
+    }
+    
+    function clearAll() {
+      localStorage.clear();
+      alert('✓ Cleared! Reloading...');
+      location.reload();
+    }
+    
+    function forceDefaults() {
+      const defaults = [
+        { x: 0, y: 0, w: 1, h: 1, icon: "youtube", type: "open_url", target: "https://youtube.com" },
+        { x: 1, y: 0, w: 1, h: 1, icon: "🧰", type: "launch_app", target: "taskmgr" },
+        { x: 2, y: 0, w: 2, h: 1, icon: "🔊", type: "volume_slider", target: "50" },
+        { x: 4, y: 0, w: 1, h: 1, icon: "📝", type: "launch_app", target: "notepad" },
+        { x: 5, y: 0, w: 2, h: 2, icon: "📊", type: "launch_app", target: "resmon" },
+        { x: 0, y: 1, w: 2, h: 2, icon: "🍅", type: "pomodoro", target: "25,5" },
+        { x: 0, y: 3, w: 2, h: 1, icon: "🔊", type: "app_slider", target: "" },
+        { x: 2, y: 1, w: 1, h: 1, icon: "🕐", type: "mini_clock", target: "digital,7", cfg: { face: "digital", tz: 7, label: "HA NOI" } },
+        { x: 4, y: 3, w: 2, h: 2, icon: "🕰️", type: "mini_clock", target: "analog,7", cfg: { face: "analog", tz: 7, label: "HA NOI" } },
+        { x: 0, y: 4, w: 3, h: 1, icon: "🌤️", type: "weather_widget", target: "10.8231,106.6297", cfg: { lat: 10.8231, lon: 106.6297, city: "TP. HO CHI MINH", skin: "soft" } },
+        { x: 7, y: 0, w: 1, h: 1, icon: "⚙️", type: "settings", target: "" }
+      ];
+      
+      localStorage.setItem('STREAMDECK_VK02_LAYOUT', JSON.stringify(defaults));
+      alert('✓ Default layout set! Now open the app.');
+    }
+    
+    // Auto-check on load
+    window.onload = checkStorage;
+  </script>
+</body>
+</html>

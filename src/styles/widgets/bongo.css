@@ -1,0 +1,157 @@
+  .bongo-cat-widget {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  overflow: hidden;
+  border-radius: 9px;
+  background: radial-gradient(130% 120% at 50% 10%, #151b26 0%, #0c0f17 100%);
+  color: var(--text-soft);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -2px 5px rgba(0, 0, 0, 0.5);
+  }
+  .bongo-cat-widget.hide-kps .bongo-kps {
+  display: none;
+  }
+  .bongo-kps {
+  position: absolute;
+  top: 5px;
+  right: 7px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  font-family: var(--font-num);
+  line-height: 1;
+  }
+  .bongo-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  }
+  .bongo-svg {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+  }
+  .bongo-trackpad {
+  fill: #161c27;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  }
+  .bongo-trackpad-mark {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.42);
+  stroke-width: 1;
+  }
+  .bongo-cat-shape {
+  fill: #fff;
+  stroke: #3a4454;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform: translate(var(--look-x, 0px), var(--look-y, 0px));
+  transition: transform 0.12s ease-out;
+  }
+  .bongo-ear-inner {
+  fill: #f07d8c;
+  }
+  .bongo-eyes {
+  fill: #3a4454;
+  stroke: #3a4454;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  }
+  .bongo-eyes path,
+  .bongo-whiskers {
+  fill: none;
+  stroke: #3a4454;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  }
+  .bongo-keyboard-case {
+  fill: #11151f;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  }
+  .bongo-keyboard-row,
+  .bongo-keyboard-cols {
+  fill: none;
+  stroke: #161c27;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  }
+  .bongo-key path {
+  fill: #f1f2ef;
+  stroke: #202328;
+  stroke-width: 1;
+  stroke-linejoin: round;
+  transition: fill 0.08s ease, transform 0.08s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+  }
+  .bongo-key.is-lit path {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 8px var(--accent-glow));
+  transform: translateY(1.5px);
+  }
+  .bongo-spacebar {
+  fill: #161c27;
+  stroke: rgba(255, 255, 255, 0.18);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  }
+  .bongo-key.is-lit {
+  filter: none;
+  }
+  .bongo-arm {
+  transition: transform 0.11s ease-out;
+  transform-box: fill-box;
+  transform-origin: center;
+  pointer-events: none;
+  }
+  .bongo-paw {
+  fill: #fff;
+  stroke: #3a4454;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  }
+  .bongo-paw-line {
+  fill: none;
+  stroke: #3a4454;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  }
+  .bongo-paw-pad {
+  fill: #f17f8d;
+  stroke: #e9697a;
+  stroke-width: 0.8;
+  }
+  .bongo-cat-widget[data-action="down"][data-hand="left"] .bongo-arm-left {
+  transform: translate(3px, 7px) rotate(9deg);
+  }
+  .bongo-cat-widget[data-action="down"][data-hand="right"] .bongo-arm-right {
+  transform: translate(-3px, 7px) rotate(-9deg);
+  }
+  .bongo-cat-widget[data-action="up"] .bongo-arm {
+  transform: translate(0, 0) rotate(0deg);
+  }
+  body.idle .bongo-cat-widget {
+  filter: brightness(0.62) saturate(0.8);
+  }
+  body.idle .weather-unit.keycap-weather {
+  opacity: 0.4;
+  filter: brightness(0.4) saturate(0.8);
+  }

@@ -1,0 +1,186 @@
+.shutdown-unit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  container-type: size;
+  color: #f2f6fc;
+}
+
+.shutdown-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.shutdown-button .deck-icon-core {
+  pointer-events: none;
+}
+
+.shutdown-status {
+  position: absolute;
+  right: 6px;
+  bottom: 5px;
+  left: 6px;
+  min-height: 1.2em;
+  color: #ffb5b8;
+  font-size: 10px;
+  line-height: 1.2;
+  text-align: center;
+  pointer-events: none;
+}
+
+.shutdown-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+}
+
+.shutdown-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.shutdown-confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100001;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(3, 6, 11, 0.78);
+  backdrop-filter: blur(10px);
+  animation: shutdown-confirm-fade 140ms ease-out both;
+}
+
+.shutdown-confirm-dialog {
+  position: relative;
+  width: min(100%, 410px);
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top-color: rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  background: linear-gradient(145deg, #191c24 0%, #11151b 68%, #0c0f14 100%);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.62), 0 0 34px rgba(216, 76, 86, 0.08);
+  color: #f2f6fc;
+  animation: shutdown-confirm-rise 180ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.shutdown-confirm-dialog::before {
+  position: absolute;
+  top: 0;
+  right: 24px;
+  left: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 107, 115, 0.75), rgba(255, 107, 115, 0.08));
+  content: "";
+}
+
+.shutdown-confirm-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.shutdown-confirm-icon {
+  display: grid;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid rgba(255, 107, 115, 0.28);
+  border-radius: 10px;
+  background: rgba(255, 107, 115, 0.1);
+  color: #ff858b;
+}
+
+.shutdown-confirm-icon .icon-vec {
+  width: 24px;
+  height: 24px;
+  color: #ff858b;
+}
+
+.shutdown-confirm-icon .icon-vec svg { width: 22px; height: 22px; filter: none; }
+
+.shutdown-confirm-copy { flex: 1; min-width: 0; padding-top: 1px; }
+
+.shutdown-confirm-dialog h2 {
+  margin: 0;
+  color: #f5f7fb;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.shutdown-confirm-dialog p {
+  margin: 8px 0 0;
+  color: #b7c0cc;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.shutdown-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.shutdown-confirm-actions button {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 15px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.shutdown-confirm-cancel {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  background: #202630;
+  color: #e2e8f0;
+}
+
+.shutdown-confirm-cancel:hover { background: #2b3440; }
+
+.shutdown-confirm-accept {
+  background: #d84c56;
+  color: #fff;
+}
+
+.shutdown-confirm-accept:hover { background: #ed5b64; }
+.shutdown-confirm-actions button:active { transform: translateY(1px); }
+.shutdown-confirm-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.shutdown-confirm-button-icon .icon-vec { width: 16px; height: 16px; color: #fff; }
+.shutdown-confirm-button-icon .icon-vec svg { display: block; width: 16px; height: 16px; filter: none; }
+
+@keyframes shutdown-confirm-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes shutdown-confirm-rise { from { opacity: 0; transform: translateY(6px) scale(0.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .shutdown-button { transition: none; }
+  .shutdown-confirm-backdrop,
+  .shutdown-confirm-dialog { animation: none; }
+  .shutdown-confirm-actions button { transition: none; }
+}

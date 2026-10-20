@@ -1,0 +1,121 @@
+  .modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 6, 11, 0.82);
+  backdrop-filter: blur(12px);
+  z-index: 99999;
+  justify-content: center;
+  align-items: center;
+  }
+  .modal-overlay.active {
+  display: flex;
+  }
+  .modal-box {
+  background: linear-gradient(160deg, #131822 0%, #0d1017 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  width: 420px;
+  max-height: 94vh;
+  overflow-y: auto;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  }
+  .modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 10px;
+  }
+  .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  }
+  .form-group label {
+  font-size: 12px;
+  color: #8b949e;
+  font-weight: 600;
+  }
+  .form-group input, .form-group select {
+  background: #090a0f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  }
+  .form-group input:focus, .form-group select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
+  }
+  .btn-browse:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
+  }
+  .form-group .check-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #c9d1d9;
+  font-weight: 600;
+  cursor: pointer;
+  }
+  .form-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  accent-color: var(--accent);
+  }
+  .icon-input-row {
+  display: flex;
+  gap: 8px;
+  }
+  .icon-input-row input {
+  flex: 1;
+  }
+  .btn-browse {
+  background: #1d2235;
+  color: var(--accent);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  }
+  .modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  }
+  .btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  font-weight: 700;
+  }
+  .btn-save { background: var(--accent); color: #000; }
+  .btn-cancel { background: #22283a; color: #fff; }
+  .btn-delete { background: var(--danger); color: #fff; }
+  /* NÃºt phÃ¡ huá»· Ä‘ang CHá»œ xÃ¡c nháº­n (cháº¡m láº§n 2) -> Ä‘á»•i sang mÃ u cáº£nh bÃ¡o */
+  .btn-delete.is-armed { background: var(--warn); color: #1a1200; }
+  /* =======================================================================
+   SD-LOOK â€” giao diá»‡n phÃ­m giá»‘ng Stream Deck THáº¬T
+   (dÃ¡n tá»« deck-keys-streamdeck.css, GIá»® nguyÃªn ná»™i dung, chá»‰ Ä‘á»•i header)
+   -----------------------------------------------------------------------
+   - Má»i rule Ä‘á»u cÃ³ tiá»n tá»‘ body.sd-look nÃªn tháº¯ng cÃ¡c !important á»Ÿ trÃªn.
+   - Báº­t á»Ÿ main.js: document.body.classList.add('sd-look');
+   - Gá»¡ lá»—i / so sÃ¡nh: bá» class 'sd-look' khá»i <body> lÃ  vá» giao diá»‡n cÅ©.
+   ======================================================================= */

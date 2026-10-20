@@ -1,0 +1,367 @@
+/* =====================================================================
+   FOREST POMODORO ADDON — Trồng cây phong cách Forest app
+   ---------------------------------------------------------------------
+   Được gom bởi src/styles/index.css.
+   Toggle: class .forest-theme nằm sẵn trong markup của widget pomodoro.
+   ===================================================================== */
+
+:root {
+  --forest-bg-from: #3d695a;
+  --forest-bg-to: #2a463d;
+  --forest-plate-center: #dfd8b7;
+  --forest-plate-mid: #c7c09a;
+  --forest-plate-edge: #5d3d2b;
+  --forest-progress: #8ecf5a;
+  --forest-progress-glow: rgba(142, 207, 90, 0.45);
+}
+
+.pomodoro-unit.forest-theme {
+  background: linear-gradient(180deg, rgba(27, 46, 39, 0.96), rgba(17, 25, 23, 0.98)) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+
+.pomodoro-unit.forest-theme .timer-bg {
+  stroke: rgba(255, 255, 255, 0.10) !important;
+  stroke-width: 5 !important;
+}
+
+.pomodoro-unit.forest-theme .timer-progress {
+  stroke: var(--forest-progress) !important;
+  stroke-width: 3.5 !important;
+  stroke-linecap: round !important;
+  filter: drop-shadow(0 0 5px var(--forest-progress-glow)) !important;
+}
+
+.pomodoro-unit.forest-theme .timer-head {
+  fill: var(--forest-progress) !important;
+  filter: drop-shadow(0 0 3px var(--forest-progress-glow)) !important;
+}
+
+.forest-plate {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(44cqw, 46cqh);
+  height: min(44cqw, 46cqh);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: radial-gradient(circle at center,
+    #f3e8b9 0%,
+    #d7c98f 58%,
+    #8d653b 100%);
+  border-radius: 50%;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 6px 16px rgba(0, 0, 0, 0.28);
+  padding-bottom: 10%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.96;
+}
+
+.pomodoro-unit.forest-theme.is-mini .forest-plate {
+  width: min(56cqw, 56cqh);
+  height: min(56cqw, 56cqh);
+}
+
+.forest-tree {
+  position: absolute;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 58%;
+  height: 58%;
+  transition: all 0.45s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.forest-tree svg {
+  width: 100%;
+  height: 100%;
+  transform: scale(1.9);
+  transform-origin: center bottom;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.28));
+}
+
+.forest-tree.tree-seed svg { transform: scale(1.25); }
+.forest-tree.tree-sprout svg { transform: scale(1.4); }
+.forest-tree.tree-growing svg { transform: scale(1.65); }
+
+.tree-seed, .tree-sprout, .tree-growing, .tree-full, .tree-dead {
+  display: none;
+}
+
+.pomodoro-unit[data-tree="seed"] .tree-seed { display: block; }
+.pomodoro-unit[data-tree="sprout"] .tree-sprout { display: block; }
+.pomodoro-unit[data-tree="growing"] .tree-growing { display: block; }
+.pomodoro-unit[data-tree="full"] .tree-full { display: block; }
+.pomodoro-unit[data-tree="dead"] .tree-dead { display: block; }
+
+.tree-dead {
+  filter: grayscale(1) brightness(0.92) contrast(1.18) drop-shadow(0 0 6px rgba(255, 80, 80, 0.35)) !important;
+  opacity: 0.92;
+}
+
+.pomodoro-unit.forest-theme .timer-time {
+  font-family: var(--font-num) !important;
+  font-variant-numeric: tabular-nums;
+  font-size: min(11cqw, 13cqh) !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.4) !important;
+  letter-spacing: 0.04em;
+  z-index: 3;
+}
+
+.pomodoro-unit.forest-theme .pomodoro-center {
+  z-index: 3;
+  gap: 0;
+}
+
+.pomodoro-unit.forest-theme .pomodoro-mark,
+.pomodoro-unit.forest-theme .pomo-phase,
+.pomodoro-unit.forest-theme .forest-tag,
+.pomodoro-unit.forest-theme .forest-btn {
+  display: none !important;
+}
+
+.pomodoro-unit.forest-theme:not(.is-tall) .forest-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  z-index: 5;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: min(72%, 120px);
+  min-height: 30px;
+  height: 30px;
+  padding: 0 8px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--txt-2, #c3ccd9);
+  font: 700 12px/1 var(--font-ui);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.pomodoro-unit:not(.forest-theme) .forest-plate,
+.pomodoro-unit:not(.forest-theme) .forest-tree,
+.pomodoro-unit:not(.forest-theme) .forest-tag,
+.pomodoro-unit:not(.forest-theme) .forest-btn {
+  display: none !important;
+}
+
+@keyframes forestComplete {
+  0%, 100% { transform: translateX(-50%) scale(1) translateY(0); }
+  25% { transform: translateX(-50%) scale(1.06) translateY(-4px); }
+  50% { transform: translateX(-50%) scale(1.03) translateY(-2px); }
+  75% { transform: translateX(-50%) scale(1.06) translateY(-4px); }
+}
+
+.pomodoro-unit.forest-theme[data-state="complete"] .forest-tree {
+  animation: forestComplete 1.2s ease-in-out;
+}
+
+.pomodoro-unit.forest-theme:not(.is-tall)[data-state="complete"] .forest-plate {
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.24), 0 6px 16px rgba(0, 0, 0, 0.28), 0 0 22px var(--forest-progress-glow);
+}
+
+.pomodoro-perimeter {
+  display: none;
+}
+
+/* Preserve the existing centered dial composition for non-tall key sizes. */
+.pomodoro-unit.forest-theme:not(.is-tall) .forest-dial {
+  position: absolute;
+  inset: 0;
+}
+
+/* Tall 1x2 Forest layout: dial, label, clock, and action each own a row. */
+.pomodoro-unit.forest-theme.is-tall {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box !important;
+  padding: 10px 6px !important;
+  overflow: hidden !important;
+  background: linear-gradient(160deg, #1c3b32 0%, #142822 100%) !important;
+  border-radius: 9px;
+}
+
+.pomodoro-unit.forest-theme.is-tall .forest-dial {
+  position: relative;
+  flex: 0 0 128px;
+  width: clamp(90px, 100%, 100px);
+  height: 128px;
+  aspect-ratio: auto;
+  margin: 0 auto;
+}
+
+.pomodoro-unit.forest-theme.is-tall .forest-plate {
+  left: 50%;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  align-items: flex-end;
+  transform: translateX(-50%);
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  opacity: 1;
+}
+
+.pomodoro-unit.forest-theme.is-tall .forest-tree {
+  width: 90%;
+  height: 100%;
+  bottom: 0;
+}
+
+.pomodoro-unit.forest-theme.is-tall .forest-tree svg {
+  transform: scale(1.05, 1.15);
+}
+
+.pomodoro-unit.forest-theme.is-tall .tree-seed svg { transform: scale(0.85, 0.95); }
+.pomodoro-unit.forest-theme.is-tall .tree-sprout svg { transform: scale(0.9, 1); }
+.pomodoro-unit.forest-theme.is-tall .tree-growing svg { transform: scale(1, 1.08); }
+
+.pomodoro-unit.forest-theme.is-tall .pomodoro-perimeter {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.pomodoro-unit.forest-theme.is-tall .pomodoro-perimeter .timer-bg {
+  stroke-width: 1.5px !important;
+}
+
+.pomodoro-unit.forest-theme.is-tall .pomodoro-perimeter .timer-progress {
+  stroke-width: 2px !important;
+  filter: drop-shadow(0 0 3px rgba(136, 194, 66, 0.34)) !important;
+}
+
+.pomodoro-unit.forest-theme.is-tall .pomodoro-ring {
+  display: none;
+}
+
+.pomodoro-unit.forest-theme.is-tall .timer-bg,
+.pomodoro-unit.forest-theme.is-tall .timer-progress {
+  stroke-width: 3.5px !important;
+}
+
+.pomodoro-unit.forest-theme.is-tall .timer-bg {
+  stroke: rgba(255, 255, 255, 0.17) !important;
+}
+
+.pomodoro-unit.forest-theme.is-tall .timer-progress {
+  stroke: #88c242 !important;
+  stroke-linecap: round !important;
+  filter: drop-shadow(0 0 4px rgba(136, 194, 66, 0.34)) !important;
+}
+
+.pomodoro-unit.forest-theme.is-tall .timer-head {
+  fill: #b4df6a !important;
+}
+
+.pomodoro-unit.forest-theme.is-tall .forest-tag {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  margin: 0 0 2px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #a7f3d0;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+.pomodoro-unit.forest-theme.is-tall .forest-tag > span {
+  font-size: 7px;
+}
+
+.pomodoro-unit.forest-theme.is-tall .pomodoro-center {
+  position: static;
+  inset: auto;
+  display: block;
+  flex: 0 0 auto;
+  padding: 0;
+  z-index: auto;
+  line-height: 1;
+}
+
+.pomodoro-unit.forest-theme.is-tall .timer-time {
+  display: block;
+  font-family: var(--font-num) !important;
+  font-variant-numeric: tabular-nums;
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  letter-spacing: 1px;
+  line-height: 1;
+  text-shadow: none !important;
+}
+
+.pomodoro-unit.forest-theme.is-tall .forest-btn {
+  display: inline-flex !important;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+  width: 85%;
+  height: 36px;
+  min-height: 36px;
+  box-sizing: border-box;
+  padding: 0 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #d9fbe9;
+  font: 700 12px/1 var(--font-ui);
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 12px rgba(102, 230, 205, 0.12);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pomodoro-unit.forest-theme.is-tall[data-state="running"] .forest-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--txt-2, #aab4c5);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.pomodoro-unit.forest-theme.is-tall .forest-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.22);
+}
+
+.pomodoro-unit.forest-theme.is-tall .pomo-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

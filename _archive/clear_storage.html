@@ -1,0 +1,15 @@
+﻿<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Clear Storage</title></head>
+<body>
+<h1>Clearing Stream Deck Storage...</h1>
+<script>
+localStorage.removeItem('STREAMDECK_VK02_LAYOUT');
+localStorage.removeItem('STREAMDECK_VK02_BRIGHTNESS');
+localStorage.removeItem('STREAMDECK_VK02_IDLE_MS');
+localStorage.removeItem('STREAMDECK_VK02_WEATHER_CACHE');
+localStorage.clear();
+document.body.innerHTML = '<h1 style="color:green;">✓ Done! Close this and restart the app.</h1>';
+</script>
+</body>
+</html>

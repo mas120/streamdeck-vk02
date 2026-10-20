@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GridStack Test</title>
+  <style>
+    body { margin: 0; padding: 20px; background: #1e1e1e; color: white; font-family: monospace; }
+    .grid-stack { background: #2d2d2d; }
+    .grid-stack-item-content { background: #4a4a4a; border: 2px solid #00e5ff; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@14.0.0/dist/gridstack.min.css" />
+</head>
+<body>
+  <h1>GridStack Minimal Test</h1>
+  <div class="grid-stack"></div>
+  
+  <script type="module">
+    import { GridStack } from 'https://cdn.jsdelivr.net/npm/gridstack@14.0.0/dist/gridstack-all.mjs';
+    
+    console.log('GridStack loaded:', GridStack);
+    
+    const grid = GridStack.init({
+      column: 8,
+      row: 5,
+      maxRow: 5,
+      cellHeight: 160,
+      margin: 8,
+      float: true
+    });
+    
+    console.log('Grid initialized:', grid);
+    
+    // Add test widgets
+    const widgets = [
+      { x: 0, y: 0, w: 1, h: 1 },
+      { x: 1, y: 0, w: 1, h: 1 },
+      { x: 2, y: 0, w: 2, h: 1 },
+    ];
+    
+    widgets.forEach((w, i) => {
+      const el = grid.addWidget(w);
+      el.querySelector('.grid-stack-item-content').textContent = `Widget ${i + 1}`;
+    });
+    
+    console.log('Widgets added:', grid.engine.nodes.length);
+    console.log('DOM elements:', document.querySelectorAll('.grid-stack-item').length);
+  </script>
+</body>
+</html>

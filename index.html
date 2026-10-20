@@ -1,0 +1,282 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stream Deck VK02</title>
+</head>
+<body>
+
+  <div class="deck-viewport">
+    <div class="deck-backdrop" id="deckBackdrop"></div>
+    <div class="grid-stack"></div>
+
+    <!-- Thanh công cụ nổi: chỉ hiện ở Chế độ Chỉnh sửa -->
+    <div class="edit-toolbar" id="editToolbar">
+      <button type="button" id="settingsOpenBtn" class="edit-toolbar-btn">&#9881; Cài đặt</button>
+      <button type="button" id="editDoneBtn" class="edit-toolbar-btn edit-done-btn">&#10003; Xong</button>
+    </div>
+  </div>
+
+  <!-- Cài đặt Deck nằm trong modal #settingsModal (mở từ thanh công cụ Edit Mode). -->
+
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-box">
+      <div class="modal-title" id="modalHeading">Cài đặt phím bấm</div>
+
+      <div class="form-group">
+        <label>Biểu tượng (glyph / logo / ảnh / emoji):</label>
+        <div class="icon-input-row">
+          <div class="icon-preview" id="iconPreview" aria-hidden="true"></div>
+          <input type="text" id="inpIcon" placeholder="lucide:home &#183; si:youtube &#183; emoji &#183; tên file" />
+        </div>
+        <div class="icon-buttons">
+          <button type="button" class="btn-browse" id="btnIconLib">Thư viện icon</button>
+          <button type="button" class="btn-browse" id="btnPickFile">Tải ảnh...</button>
+          <button type="button" class="btn-browse" id="btnIconAuto">Lấy tự động</button>
+        </div>
+      </div>
+
+      <div class="form-group" id="grpLabel">
+        <label for="inpLabel">Nhãn hiển thị trên phím:</label>
+        <input type="text" id="inpLabel" placeholder="Nhãn viết tay..." />
+      </div>
+
+      <div class="glyph-picker" id="iconPicker" style="display: none;">
+        <div class="glyph-picker-header">
+          <input type="search" id="iconSearch" placeholder="Tìm glyph... (home, âm lượng, mic)" autocomplete="off" />
+          <button type="button" class="glyph-picker-close" id="iconPickerClose" aria-label="Đóng">&times;</button>
+        </div>
+        <div class="icon-tabs">
+          <button type="button" class="icon-tab active" data-tab="lucide">Lucide (icon)</button>
+          <button type="button" class="icon-tab" data-tab="si">Logo (brand)</button>
+        </div>
+        <div class="icon-grid" id="iconGrid"></div>
+      <div class="icon-picker-foot" id="iconPickerFoot"><span id="iconStatus"></span></div></div>
+
+      <div class="form-group">
+        <label for="selType">Loại phím:</label>
+        <select id="selType">
+          <option value="">-- Chọn --</option>
+          <option value="launch_app">Mở ứng dụng / file</option>
+          <option value="open_url">Mở trang web</option>
+          <option value="key">Ấn phím tắt</option>
+          <option value="media">Điều khiển media</option>
+          <option value="volume_slider">Âm lượng (Master)</option>
+          <option value="app_slider">Âm lượng ứng dụng cụ thể</option>
+          <option value="todo_list">Danh sách việc cần làm (To-Do)</option>
+          <option value="mic_widget">Microphone</option>
+          <option value="shutdown_widget">Tắt máy tính</option>
+          <option value="media_player">Đang phát (YouTube / media)</option>
+          <option value="music_wave">Sóng nhạc (âm thanh đầu ra)</option>
+          <option value="mini_clock">Đồng hồ</option>
+          <option value="pomodoro">Pomodoro</option>
+          <option value="bongo_cat">Bongo Cat</option>
+          <option value="weather_widget">Thời tiết</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="grpTileSize" style="display: none;">
+        <label for="selTileSize">Kích thước ô:</label>
+        <select id="selTileSize">
+          <option value="auto">Mặc định theo loại</option>
+          <option value="1x1">1x1</option>
+          <option value="2x1">2x1</option>
+          <option value="1x2">1x2</option>
+          <option value="2x2">2x2</option>
+          <option value="3x1">3x1</option>
+          <option value="3x2">3x2</option>
+          <option value="4x1">4x1</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="grpTarget" style="display: none;">
+        <label for="inpTarget">Đường dẫn / URL / Phím tắt:</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="inpTarget" placeholder='C:\path\to\app.exe hoặc https://...' style="flex: 1;" />
+          <button type="button" class="btn-browse" id="btnBrowse">Browse...</button>
+        </div>
+      </div>
+
+      <div class="form-group" id="grpMedia" style="display: none;">
+        <label>Lệnh media:</label>
+        <select id="selMedia">
+          <option value="play-pause">Play / Pause</option>
+          <option value="next">Next</option>
+          <option value="prev">Previous</option>
+          <option value="stop">Stop</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="grpVolume" style="display: none;">
+        <label>Âm lượng:</label>
+        <select id="selVolume">
+          <option value="up">Tăng 10%</option>
+          <option value="down">Giảm 10%</option>
+          <option value="mute">Tắt / Bật tiếng</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="grpApp" style="display: none;">
+        <label for="selApp">Ứng dụng đang phát âm:</label>
+        <select id="selApp">
+          <option value="">Đang tải danh sách...</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="grpClock" style="display: none;">
+        <label for="selClockFace">Kiểu mặt đồng hồ:</label>
+        <select id="selClockFace">
+          <option value="digital">Digital</option>
+          <option value="analog">Analog</option>
+          <option value="flip">Flip</option>
+        </select>
+        <label for="inpClockTz">Múi giờ (offset từ UTC):</label>
+        <input type="number" id="inpClockTz" min="-12" max="14" step="0.5" placeholder="+7" value="7" />
+        <label for="inpClockLabel">Nhãn múi giờ:</label>
+        <input type="text" id="inpClockLabel" placeholder="HÀ NỘI" value="HÀ NỘI" />
+        <div class="modal-hint">Múi giờ mặc định +7 (Việt Nam). Nhãn để trống sẽ tự hiện UTC±h.</div>
+      </div>
+
+      <div class="form-group" id="grpPomodoro" style="display: none;">
+        <label>Thời lượng (phút):</label>
+        <div class="pomo-duration-row">
+          <div class="pomo-duration-item">
+            <span class="pomo-duration-tag work">LÀM VIỆC</span>
+            <input type="number" id="inpPomodoroWork" min="1" max="120" value="25" />
+          </div>
+          <div class="pomo-duration-item">
+            <span class="pomo-duration-tag break">NGHỈ</span>
+            <input type="number" id="inpPomodoroBreak" min="1" max="60" value="5" />
+          </div>
+        </div>
+        <div class="modal-hint">
+          Nhấn ô pomodoro: Bắt đầu / Dừng.<br>
+          Nhấn giữ (>1s): Reset về 0, chuyển về pha LÀM VIỆC.
+        </div>
+      </div>
+
+      <div class="form-group" id="grpWeather" style="display: none;">
+        <label>Toạ độ lấy thời tiết</label>
+        <div class="pomo-duration-row">
+          <div class="pomo-duration-item">
+            <span class="pomo-duration-tag work">LAT (vĩ độ)</span>
+            <input type="text" id="inpWeatherLat" placeholder="10.9804" value="10.9804" />
+          </div>
+          <div class="pomo-duration-item">
+            <span class="pomo-duration-tag break">LON (kinh độ)</span>
+            <input type="text" id="inpWeatherLon" placeholder="106.6519" value="106.6519" />
+          </div>
+        </div>
+        <div class="pomo-duration-item" style="margin-top: 8px;">
+          <span class="pomo-duration-tag break">TÊN THÀNH PHỐ</span>
+          <input type="text" id="inpWeatherCity" placeholder="THỦ DẦU MỘT" value="THỦ DẦU MỘT" />
+        </div>
+        <div class="icon-buttons" style="margin-top: 8px;">
+          <button type="button" class="btn-browse" id="btnWeatherLocate">Tự định vị theo IP</button>
+        </div>
+        <div style="margin-top: 10px;">
+          <label for="selWeatherSkin" style="font-size: 12px;">Skin hiển thị</label>
+          <select id="selWeatherSkin">
+            <option value="soft">Màu dịu - gradient full-bleed, dịu 30% độ chói (mặc định)</option>
+            <option value="flat">Phẳng - nền #111317, màu chỉ ở cụm minh hoạ</option>
+          </select>
+        </div>
+        <div class="pomo-duration-item" style="margin-top: 8px;">
+          <span class="pomo-duration-tag work">API KEY (để trống)</span>
+          <input type="text" id="inpWeatherKey" placeholder="Không cần - Open-Meteo miễn phí" />
+        </div>
+        <div class="modal-hint">Mặc định Thủ Dầu Một (10.9804, 106.6519). Ô chuẩn 3x1 (thu gọn 2x1 / 1x1, ô 2x2 thêm gió + độ ẩm). Tự cập nhật mỗi 15 phút; mất mạng quá 30 phút hiện badge DỮ LIỆU CŨ.</div>
+      </div>
+
+      <div class="form-group" id="grpBongo" style="display: none;">
+        <label for="selBongoSize">Kích thước widget</label>
+        <select id="selBongoSize">
+          <option value="2x1">2x1</option>
+          <option value="2x2">2x2</option>
+        </select>
+        <label class="check-row" style="margin-top: 10px;">
+          <input type="checkbox" id="chkBongoKps" checked /> Hiện KPS (nhịp gõ)
+        </label>
+      </div>
+
+      <div class="form-group" id="grpFit" style="display: none;">
+        <label for="selIconFit">Cách hiển thị ảnh:</label>
+        <select id="selIconFit">
+          <option value="contain">Vừa khung</option>
+          <option value="cover">Phủ kín phím</option>
+        </select>
+        <label for="inpTitle">Nhãn hiển thị trên phím:</label>
+        <input type="text" id="inpTitle" maxlength="24" placeholder="Nhãn viết tay..." />
+        <label for="selTitlePos">Vị trí nhãn:</label>
+        <select id="selTitlePos">
+          <option value="top">Trên</option>
+          <option value="middle">Giữa</option>
+          <option value="bottom">Dưới</option>
+        </select>
+        <label for="inpTitleSize">Cỡ chữ nhãn:</label>
+        <input type="number" id="inpTitleSize" min="9" max="32" value="14" />
+        <label class="check-row"><input type="checkbox" id="chkTitleShadow" checked /> Bóng chữ</label>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-delete" id="btnDelete">Xoá phím</button>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-cancel" id="btnCancel">Huỷ</button>
+          <button class="btn btn-save" id="btnSave">Lưu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Cài đặt Deck: gộp Chế độ (Run/Edit) + Độ sáng + Tự tối khi rảnh -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-box">
+      <div class="modal-title">Cài đặt Deck</div>
+
+      <div class="modal-hint">
+        Nhấp <strong>đôi</strong> phím <strong>&#9881;</strong> để bật/tắt <strong>Chế độ Chỉnh sửa</strong>.
+        Khi đang chỉnh sửa, bấm nút <strong>&#10003; Xong</strong> ở trên để thoát nhanh.
+        Chuột phải vào phím &#9881; để mở bảng này.
+      </div>
+
+      <div class="form-group">
+        <label>Chế độ</label>
+        <div class="seg-control" id="modeSegment" role="group" aria-label="Chế độ deck">
+          <button type="button" class="seg-btn" data-mode="run">&#128274; Chạy</button>
+          <button type="button" class="seg-btn" data-mode="edit">&#9881; Chỉnh sửa</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Độ sáng màn hình</label>
+        <div class="settings-range-row">
+          <span>&#127769;</span>
+          <input type="range" id="brightnessRange" min="30" max="130" value="100"
+                 aria-label="Độ sáng màn hình deck" />
+          <span>&#9728;</span>
+          <span class="settings-range-val" id="brightnessValue">100%</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Tự tối khi rảnh</label>
+        <select id="settingsIdle">
+          <option value="0">Tắt</option>
+          <option value="45000">Sau 45 giây</option>
+          <option value="90000">Sau 90 giây</option>
+          <option value="180000">Sau 3 phút</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-delete" id="btnResetLayout">Đặt lại bố cục</button>
+        <button class="btn btn-save" id="btnSettingsClose">Xong</button>
+      </div>
+    </div>
+  </div>  <input type="file" id="filePicker" accept="image/*" style="display:none;" />
+
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+﻿  <!-- CÃ i Äáº·t Deck lÃ  má»™t phÃ­m 1x1 náº±m trong lÆ°á»›i (data-type="settings"), khÃ´ng cÃ²n nÃºt ná»•i Ä‘Ã¨ lÃªn phÃ­m khÃ¡c. -->

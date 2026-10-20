@@ -1,0 +1,124 @@
+/* =========================================================================
+   SD-LOOK — giao diện phím giống Stream Deck thật
+   -------------------------------------------------------------------------
+   CÁCH DÙNG
+   1) Dán toàn bộ file này vào CUỐI thẻ <style> trong index.html
+      (phải nằm SAU rule "(1) Màn hình LCD" ở khoảng dòng 1628).
+   2) main.js:   const MARGIN = 8;          // phím 1x1 = đúng 144x144px (1280x800)
+                 document.body.classList.add('sd-look');
+   3) main.js, hàm flashKeycap: đổi (ok ? 300 : 400) + 30  ->  930
+   Gỡ lỗi / so sánh: bỏ class 'sd-look' khỏi <body> là về giao diện cũ.
+   Mọi rule đều đặt sau tiền tố body.sd-look nên thắng các !important cũ.
+   ========================================================================= */
+
+body.sd-look {
+  --radius-key: 12px;
+  --sd-body: #000;            /* thân phím: đen thuần như nhựa Stream Deck */
+}
+
+/* ---- 1. THÂN PHÍM: phẳng, đen, không viền 3 lớp, không bevel/gloss ------- */
+body.sd-look .grid-stack-item-content {
+  background: var(--sd-body) !important;
+  border: 0 !important;                                  /* ảnh được tràn đủ 144px */
+  border-radius: var(--radius-key) !important;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),                 /* mép nhựa mảnh */
+    0 4px 10px rgba(0, 0, 0, 0.55) !important;
+  transition: transform 0.12s ease-out;                  /* bỏ overshoot "lò xo" */
+}
+
+/* Gloss cũ (14% trắng, nằm TRÊN ảnh) làm bạc nửa trên icon -> chỉ còn
+   một vệt phản chiếu kính rất nhẹ */
+body.sd-look .grid-stack-item-content::before {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 45%);
+}
+body.sd-look .grid-stack-item[data-type] .grid-stack-item-content::before { opacity: 1; }
+
+/* Bệ viền sáng + tối 4 góc làm cả hàng phím ngoài rìa tối hơn phím giữa;
+   màn LCD thật thì đều sáng như nhau */
+body.sd-look .deck-viewport::before { box-shadow: none; }
+
+/* ---- 2. MÀN HÌNH LCD: tràn kín mặt phím (bỏ khung 10px) ------------------ */
+body.sd-look :is(.deck-icon-core, .volume-deck-unit, .app-deck-unit,
+                 .pomodoro-unit, .clock-unit, .weather-unit) {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;                /* thân phím đã bo + cắt (overflow: hidden) */
+  background: #000;
+  box-shadow: none;
+}
+body.sd-look .settings-core { padding: 0; }
+
+/* ---- 3. ICON: ảnh/icon app lấp đầy phím như ảnh 144x144 của Elgato ------- */
+body.sd-look .icon-chip {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+}
+body.sd-look .deck-icon-core img { filter: none; object-fit: contain; }
+body.sd-look .deck-icon-core .icon-emoji { font-size: min(56cqw, 56cqh); filter: none; }
+
+/* Glyph/logo vector: chừa ~20% mép để chiếm ~58% phím (bản vector không
+   có ảnh nền nên không được tràn kín). icons.css chưa được gửi nên khai
+   báo lại kích thước cho chắc. */
+body.sd-look .icon-chip:has(> .icon-vec) { padding: 21%; }
+body.sd-look .icon-chip > .icon-vec { width: 100%; height: 100%; display: flex; }
+body.sd-look .icon-chip > .icon-vec svg { width: 100%; height: 100%; }
+
+/* ---- 4. NHẤN PHÍM: lún nhẹ + tối đi, KHÔNG neon/ripple ------------------- */
+body.sd-look .grid-stack-item-content.keycap-pressed,
+body.sd-look:not(.edit-mode) .grid-stack-item-content:active {
+  transform: scale(0.95);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.8) !important;
+  transition: transform 0.06s ease-out, box-shadow 0.06s ease-out;
+}
+body.sd-look .grid-stack-item-content.keycap-pressed :is(.deck-icon-core, .volume-deck-unit,
+    .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit),
+body.sd-look:not(.edit-mode) .grid-stack-item-content:active :is(.deck-icon-core,
+    .volume-deck-unit, .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit) {
+  filter: brightness(0.72);
+  box-shadow: none;
+}
+body.sd-look .key-ripple { display: none; }
+
+/* ---- 5. PHÍM TRỐNG: vẫn là phím đen (màn tắt), không biến mất ------------- */
+body.sd-look:not(.edit-mode) .slot-cell {
+  opacity: 1;
+  background: #050506;
+  border: 0;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.035);
+}
+body.sd-look:not(.edit-mode) .slot-cell.is-filled { opacity: 0; }
+
+/* ---- 6. KẾT QUẢ: dấu ✓ xanh / ⚠ vàng như Stream Deck (thay vòng viền) ---- */
+body.sd-look .grid-stack-item-content.status-success::after,
+body.sd-look .grid-stack-item-content.status-error::after {
+  background-color: rgba(0, 0, 0, 0.55);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 44%;
+  box-shadow: none;
+  animation: sdResult 900ms ease-out forwards;
+}
+body.sd-look .grid-stack-item-content.status-success::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2334d27b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12.5l5 5L20 6.5'/%3E%3C/svg%3E");
+}
+body.sd-look .grid-stack-item-content.status-error::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffc247' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5 22 20.5H2z'/%3E%3Cpath d='M12 10v5'/%3E%3Cpath d='M12 18h.01'/%3E%3C/svg%3E");
+}
+@keyframes sdResult {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ---- 7. NHÃN: sát mép hơn một chút, đậm vừa ------------------------------ */
+body.sd-look .key-title { left: 4px; right: 4px; font-weight: 700; }
+body.sd-look .key-title[data-pos="top"]    { top: 6px; }
+body.sd-look .key-title[data-pos="bottom"] { bottom: 6px; }

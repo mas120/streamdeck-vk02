@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Console Monitor</title>
+<style>
+  body { background: #1e1e1e; color: #d4d4d4; font-family: monospace; padding: 20px; }
+  pre { background: #2d2d2d; padding: 15px; border-radius: 4px; white-space: pre-wrap; }
+  .error { color: #f48771; }
+  .warn { color: #dcdcaa; }
+  .log { color: #4ec9b0; }
+</style>
+</head>
+<body>
+<h1>Console Monitor</h1>
+<button onclick="location.reload()">Refresh</button>
+<button onclick="document.getElementById('out').innerHTML=''">Clear</button>
+<pre id="out"></pre>
+<iframe id="app" src="http://localhost:1420" style="position:absolute;left:-9999px;"></iframe>
+
+<script>
+const out = document.getElementById('out');
+const log = (msg, type='log') => {
+  const line = document.createElement('div');
+  line.className = type;
+  line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+  out.appendChild(line);
+};
+
+setTimeout(() => {
+  const iframe = document.getElementById('app');
+  const win = iframe.contentWindow;
+  
+  // Capture console
+  const originalLog = win.console.log;
+  const originalWarn = win.console.warn;
+  const originalError = win.console.error;
+  
+  win.console.log = function(...args) {
+    log(args.join(' '), 'log');
+    originalLog.apply(win.console, args);
+  };
+  
+  win.console.warn = function(...args) {
+    log(args.join(' '), 'warn');
+    originalWarn.apply(win.console, args);
+  };
+  
+  win.console.error = function(...args) {
+    log(args.join(' '), 'error');
+    originalError.apply(win.console, args);
+  };
+  
+  // Listen for errors
+  win.addEventListener('error', (e) => {
+    log(`ERROR: ${e.message} at ${e.filename}:${e.lineno}`, 'error');
+  });
+  
+  log('Console monitor active', 'log');
+  
+  // Check after 3 seconds
+  setTimeout(() => {
+    log('=== CHECKING STATE ===', 'log');
+    log(`grid: ${typeof win.grid}`, 'log');
+    log(`createWidgetEl: ${typeof win.createWidgetEl}`, 'log');
+    log(`Grid nodes: ${win.grid ? win.grid.engine.nodes.length : 'N/A'}`, 'log');
+    log(`DOM items: ${win.document.querySelectorAll('.grid-stack-item').length}`, 'log');
+  }, 3000);
+  
+}, 1000);
+</script>
+</body>
+</html>

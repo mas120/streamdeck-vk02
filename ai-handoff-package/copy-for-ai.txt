@@ -1,0 +1,15 @@
+Project này là Stream Deck desktop app chạy bằng Tauri + Vite + Vanilla JS. Logic chính nằm ở src/main.js, styling chung ở src/deck.css, theme Pomodoro Forest ở src/forest-pomodoro.css. Dự án đang ở giai đoạn polish UI và stabilization, không phải prototype sơ khai. Mục tiêu là giữ visual language đồng nhất: keycap 3D, soft gradients, shadows, consistent spacing, và GridStack resizing behavior. Khi sửa widget, cần đọc trước logic + CSS liên quan. Ưu tiên direct DOM updates thay vì re-render toàn bộ widget, đặc biệt cho Pomodoro, Weather và Clock. Không phá layout khi resize hoặc reload. Nếu cần thêm widget mới, phải đồng bộ với hệ thống mặc định của deck và giữ style chung.
+
+File cần đọc trước:
+- src/main.js
+- src/deck.css
+- src/forest-pomodoro.css
+- src/forest-tree-svgs.js
+- src/todo-store.js
+- index.html
+
+Mục tiêu hiện tại:
+- hoàn thiện polish từng widget
+- đồng bộ style trên các kích thước deck
+- giảm bug layout / resize / render
+- giữ app nhanh và mượt khi chạy liên tục

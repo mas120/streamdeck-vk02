@@ -1,0 +1,58 @@
+.mic-deck-unit {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  container-type: size;
+}
+
+.mic-deck-unit .deck-icon-core {
+  pointer-events: none;
+}
+
+.mic-meter {
+  position: absolute;
+  right: 22%;
+  bottom: 12px;
+  left: 22%;
+  z-index: 3;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+}
+
+.mic-meter-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.08s linear;
+}
+
+.mic-deck-unit.is-muted .icon-vec {
+  color: var(--danger);
+}
+
+.mic-deck-unit.is-muted .mic-meter {
+  display: none;
+}
+
+.mic-deck-unit[data-error="1"] .mic-meter {
+  background: var(--danger);
+}
+
+.mic-deck-unit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+}
+
+body.idle .mic-deck-unit {
+  filter: brightness(0.55) saturate(0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mic-meter-fill { transition: none; }
+}

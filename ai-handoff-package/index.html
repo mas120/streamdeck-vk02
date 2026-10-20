@@ -1,0 +1,260 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stream Deck VK02</title>
+  <link rel="stylesheet" href="/src/deck.css" />
+  <link rel="stylesheet" href="/src/forest-pomodoro.css" />
+</head>
+<body>
+
+  <div class="deck-viewport">
+    <div class="deck-backdrop" id="deckBackdrop"></div>
+    <div class="grid-stack"></div>
+
+    <!-- Nut noi Xong: chi hien o Che do Chinh sua de thoat nhanh -->
+    <button type="button" id="editDoneBtn" class="edit-done-btn">&#10003; Xong</button>
+  </div>
+
+  <!-- Cai Dat Deck gio la mot PHIM 1x1 nam trong luoi (data-type="settings"), khong con nut noi de len phim khac. -->
+
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-box">
+      <div class="modal-title" id="modalHeading">Cai Dat Phim Bam</div>
+
+      <div class="form-group">
+        <label>Bieu tuong (glyph / logo / anh / emoji):</label>
+        <div class="icon-input-row">
+          <div class="icon-preview" id="iconPreview" aria-hidden="true"></div>
+          <input type="text" id="inpIcon" placeholder="lucide:home &#183; si:youtube &#183; emoji &#183; ten file" />
+        </div>
+        <div class="icon-buttons">
+          <button type="button" class="btn-browse" id="btnIconLib">Thu vien icon</button>
+          <button type="button" class="btn-browse" id="btnPickFile">Tai anh...</button>
+          <button type="button" class="btn-browse" id="btnIconAuto">Lay tu dong</button>
+        </div>
+      </div>
+
+      <div class="form-group" id="grpLabel">
+        <label for="inpLabel">Nhan hien thi tren phim:</label>
+        <input type="text" id="inpLabel" placeholder="Nhan viet tay..." />
+      </div>
+
+      <div class="glyph-picker" id="iconPicker" style="display: none;">
+        <div class="glyph-picker-header">
+          <input type="search" id="iconSearch" placeholder="Tim glyph... (home, am luong, mic)" autocomplete="off" />
+          <button type="button" class="glyph-picker-close" id="iconPickerClose" aria-label="Dong">&times;</button>
+        </div>
+        <div class="icon-tabs">
+          <button type="button" class="icon-tab active" data-tab="lucide">Lucide (icon)</button>
+          <button type="button" class="icon-tab" data-tab="si">Logo (brand)</button>
+        </div>
+        <div class="icon-grid" id="iconGrid"></div>
+      <div class="icon-picker-foot" id="iconPickerFoot"><span id="iconStatus"></span></div></div>
+
+      <div class="form-group">
+        <label for="selType">Loai phim:</label>
+        <select id="selType">
+          <option value="">-- Chon --</option>
+          <option value="launch_app">Mo ung dung / file</option>
+          <option value="open_url">Mo trang web</option>
+          <option value="key">An phim tat</option>
+          <option value="media">Dieu khien media</option>
+          <option value="volume_slider">Am luong (Master)</option>
+          <option value="app_slider">Am luong ung dung cu the</option>
+          <option value="todo_list">Danh sach viec can lam (To-Do)</option>
+          <option value="mini_clock">Dong ho</option>
+          <option value="pomodoro">Pomodoro</option>
+          <option value="bongo_cat">Bongo Cat</option>
+          <option value="weather_widget">Thoi tiet</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="grpTarget" style="display: none;">
+        <label for="inpTarget">Duong dan / URL / Phim tat:</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="inpTarget" placeholder='C:\path\to\app.exe hoac https://...' style="flex: 1;" />
+          <button type="button" class="btn-browse" id="btnBrowse">Browse...</button>
+        </div>
+      </div>
+
+      <div class="form-group" id="grpMedia" style="display: none;">
+        <label>Lenh media:</label>
+        <select id="selMedia">
+          <option value="play-pause">Play / Pause</option>
+          <option value="next">Next</option>
+          <option value="prev">Previous</option>
+          <option value="stop">Stop</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="grpVolume" style="display: none;">
+        <label>Am luong:</label>
+        <select id="selVolume">
+          <option value="up">Tang 10%</option>
+          <option value="down">Giam 10%</option>
+          <option value="mute">Tat / Bat tieng</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="grpApp" style="display: none;">
+        <label for="selApp">Ung dung dang phat am:</label>
+        <select id="selApp">
+          <option value="">Dang tai danh sach...</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="grpClock" style="display: none;">
+        <label for="selClockFace">Kieu mat dong ho:</label>
+        <select id="selClockFace">
+          <option value="digital">Digital</option>
+          <option value="analog">Analog</option>
+          <option value="flip">Flip</option>
+        </select>
+        <label for="inpClockTz">Mui gio (offset tu UTC):</label>
+        <input type="number" id="inpClockTz" min="-12" max="14" step="0.5" placeholder="+7" value="7" />
+        <label for="inpClockLabel">Nhan mui gio:</label>
+        <input type="text" id="inpClockLabel" placeholder="HA NOI" value="HA NOI" />
+        <div class="modal-hint">Mui gio mac dinh +7 (Viet Nam). Nhan de trong se tu hien UTCÃ‚Â±h.</div>
+      </div>
+
+      <div class="form-group" id="grpPomodoro" style="display: none;">
+        <label>Thoi luong (phut):</label>
+        <div class="pomo-duration-row">
+          <div class="pomo-duration-item">
+            <span class="pomo-duration-tag work">LAM VIEC</span>
+            <input type="number" id="inpPomodoroWork" min="1" max="120" value="25" />
+          </div>
+          <div class="pomo-duration-item">
+            <span class="pomo-duration-tag break">NGHI</span>
+            <input type="number" id="inpPomodoroBreak" min="1" max="60" value="5" />
+          </div>
+        </div>
+        <div class="modal-hint">
+          Nhan o pomodoro: Bat / Dung.<br>
+          Nhan giu (>1s): Reset ve 0, chuyen ve pha LAM VIEC.
+        </div>
+      </div>
+
+      <div class="form-group" id="grpWeather" style="display: none;">
+        <label>Toa do lay thoi tiet</label>
+        <div class="pomo-duration-row">
+          <div class="pomo-duration-item">
+            <span class="pomo-duration-tag work">LAT (vi do)</span>
+            <input type="text" id="inpWeatherLat" placeholder="10.8231" value="10.8231" />
+          </div>
+          <div class="pomo-duration-item">
+            <span class="pomo-duration-tag break">LON (kinh do)</span>
+            <input type="text" id="inpWeatherLon" placeholder="106.6297" value="106.6297" />
+          </div>
+        </div>
+        <div class="pomo-duration-item" style="margin-top: 8px;">
+          <span class="pomo-duration-tag break">TEN THANH PHO</span>
+          <input type="text" id="inpWeatherCity" placeholder="TP. HO CHI MINH" value="TP. HO CHI MINH" />
+        </div>
+        <div style="margin-top: 10px;">
+          <label for="selWeatherSkin" style="font-size: 12px;">Skin hien thi</label>
+          <select id="selWeatherSkin">
+            <option value="soft">Mau diu - gradient full-bleed, diu 30% do choi (mac dinh)</option>
+            <option value="flat">Phang - nen #111317, mau chi o cum minh hoa</option>
+          </select>
+        </div>
+        <div class="pomo-duration-item" style="margin-top: 8px;">
+          <span class="pomo-duration-tag work">API KEY (de trong)</span>
+          <input type="text" id="inpWeatherKey" placeholder="Khong can - Open-Meteo mien phi" />
+        </div>
+        <div class="modal-hint">Mac dinh TP.HCM (10.8231, 106.6297). O chuan 3x1 (thu gon 2x1 / 1x1, o 2x2 them gio + do am). Tu cap nhat moi 15 phut; mat mang qua 30 phut hien badge DU LIEU CU.</div>
+      </div>
+
+      <div class="form-group" id="grpBongo" style="display: none;">
+        <label for="selBongoSize">Kich thuoc widget</label>
+        <select id="selBongoSize">
+          <option value="2x1">2x1</option>
+          <option value="2x2">2x2</option>
+        </select>
+        <label class="check-row" style="margin-top: 10px;">
+          <input type="checkbox" id="chkBongoKps" checked /> Hien KPS (nhịp go)
+        </label>
+      </div>
+
+      <div class="form-group" id="grpFit" style="display: none;">
+        <label for="selIconFit">Cach hien thi anh:</label>
+        <select id="selIconFit">
+          <option value="contain">Vua khung</option>
+          <option value="cover">Phu kin phim</option>
+        </select>
+        <label for="inpTitle">Nhan hien thi tren phim:</label>
+        <input type="text" id="inpTitle" maxlength="24" placeholder="Nhan viet tay..." />
+        <label for="selTitlePos">Vi tri nhan:</label>
+        <select id="selTitlePos">
+          <option value="top">Tren</option>
+          <option value="middle">Giua</option>
+          <option value="bottom">Duoi</option>
+        </select>
+        <label for="inpTitleSize">Co chu nhan:</label>
+        <input type="number" id="inpTitleSize" min="9" max="32" value="14" />
+        <label class="check-row"><input type="checkbox" id="chkTitleShadow" checked /> Bong chu</label>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-delete" id="btnDelete">Xoa phim</button>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-cancel" id="btnCancel">Huy</button>
+          <button class="btn btn-save" id="btnSave">Luu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Cai Dat Deck: gop Che do (Run/Edit) + Do sang + Tu toi khi ranh -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-box">
+      <div class="modal-title">Cai Dat Deck</div>
+
+      <div class="modal-hint">
+        Nhap <strong>doi</strong> phim <strong>&#9881;</strong> de bat/tat <strong>Che do Chinh sua</strong>.
+        Khi dang chinh sua, bam nut <strong>&#10003; Xong</strong> o tren de thoat nhanh.
+        Chuot phai vao phim &#9881; de mo bang nay.
+      </div>
+
+      <div class="form-group">
+        <label>Che do</label>
+        <div class="seg-control" id="modeSegment" role="group" aria-label="Che do deck">
+          <button type="button" class="seg-btn" data-mode="run">&#128274; Chay</button>
+          <button type="button" class="seg-btn" data-mode="edit">&#9881; Chinh sua</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Do sang man hinh</label>
+        <div class="settings-range-row">
+          <span>&#127769;</span>
+          <input type="range" id="brightnessRange" min="30" max="130" value="100"
+                 aria-label="Do sang man hinh deck" />
+          <span>&#9728;</span>
+          <span class="settings-range-val" id="brightnessValue">100%</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Tu toi khi ranh</label>
+        <select id="settingsIdle">
+          <option value="0">Tat</option>
+          <option value="45000">Sau 45 giay</option>
+          <option value="90000">Sau 90 giay</option>
+          <option value="180000">Sau 3 phut</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-delete" id="btnResetLayout">Dat lai bo cuc</button>
+        <button class="btn btn-save" id="btnSettingsClose">Xong</button>
+      </div>
+    </div>
+  </div>  <input type="file" id="filePicker" accept="image/*" style="display:none;" />
+
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

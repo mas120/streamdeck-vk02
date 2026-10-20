@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Inject Test</title>
+</head>
+<body>
+  <h1>Testing Stream Deck in iframe...</h1>
+  <iframe src="http://localhost:1420" width="1280" height="800" style="border: 2px solid red;"></iframe>
+  
+  <script>
+    setTimeout(() => {
+      const iframe = document.querySelector('iframe');
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      const iframeWin = iframe.contentWindow;
+      
+      console.log('=== IFRAME DEBUG ===');
+      console.log('1. GridStack exists:', typeof iframeWin.GridStack);
+      console.log('2. grid exists:', typeof iframeWin.grid);
+      console.log('3. grid value:', iframeWin.grid);
+      
+      if (iframeWin.grid) {
+        console.log('4. Grid nodes:', iframeWin.grid.engine.nodes.length);
+      }
+      
+      const items = iframeDoc.querySelectorAll('.grid-stack-item');
+      console.log('5. DOM items:', items.length);
+      
+      console.log('6. Grid container:', iframeDoc.querySelector('.grid-stack'));
+      console.log('7. Grid HTML:', iframeDoc.querySelector('.grid-stack')?.innerHTML.substring(0, 200));
+      
+      // Try to call loadLayout or createWidgetEl
+      if (typeof iframeWin.createWidgetEl === 'function') {
+        console.log('8. Manually creating widget...');
+        try {
+          iframeWin.createWidgetEl({ x: 0, y: 0, w: 1, h: 1, icon: "🔴", type: "open_url", target: "test" });
+          console.log('✓ Widget created!');
+          console.log('9. DOM items after:', iframeDoc.querySelectorAll('.grid-stack-item').length);
+        } catch (err) {
+          console.error('✗ Failed:', err);
+        }
+      }
+    }, 5000);
+  </script>
+</body>
+</html>

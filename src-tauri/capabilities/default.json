@@ -1,0 +1,10 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window and the To-do editor window",
+  "windows": ["main", "todo"],
+  "permissions": [
+    "core:default",
+    "opener:default"
+  ]
+}

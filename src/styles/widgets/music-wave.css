@@ -1,0 +1,42 @@
+.music-wave-unit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 12px 14px;
+  overflow: hidden;
+  border-radius: inherit;
+  background: linear-gradient(180deg, #141a22, #0b1016);
+}
+
+.music-wave-bars {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+  width: 100%;
+  height: 68%;
+  min-height: 24px;
+}
+
+.music-wave-bar {
+  display: block;
+  flex: 1 1 0;
+  min-width: 1px;
+  max-width: 7px;
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #a8f5e1, var(--accent), #43aeb8);
+  opacity: 0.82;
+  transform: scaleY(var(--bar-level, 0.035));
+  transform-origin: center;
+  transition: transform 70ms linear, opacity 120ms linear;
+}
+
+.music-wave-unit[data-state="active"] .music-wave-bar { opacity: 1; }
+.music-wave-unit[data-state="unavailable"] .music-wave-bar { opacity: 0.24; }
+
+@media (prefers-reduced-motion: reduce) {
+  .music-wave-bar { transition: none; }
+}

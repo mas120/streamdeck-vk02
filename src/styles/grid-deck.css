@@ -1,0 +1,247 @@
+  * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-drag: none;
+  }
+  html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: var(--font-ui);   /* font thuáº§n Viá»‡t â€” xem token á»Ÿ :root */
+  }
+  /* Khung chá»©a toÃ n bá»™ deck â€” khoÃ¡ cá»©ng 100% viewport (<=> 1280x800 khi cá»­a sá»• 1280x800) */
+  .deck-viewport {
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  }
+  /* Container chá»©a cÃ¡c Ã´ ná»n tÄ©nh: Ä‘á»“ng bá»™ 100% há»‡ toáº¡ Ä‘á»™ vá»›i .grid-stack (cÃ¹ng gá»‘c 0,0) */
+  .deck-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  }
+  .slot-cell {
+  position: absolute;
+  background: var(--slot-bg);
+  border: 1px solid var(--slot-border);
+  border-radius: var(--radius-key);
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.92);
+  box-sizing: border-box;
+  }
+  /* Khung GridStack náº±m Ä‘Ã¨ lÃªn, cÃ¹ng gá»‘c toáº¡ Ä‘á»™ vá»›i .deck-backdrop */
+  .grid-stack {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+  }
+  /* Ã” bao ngoÃ i do GridStack quáº£n lÃ½ (bounding box = w*cellWidth x h*cellHeight) */
+  .grid-stack-item {
+  padding: 0;
+  box-sizing: border-box;
+  /* Cho phÃ©p kÃ©o tháº£ cáº£m á»©ng mÆ°á»£t, khÃ´ng bá»‹ WebView2/Windows cÆ°á»›p gesture */
+  touch-action: none;
+  }
+  /* PhÃ­m báº¥m 3D â€” lá»t lÃ²ng chÃ­nh xÃ¡c bÃªn trong bounding box (GridStack tá»± inset theo margin) */
+  .grid-stack-item-content {
+  background: var(--key-surface) !important;
+  border: 1px solid var(--key-border) !important;
+  border-top: 1px solid var(--key-border-top) !important;   /* mÃ©p trÃªn pháº£n quang */
+  border-radius: var(--radius-key) !important;
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    var(--key-bevel) !important;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  cursor: grab;
+  overflow: hidden !important;
+  transition: transform 0.18s cubic-bezier(0.2, 1.6, 0.3, 1), border-color 0.15s, box-shadow 0.15s;
+  touch-action: none;
+  }
+  .grid-stack-item-content:active {
+  cursor: grabbing;
+  }
+  .grid-stack-item-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 26%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 14px 14px 80% 80% / 14px 14px 20% 20%;
+  pointer-events: none;
+  z-index: 3;
+  }
+  /* Widget "mÃ n hÃ¬nh" (LCD) KHÃ”NG nháº­n lá»›p gloss máº¡nh nhÆ° keycap trÆ¡n: giáº£m Ä‘á»™
+   sÃ¡ng Ä‘á»ƒ máº·t LCD khÃ´ng bá»‹ "báº¹t" vÃ  khÃ´ng lá»™ dáº£i sÃ¡ng cong trÃªn Ã´ rá»™ng. */
+  .grid-stack-item[data-type="volume_slider"] .grid-stack-item-content::before,
+  .grid-stack-item[data-type="app_slider"] .grid-stack-item-content::before,
+  .grid-stack-item[data-type="pomodoro"] .grid-stack-item-content::before,
+  .grid-stack-item[data-type="mini_clock"] .grid-stack-item-content::before,
+  .grid-stack-item[data-type="weather_widget"] .grid-stack-item-content::before,
+  .grid-stack-item[data-type="bongo_cat"] .grid-stack-item-content::before {
+  opacity: 0.5;
+  }
+  /* Cá» Ã KHÃ”NG cÃ³ rule hover cho keycap (.grid-stack-item-content):
+   trÃªn panel cáº£m á»©ng VK02, WebView2 Ã¡p tráº¡ng thÃ¡i hover ngay khi cháº¡m vÃ 
+   GIá»® NGUYÃŠN cho tá»›i khi cháº¡m chá»— khÃ¡c -> phÃ­m vá»«a cháº¡m bá»‹ "dÃ­nh" viá»n
+   cyan sÃ¡ng mÃ£i. Pháº£n há»“i cháº¡m Ä‘Ã£ cÃ³ :active + .keycap-pressed. */
+  .deck-icon-core {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;   /* icon tá»± canh theo cqw/cqh; khÃ´ng chá»«a mÃ©p ná»¯a Ä‘á»ƒ chiáº¿m ~65% phÃ­m */
+  position: relative;
+  z-index: 2;
+  container-type: size;   /* báº­t cqw/cqh cho icon squircle */
+  }
+  /* Icon app 1x1: chiáº¿m ~72% bá» rá»™ng "mÃ n hÃ¬nh" (â‰ˆ 62â€“66% phÃ­m), squircle 12px.
+   TrÆ°á»›c Ä‘Ã¢y 56px / 46cqw â‰ˆ 1/3 phÃ­m nÃªn icon trÃ´ng nhá» vÃ  láº¡c lÃµng. */
+  .icon-chip {
+  width: 92px;
+  width: min(72cqw, 72cqh);
+  height: min(72cqw, 72cqh);
+  border-radius: var(--radius-chip);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  }
+  .deck-icon-core img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+  }
+  .deck-icon-core .icon-emoji {
+  font-size: 64px;
+  font-size: min(52cqw, 52cqh);
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+  }
+  /* --- Tuá»³ chá»n khá»›p áº£nh: data-fit="contain" (Vá»«a khung, máº·c Ä‘á»‹nh) | "cover" (Phá»§ kÃ­n) ---
+   Phá»§ kÃ­n: áº£nh tráº£i háº¿t máº·t phÃ­m (bá» khung LCD 10px), cáº¯t theo bo gÃ³c keycap. */
+  .deck-icon-core[data-fit="cover"] {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  }
+  .deck-icon-core[data-fit="cover"] .icon-chip {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  }
+  .deck-icon-core[data-fit="cover"] img {
+  object-fit: cover;
+  filter: none;
+  }
+  .deck-icon-core[data-fit="cover"] .icon-emoji { font-size: min(78cqw, 78cqh); }
+  /* --- Icon dá»± phÃ²ng khi áº£nh bá»‹ vá»¡: glyph trung tÃ­nh + tÃªn app --- */
+  .icon-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: 8%;
+  color: #8d9ab0;
+  background: linear-gradient(145deg, #1b1f2c, #10131c);
+  pointer-events: none;
+  }
+  .icon-fallback-glyph { width: 50%; height: auto; max-height: 56%; flex: none; }
+  .icon-fallback-name {
+  max-width: 100%;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #b4bfd1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  }
+  /* NÃºt icon nhá» cá»§a slider: chá»‰ hiá»‡n glyph (tÃªn app Ä‘Ã£ náº±m á»Ÿ hÃ ng tÃªn) */
+  .app-icon-btn .icon-fallback { padding: 18%; gap: 0; }
+  .app-icon-btn .icon-fallback-name { display: none; }
+  .app-deck-unit.is-mini .app-icon-btn .icon-fallback { padding: 10%; gap: 2px; }
+  .app-deck-unit.is-mini .app-icon-btn .icon-fallback-name { display: block; font-size: 12px; }
+  /* ÄÃ£ cÃ³ nhÃ£n chá»“ng lÃªn thÃ¬ khÃ´ng láº·p tÃªn app á»Ÿ icon dá»± phÃ²ng */
+  .grid-stack-item-content:has(.key-title) .icon-fallback-name { display: none; }
+  /* --- NHÃƒN (title) chá»“ng lÃªn icon, giá»‘ng Stream Deck ---
+   Vá»‹ trÃ­: data-pos = top | middle | bottom; cá»¡ chá»¯: --title-size; Ä‘á»• bÃ³ng: data-shadow="1". */
+  .key-title {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  z-index: 5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-align: center;
+  font-size: 14px;
+  font-size: var(--title-size, 14px);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: 0.01em;
+  color: rgba(240, 244, 250, 0.84);
+  word-break: break-word;
+  pointer-events: none;
+  }
+  .key-title[data-pos="top"]    { top: 8px; }
+  .key-title[data-pos="middle"] { top: 50%; transform: translateY(-50%); }
+  .key-title[data-pos="bottom"] { bottom: 8px; }
+  .key-title[data-shadow="1"] {
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.95),
+    0 0 6px rgba(0, 0, 0, 0.9),
+    0 2px 10px rgba(0, 0, 0, 0.7);
+  }
+  /* =====================================================================
+   FADER CAPSULE THá»NG NHáº¤T (dÃ¹ng cho Cáº¢ Ã¢m lÆ°á»£ng há»‡ thá»‘ng láº«n per-app).
+   ---------------------------------------------------------------------
+   - .volume-deck-unit: "mÃ n hÃ¬nh" LCD cá»§a phÃ­m Ã¢m lÆ°á»£ng há»‡ thá»‘ng; bá»‘ cá»¥c
+     dá»c gá»“m hÃ ng Ä‘áº§u (.volume-core) + thanh capsule (.volume-track).
+     HÃ¬nh khá»‘i/ná»n/viá»n láº¥y tá»« rule LCD dÃ¹ng chung á»Ÿ cuá»‘i file.
+   - .volume-fill : lá»›p tiáº¿n Ä‘á»™ bÃªn trong capsule, rá»™ng theo --fill-percent,
+     gradient cyan #00C6FF -> #0072FF, "nÃºm" sÃ¡ng á»Ÿ mÃ©p fill.
+   - --fill-percent (0..100): JS ghi trá»±c tiáº¿p khi vuá»‘t (throttle 20ms).
+   - data-orient="v" (Ã´ CAO hÆ¡n rá»™ng): capsule chuyá»ƒn Dá»ŒC, fill tá»« ÄÃY.
+   ===================================================================== */
+  .volume-deck-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 8px;
+  gap: min(5cqw, 4cqh);
+  padding: 10px 14px;
+  padding: var(--widget-pad-compact) var(--widget-pad);
+  container-type: size;
+  cursor: pointer;
+  touch-action: none;
+  z-index: 2;
+  }
+  /* Thanh CAPSULE cá»§a Ã´ Ã¢m lÆ°á»£ng há»‡ thá»‘ng: bo trÃ²n 999px, lÃ²ng tá»‘i + viá»n máº£nh.
+   Chiá»u cao khá»›p .app-track -> hai loáº¡i fader nhÃ¬n nhÆ° Má»˜T thÃ nh pháº§n. */

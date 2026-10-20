@@ -1,0 +1,23 @@
+export const DEFAULT_WIDGETS = [
+  { x: 0, y: 0, w: 1, h: 1, icon: 'youtube', type: 'open_url', target: 'https://youtube.com' },
+  { x: 1, y: 0, w: 1, h: 1, icon: '🧰', type: 'launch_app', target: 'taskmgr' },
+  { x: 2, y: 0, w: 2, h: 1, icon: '🔊', type: 'volume_slider', target: '50' },
+  { x: 4, y: 0, w: 1, h: 1, icon: '📝', type: 'launch_app', target: 'notepad' },
+  { x: 5, y: 0, w: 2, h: 2, icon: '📊', type: 'launch_app', target: 'resmon' },
+  { x: 0, y: 1, w: 2, h: 2, icon: '🍅', type: 'pomodoro', target: '25,5' },
+  { x: 0, y: 3, w: 2, h: 1, icon: '🔊', type: 'app_slider', target: '' },
+  {
+    x: 2, y: 1, w: 1, h: 1, icon: '🕐', type: 'mini_clock', target: 'digital,7',
+    cfg: { face: 'digital', tz: 7, label: 'HÀ NỘI' },
+  },
+  {
+    x: 4, y: 3, w: 2, h: 2, icon: '🕰️', type: 'mini_clock', target: 'analog,7',
+    cfg: { face: 'analog', tz: 7, label: 'HÀ NỘI' },
+  },
+  {
+    x: 0, y: 4, w: 3, h: 1, icon: '🌤️', type: 'weather_widget', target: '10.9804,106.6519',
+    cfg: { lat: 10.9804, lon: 106.6519, city: 'THỦ DẦU MỘT', skin: 'soft' },
+  },
+  { x: 7, y: 0, w: 1, h: 1, icon: '⏻', type: 'shutdown_widget', target: '' },
+  { x: 7, y: 4, w: 1, h: 1, icon: '🎙️', type: 'mic_widget', target: 'mic' },
+];

@@ -1,0 +1,425 @@
+  .clock-unit {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 8px;
+  overflow: hidden;
+  container-type: size;   /* báº­t Ä‘Æ¡n vá»‹ cqw/cqh cho cÃ¡c pháº§n tá»­ con */
+  z-index: 2;
+  }
+  /* Quáº§ng sÃ¡ng phÃ­a sau sá»‘/kim: mÃ n hÃ¬nh "phÃ¡t sÃ¡ng" thay vÃ¬ pháº³ng */
+  .clock-unit::before {
+  content: "";
+  position: absolute;
+  left: -14%;
+  right: -14%;
+  top: -28%;
+  height: 120%;
+  background: radial-gradient(58% 55% at 50% 45%,
+    rgba(0, 229, 255, 0.14) 0%, rgba(0, 229, 255, 0.06) 38%, rgba(0, 229, 255, 0) 74%);
+  pointer-events: none;
+  }
+  .clock-unit > * { position: relative; z-index: 1; }
+  .clock-label {
+  font-size: 9px;
+  font-size: min(5.4cqw, 9.4cqh);
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #6d7a90;
+  text-align: center;
+  line-height: 1;
+  max-width: 96%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  }
+  /* Máº·t sá»‘ analog á»Ÿ Ã´ 1x1: nhÆ°á»ng chá»— cho máº·t sá»‘ -> áº©n nhÃ£n */
+  .keycap-clock-analog.is-mini .clock-label { display: none; }
+  /* --- (a) DIGITAL: giá» hero (TRáº®NG TUYáº¾T, mono) + ngÃ y á»Ÿ gÃ³c + chip giÃ¢y --- */
+  .keycap-clock-digital { color: #f4f8ff; }
+  .clock-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  padding: 0 2px;
+  line-height: 1;
+  color: #7d879b;
+  font-size: 9px;
+  font-size: min(6cqw, 10cqh);
+  }
+  .keycap-clock-digital.is-mini .clock-top { font-size: 10px; font-size: 8cqw; }
+    .keycap-clock-digital.is-mini { padding-top: 4px; }
+  .keycap-clock-digital.is-big .clock-top { font-size: 15px; font-size: 6.4cqw; }
+  .clock-date {
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(195, 210, 230, 0.9);
+  }
+  .clock-secs-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42em;
+  padding: 0.24em 0.62em;
+  border-radius: 999px;
+  background: rgba(0, 229, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(0, 229, 255, 0.16), 0 0 12px rgba(0, 229, 255, 0.08);
+  color: #8ef2ff;
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  /* LÃ m dá»‹u chip giÃ¢y: giá» hero váº«n lÃ  Ä‘iá»ƒm nháº¥n sá»‘ 1 trÃªn Ã´ */
+  opacity: 0.75;
+  }
+  /* Cháº¥m nháº¥p nhÃ¡y trong chip giÃ¢y (nhá»‹p 1 giÃ¢y) */
+  .clock-pulse {
+  width: 0.42em;
+  height: 0.42em;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  animation: clockPulse 1s ease-in-out infinite;
+  }
+  @keyframes clockPulse {
+  0%, 100% { opacity: 0.25; transform: scale(0.78); }
+  50% { opacity: 1; transform: scale(1); }
+  }
+  .clock-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  line-height: 1;
+  }
+  .clock-time {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: #f3f8ff;
+  filter: drop-shadow(0 0 10px rgba(129, 208, 255, 0.18))
+          drop-shadow(0 0 22px rgba(190, 214, 240, 0.18));
+  font-size: 60px;
+  font-size: 21cqw;
+  }
+  /* Chá»¯ hero: gradient tráº¯ng -> tráº¯ng xanh ráº¥t nháº¡t (giá»¯ tÃ´ng "tráº¯ng tuyáº¿t").
+   Chá»‰ báº­t khi trÃ¬nh duyá»‡t há»— trá»£ background-clip:text. */
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+  .clock-time {
+    background: linear-gradient(180deg, #ffffff 0%, #f2f8ff 52%, #cfe4f7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  }
+  .keycap-clock-digital.is-mini .clock-time { font-size: 34px; font-size: 27cqw; }
+  .keycap-clock-digital.is-big .clock-time { font-size: 84px; font-size: 29cqw; }
+  .clock-bar {
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  }
+  .keycap-clock-digital.is-big .clock-bar { height: 5px; }
+  .clock-bar-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(0, 229, 255, 0.35), var(--accent));
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.75);
+  }
+  /* Chá»‰ báº­t transition SAU khung hÃ¬nh Ä‘áº§u (thanh quÃ©t khÃ´ng "cháº¡y khá»Ÿi Ä‘á»™ng") */
+  .keycap-clock-digital.is-animating .clock-bar-fill { transition: width 1s linear; }
+  /* --- (b) ANALOG: máº·t sá»‘ watch-face (vÃ nh, váº¡ch, sá»‘, cung giÃ¢y, 3 kim) --- */
+  .keycap-clock-analog { padding: 7px 7px 5px; }
+  .clock-bezel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  }
+  .clock-wide-meta { display: none; }
+  .keycap-clock-analog.is-short .clock-bezel {
+  flex-direction: row;
+  gap: min(4cqw, 4cqh);
+  }
+  .keycap-clock-analog.is-short .clock-face {
+  flex: 0 0 min(88cqh, 44cqw);
+  width: min(88cqh, 44cqw);
+  height: 100%;
+  }
+  .keycap-clock-analog.is-short .clock-wide-meta {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  color: var(--text-soft);
+  font-family: var(--font-num);
+  font-size: max(10px, min(7cqw, 13cqh));
+  font-variant-numeric: tabular-nums;
+  }
+  .clock-wide-date { color: rgba(232, 241, 252, 0.92); font-weight: 700; white-space: nowrap; }
+  .clock-wide-zone { color: var(--accent); font-weight: 700; white-space: nowrap; }
+  .clock-face {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+  }
+  .clock-rim { fill: none; stroke: url(#clockRimGrad); stroke-width: 2.2; }
+  .clock-dial { fill: url(#clockDialGrad); stroke: rgba(255, 255, 255, 0.07); stroke-width: 0.6; }
+  .clock-glare { fill: url(#clockGlareGrad); }
+  /* 60 váº¡ch phÃºt + 12 váº¡ch giá»; 12/3/6/9 Ä‘áº­m neon */
+  .clock-tick {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 0.7;
+  stroke-linecap: round;
+  }
+  .clock-tick.is-major { stroke: rgba(255, 255, 255, 0.42); stroke-width: 1.5; }
+  .clock-tick.is-quarter {
+  stroke: var(--accent);
+  stroke-width: 1.9;
+  filter: drop-shadow(0 0 2.4px rgba(0, 229, 255, 0.85));
+  }
+  /* Sá»‘ 12 / 3 / 6 / 9 trÃªn máº·t sá»‘ */
+  .clock-num {
+  fill: rgba(233, 246, 255, 0.8);
+  font-family: var(--font-num);
+  font-size: 10.5px;
+  font-weight: 800;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  }
+  /* Cung giÃ¢y cháº¡y quanh vÃ nh: 1 vÃ²ng Ä‘áº§y = 1 phÃºt (JS ghi --sec-offset) */
+  .clock-arc-track {
+  fill: none;
+  stroke: rgba(0, 229, 255, 0.13);
+  stroke-width: 1.1;
+  stroke-dasharray: 286.51;    /* 2 * pi * 45.6 */
+  }
+  .clock-arc {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-dasharray: 286.51;
+  /* JS ghi --sec-offset (0..286.51) Ä‘á»ƒ cung cháº¡y Ä‘Ãºng tiáº¿n Ä‘á»™ trong phÃºt */
+  stroke-dashoffset: var(--sec-offset, 286.51);
+  filter: drop-shadow(0 0 3px rgba(0, 229, 255, 0.9));
+  }
+  /* Kim: xoay quanh tÃ¢m (50,50) theo biáº¿n --angle do JS ghi vÃ o */
+  .clock-hand {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transform: rotate(var(--angle, 0deg));
+  }
+  /* Chá»‰ báº­t transition SAU khung hÃ¬nh Ä‘áº§u Ä‘á»ƒ kim khÃ´ng "quay khá»Ÿi Ä‘á»™ng" */
+  .keycap-clock-analog.is-animating .clock-hand { transition: transform 0.1s linear; }
+  .hand-hour { fill: #eaf6ff; filter: drop-shadow(0 0 3px rgba(234, 246, 255, 0.45)); }
+  .hand-minute { fill: #bfeaff; filter: drop-shadow(0 0 3.5px rgba(0, 229, 255, 0.5)); }
+  /* Kim giÃ¢y Ä‘á» neon + Ä‘á»‘i trá»ng â€” Ä‘iá»ƒm nháº¥n cá»§a máº·t sá»‘ */
+  .hand-second {
+  stroke: #ff4d6d;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 5px rgba(255, 77, 109, 0.85));
+  }
+  .hand-second circle { fill: #ff4d6d; stroke: none; }
+  /* Cá»­a sá»• ngÃ y trÃªn máº·t sá»‘ */
+  .clock-date-mini {
+  fill: var(--accent);
+  font-family: var(--font-num);
+  font-size: 6.4px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  }
+  .clock-center-cap { fill: #0a1120; stroke: rgba(0, 229, 255, 0.45); stroke-width: 0.8; }
+  .clock-center-dot { fill: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
+  /* ---------------------------------------------------------------------
+   (c) THáºº Láº¬T (flip) 24 GIá»œ: 4 táº¥m HH MM, má»—i táº¥m 2 ná»­a TÄ¨NH + 2 LÃ Láº¬T
+   - Máº·t 24 GIá»œ (0h..23h) nÃªn KHÃ”NG cÃ³ nhÃ£n AM/PM: 4 táº¥m sá»‘ lÃ  toÃ n bá»™
+     ná»™i dung nhÃ¬n tháº¥y, khÃ´ng chá»¯ nÃ o chen vÃ o.
+   - Ã” khuyáº¿n nghá»‹ 2x1. Má»—i .flip-card Tá»° lÃ  container (container-type:
+     size) nÃªn sá»‘ Ä‘o theo CHÃNH bá» ngang táº¥m -> 4 táº¥m luÃ´n Ä‘á»u nhau á»Ÿ
+     má»i cá»¡ Ã´ (1x1 / 2x1 / 3x1 / 2x2), khÃ´ng phá»¥ thuá»™c bá» ngang cáº£ Ã´.
+   --------------------------------------------------------------------- */
+  .keycap-clock-flip {
+  --flip-ink: #f4f8ff;         /* mÃ u sá»‘ (ná»­a tÄ©nh + lÃ¡ láº­t) */
+  --flip-gap: 4px;             /* khe giá»¯a 4 táº¥m (dáº¥u hai cháº¥m cÃ³ khe riÃªng) */
+  gap: 2px;
+  padding: 6px 6px 4px;
+  }
+  .flip-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--flip-gap);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  perspective: 260px;          /* chiá»u sÃ¢u cho lÃ¡ láº­t rotateX */
+  }
+  .flip-card {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  border-radius: 7px;
+  background: #0b0e15;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+              0 2px 6px rgba(0, 0, 0, 0.55);
+  container-type: size;        /* sá»‘ bÃªn trong Ä‘o theo bá» ngang Táº¤M */
+  transform-style: preserve-3d;
+  overflow: hidden;
+  }
+  .flip-card::after {
+  content: "";
+  position: absolute;
+  z-index: 5;
+  top: calc(50% - 0.5px);
+  left: 0;
+  right: 0;
+  height: 1px;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.85), 0 -1px 0 rgba(255, 255, 255, 0.04);
+  }
+  /* Dáº¥u hai cháº¥m giá»¯a giá» vÃ  phÃºt: 2 cháº¥m trÃ²n, KHÃ”NG pháº£i chá»¯ */
+  .flip-colon {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: min(18cqw, 12cqh);
+  height: 100%;
+  padding: 0 min(4cqw, 5cqh);
+  }
+  .flip-colon i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--flip-ink);
+  opacity: 0.55;
+  }
+  /* 2 ná»­a TÄ¨NH (.flip-half) + 2 LÃ Láº¬T (.flip-fold) Ä‘á»u chiáº¿m ná»­a táº¥m; má»—i
+   khá»‘i cáº¯t 1 ná»­a con sá»‘ (sá»‘ cao gáº¥p Ä‘Ã´i ná»­a táº¥m -> xem .flip-digit). */
+  .flip-half,
+  .flip-fold {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  overflow: hidden;
+  backface-visibility: hidden;
+  }
+  .flip-top,
+  .flip-fold-top {
+  top: 0;
+  border-radius: 7px 7px 0 0;
+  background: linear-gradient(180deg, #202634 0%, #141a26 100%);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.7);
+  }
+  .flip-bottom,
+  .flip-fold-bottom {
+  bottom: 0;
+  border-radius: 0 0 7px 7px;
+  background: linear-gradient(180deg, #0f141d 0%, #05070b 100%);
+  }
+  /* LÃ¡ láº­t lÃºc NGHá»ˆ náº±m vuÃ´ng gÃ³c (khuáº¥t) -> chá»‰ tháº¥y 2 ná»­a tÄ©nh. */
+  .flip-fold-top {
+  transform: rotateX(-90deg);
+  transform-origin: 50% 100%;
+  z-index: 3;
+  }
+  .flip-fold-bottom {
+  transform: rotateX(90deg);
+  transform-origin: 50% 0%;
+  z-index: 4;
+  }
+  .flip-digit {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 200%;                /* gáº¥p Ä‘Ã´i ná»­a táº¥m -> sá»‘ náº±m Ä‘Ãºng tÃ¢m táº¥m */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--flip-ink);
+  text-shadow: 0 0 10px rgba(190, 214, 240, 0.22);
+  font-size: min(150cqw, 92cqh);
+  }
+  /* Ná»­a TRÃŠN láº¥y pháº§n trÃªn cá»§a sá»‘, ná»­a DÆ¯á»šI láº¥y pháº§n dÆ°á»›i (khá»›p á»Ÿ khe giá»¯a) */
+  .flip-top > .flip-digit,
+  .flip-fold-top > .flip-digit { top: 0; }
+  .flip-bottom > .flip-digit,
+  .flip-fold-bottom > .flip-digit { bottom: 0; }
+  /* 2 NHá»ŠP Láº¬T: lÃ¡ TRÃŠN láº­t xuá»‘ng (0-300ms) Rá»’I lÃ¡ DÆ¯á»šI Ä‘Ã¡p xuá»‘ng (300-600ms).
+   JS gá»¡ .is-flipping khi animationend cá»§a lÃ¡ dÆ°á»›i -> animation cháº¡y láº¡i. */
+  .flip-card.is-flipping > .flip-fold-top {
+  animation: flipFoldTop 300ms ease-in;
+  }
+  .flip-card.is-flipping > .flip-fold-bottom {
+  animation: flipFoldBottom 300ms ease-out 300ms;
+  }
+  @keyframes flipFoldTop {
+  0% { transform: rotateX(0deg); }
+  100% { transform: rotateX(-90deg); }
+  }
+  @keyframes flipFoldBottom {
+  0% { transform: rotateX(90deg); }
+  100% { transform: rotateX(0deg); }
+  }
+  /* Cá»¡ Ã´: 1x1 (is-mini) bá» dáº¥u hai cháº¥m cho 4 táº¥m rá»™ng ra; Ã´ rá»™ng (is-short/
+   is-big) ná»›i khe giá»¯a cÃ¡c táº¥m cho thoÃ¡ng. */
+  .keycap-clock-flip.is-mini { --flip-gap: 2px; padding: 4px; }
+  .keycap-clock-flip.is-mini .flip-colon { display: none; }
+  .keycap-clock-flip.is-mini .flip-card { border-radius: 4px; }
+  .keycap-clock-flip.is-short { --flip-gap: 6px; }
+  .keycap-clock-flip.is-big { --flip-gap: 8px; padding: 8px; }
+  /* =====================================================================
+   PHÃM THá»œI TIáº¾T (weather_widget) â€” 3x1 Máº¶C Äá»ŠNH, CO THEO Cá»  Ã”
+   ---------------------------------------------------------------------
+   2 SKIN (data-skin, chá»n trong modal "CÃ i Äáº·t PhÃ­m Báº¥m"):
+     Â· soft (MÃ€U Dá»ŠU â€” máº·c Ä‘á»‹nh): ná»n GRADIENT full-bleed Ä‘á»•i theo tráº¡ng
+       thÃ¡i trá»i (data-tint) + ngÃ y/Ä‘Ãªm (data-night="1" -> tÃ­m navy); má»™t
+       lá»›p scrim tá»‘i 30% phá»§ trÃªn gradient -> "lÃ m dá»‹u 30% Ä‘á»™ chÃ³i".
+     Â· flat (PHáº²NG): ná»n #111317; mÃ u CHá»ˆ cÃ²n á»Ÿ cá»¥m minh hoáº¡ SVG.
+   Bá» Cá»¤C â€” 4 vÃ¹ng trong .wx-body:
+     [.weather-hero: tÃ¬nh tráº¡ng trá»i + nhiá»‡t Ä‘á»™ Lá»šN] | [.wx-divider 1px/60%]
+     | [.wx-meta: "T5, 08/10" + ðŸ“tÃªn TP (+ giÃ³/Ä‘á»™ áº©m á»Ÿ Ã´ 2x2)]
+     | [.wx-art: minh hoáº¡ SVG trÃ n mÃ©p pháº£i ~15%]
+     Â· 3x1 (is-short.is-wide3): Ä‘á»§ 4 cá»™t;
+     Â· 2x1 (is-short): bá» váº¡ch ngÄƒn, ngÃ y + TP gom 1 dÃ²ng nhá» DÆ¯á»šI sá»‘ Â°C;
+     Â· 2x2 (is-big): minh hoáº¡ Lá»šN phÃ­a trÃªn, dÆ°á»›i lÃ  Â°C + text + giÃ³/Ä‘á»™ áº©m;
+     Â· 1x1 (is-mini): chá»‰ minh hoáº¡ thu nhá» + sá»‘ Â°C.
+   Cá»¡ chá»¯/icon dÃ¹ng cqw/cqh nÃªn cÃ¢n Ä‘á»‘i á»Ÿ má»i cá»¡ Ã´.
+   ===================================================================== */

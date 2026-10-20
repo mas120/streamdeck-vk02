@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Debug Console</title>
+  <style>
+    body { background: #1e1e1e; color: #d4d4d4; font-family: 'Consolas', monospace; padding: 20px; }
+    button { padding: 10px 20px; margin: 5px; font-size: 14px; cursor: pointer; }
+    pre { background: #2d2d2d; padding: 15px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; }
+    .error { color: #f48771; }
+    .success { color: #4ec9b0; }
+    .warning { color: #dcdcaa; }
+  </style>
+</head>
+<body>
+  <h1>Stream Deck Debug Console</h1>
+  <button onclick="runDebug()">Run Full Debug</button>
+  <button onclick="clearOutput()">Clear</button>
+  <button onclick="forceCreateWidget()">Force Create Test Widget</button>
+  <button onclick="checkConsole()">Check Browser Console</button>
+  <pre id="output"></pre>
+  
+  <script>
+    const output = document.getElementById('output');
+    const log = (msg, type = '') => {
+      const line = document.createElement('div');
+      line.className = type;
+      line.textContent = msg;
+      output.appendChild(line);
+    };
+    
+    const clearOutput = () => { output.innerHTML = ''; };
+    
+    const runDebug = async () => {
+      clearOutput();
+      log('=== STREAM DECK FULL DEBUG ===', 'success');
+      
+      try {
+        const response = await fetch('http://localhost:1420');
+        const html = await response.text();
+        log(`✓ Server responding (${html.length} bytes)`);
+      } catch (err) {
+        log(`✗ Server not responding: ${err.message}`, 'error');
+        return;
+      }
+      
+      // Open the app in new window to debug
+      const win = window.open('http://localhost:1420', 'streamdeck', 'width=1280,height=800');
+      
+      setTimeout(() => {
+        try {
+          const doc = win.document;
+          const w = win;
+          
+          log('\n--- CHECKING GLOBALS ---');
+          log(`GridStack: ${typeof w.GridStack}`);
+          log(`grid: ${typeof w.grid}`);
+          log(`createWidgetEl: ${typeof w.createWidgetEl}`);
+          log(`defaultWidgets: ${typeof w.defaultWidgets}`);
+          
+          if (w.grid) {
+            log(`\n--- GRID INFO ---`);
+            log(`Grid engine nodes: ${w.grid.engine.nodes.length}`);
+            log(`Grid opts: ${JSON.stringify(w.grid.opts, null, 2)}`);
+          }
+          
+          log(`\n--- DOM INFO ---`);
+          log(`GridStack container: ${!!doc.querySelector('.grid-stack')}`);
+          log(`Grid items in DOM: ${doc.querySelectorAll('.grid-stack-item').length}`);
+          log(`Backdrop slots: ${doc.querySelectorAll('.slot-cell').length}`);
+          
+          log(`\n--- STORAGE ---`);
+          const storage = w.localStorage.getItem('STREAMDECK_VK02_LAYOUT');
+          log(`localStorage: ${storage ? storage.substring(0, 100) : 'null'}`);
+          
+          log(`\n--- CONSOLE LOGS ---`, 'warning');
+          log('Check the opened window console for errors!');
+          
+          // Try manual widget creation
+          if (typeof w.createWidgetEl === 'function' && w.grid) {
+            log(`\n--- MANUAL TEST ---`);
+            try {
+              w.createWidgetEl({ x: 0, y: 0, w: 1, h: 1, icon: "🔴", type: "open_url", target: "test" });
+              log(`✓ Manual widget created!`, 'success');
+              log(`DOM items after: ${doc.querySelectorAll('.grid-stack-item').length}`);
+            } catch (err) {
+              log(`✗ Failed: ${err.message}`, 'error');
+              log(`Stack: ${err.stack}`, 'error');
+            }
+          }
+          
+        } catch (err) {
+          log(`\n✗ DEBUG ERROR: ${err.message}`, 'error');
+        }
+      }, 3000);
+      
+      log('\nWaiting 3 seconds for app to load...');
+    };
+    
+    const forceCreateWidget = async () => {
+      const win = window.open('http://localhost:1420', 'streamdeck');
+      setTimeout(() => {
+        if (win && win.createWidgetEl && win.grid) {
+          clearOutput();
+          log('Creating test widget...', 'warning');
+          try {
+            win.createWidgetEl({ x: 3, y: 2, w: 1, h: 1, icon: "⚡", type: "open_url", target: "test" });
+            log('✓ Widget created!', 'success');
+          } catch (err) {
+            log(`✗ Error: ${err.message}`, 'error');
+          }
+        }
+      }, 2000);
+    };
+    
+    const checkConsole = () => {
+      clearOutput();
+      log('Open the Stream Deck window and check:', 'warning');
+      log('1. Press F12 to open DevTools');
+      log('2. Go to Console tab');
+      log('3. Look for red errors or yellow warnings');
+      log('4. Copy and paste any errors here');
+    };
+  </script>
+</body>
+</html>

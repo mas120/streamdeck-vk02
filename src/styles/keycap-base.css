@@ -1,0 +1,396 @@
+  .pomodoro-unit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  container-type: size;   /* báº­t cqw/cqh cho sá»‘ giá» + glyph */
+  color: var(--pomo-work);   /* pha LÃ€M VIá»†C (Ä‘á» cam) */
+  z-index: 2;
+  }
+  .pomodoro-unit[data-mode="break"] { color: var(--pomo-break); }   /* pha NGHá»ˆ */
+  .pomodoro-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88%;
+  height: 88%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  overflow: visible;
+  }
+  .timer-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 6;
+  }
+  .timer-progress {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s linear, opacity 0.4s ease, filter 0.4s ease;
+  }
+  .timer-progress.work  { filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 15px rgba(255, 90, 77, 0.5)); }
+  .timer-progress.break { filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 15px rgba(70, 217, 119, 0.5)); }
+  /* Cháº¥m sÃ¡ng á»Ÿ Ä‘áº§u cung: cÃ²n bao nhiÃªu thá»i gian = nhÃ¬n 1 cÃ¡i lÃ  biáº¿t */
+  .timer-head {
+  fill: #ffffff;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transform: rotate(calc(var(--pomo-ratio, 1) * 360deg));
+  transition: transform 0.3s linear;
+  filter: drop-shadow(0 0 3px currentColor) drop-shadow(0 0 7px currentColor);
+  }
+  .pomodoro-center {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  gap: min(2cqw, 1.2cqh);
+  text-align: center;
+  padding: 6px;
+  pointer-events: none;
+  }
+  .timer-time {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  font-size: 32px;                /* sá»‘ mm:ss hero á»Ÿ Ã´ 2x2 */
+  font-size: min(17cqw, 22cqh);   /* 1x1 / 2x1 / 2x2 Ä‘á»u lá»t lÃ²ng vÃ²ng LED */
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: #fff;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+  /* Sá»‘ giá» Äƒn mÃ u pha -> nháº­n ra LÃ€M VIá»†C / NGHá»ˆ NGAY, khÃ´ng cáº§n Ä‘á»c chá»¯ */
+  .pomodoro-unit[data-mode="work"] .timer-time {
+  color: #ffe2de;
+  text-shadow: 0 0 14px rgba(255, 90, 77, 0.8);
+  }
+  .pomodoro-unit[data-mode="break"] .timer-time {
+  color: #d8ffe4;
+  text-shadow: 0 0 14px rgba(70, 217, 119, 0.8);
+  }
+  /* Glyph tráº¡ng thÃ¡i: â–¶ Ä‘ang cháº¡y Â· âšâš táº¡m dá»«ng Â· â–¶ má» nhÃ¡y khi chá» cháº¡m */
+  .pomodoro-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  width: min(7.4cqw, 9cqh);
+  height: min(7.4cqw, 9cqh);
+  color: #ffffff;
+  transition: color 0.3s ease, opacity 0.3s ease;
+  }
+  .pomo-glyph { width: 100%; height: 100%; fill: currentColor; }
+  .pomodoro-mark .glyph-pause { display: none; }
+  .pomodoro-unit[data-state="paused"] .glyph-play { display: none; }
+  .pomodoro-unit[data-state="paused"] .glyph-pause { display: block; }
+  /* Ã” 1x1: bá» glyph tráº¡ng thÃ¡i -> nhÆ°á»ng trá»n diá»‡n tÃ­ch cho sá»‘ mm:ss + vÃ²ng LED
+   (tráº¡ng thÃ¡i váº«n Ä‘á»c Ä‘Æ°á»£c qua mÃ u vÃ²ng + animation thá»Ÿ). */
+  .pomodoro-unit.is-mini .pomodoro-mark { display: none; }
+  .pomodoro-unit[data-state="idle"] .pomodoro-mark { opacity: 0.42; animation: pomoReady 2.2s ease-in-out infinite; }
+  .pomodoro-unit[data-state="idle"] .timer-progress { opacity: 0.55; }
+  .pomodoro-unit[data-state="running"] .pomodoro-mark { opacity: 0.95; }
+  .pomodoro-unit[data-state="running"] .timer-progress { animation: pomoBreathe 2.6s ease-in-out infinite; }
+  .pomodoro-unit[data-state="running"] .timer-head { animation: pomoBreathe 2.6s ease-in-out infinite; }
+  .pomodoro-unit[data-state="paused"] .pomodoro-mark { color: var(--warn); }
+  .pomodoro-unit[data-state="paused"] .timer-progress,
+  .pomodoro-unit[data-state="paused"] .timer-head { opacity: 0.4; }
+  /* Nhá»‹p "thá»Ÿ" ráº¥t nháº¹: máº¯t nháº­n ra Ä‘á»“ng há»“ ÄANG cháº¡y mÃ  khÃ´ng gÃ¢y nhiá»…u */
+  @keyframes pomoBreathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.68; } }
+  @keyframes pomoReady { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.85; } }
+  /* TÃ´n trá»ng cÃ i Ä‘áº·t giáº£m chuyá»ƒn Ä‘á»™ng cá»§a há»‡ Ä‘iá»u hÃ nh */
+  @media (prefers-reduced-motion: reduce) {
+  .pomodoro-unit .timer-progress,
+  .pomodoro-unit .timer-head,
+  .pomodoro-unit .pomodoro-mark { animation: none !important; }
+  }
+  /* Chá»›p nhÃ¡y viá»n LED ~1.5s khi háº¿t giá» */
+  .grid-stack-item-content.pomo-finish .pomodoro-unit {
+  animation: pomoFinishBlink 1.5s ease-in-out;
+  }
+  @keyframes pomoFinishBlink {
+  0%, 100% {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+                inset 0 3px 14px rgba(0, 0, 0, 0.9);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    box-shadow: inset 0 0 0 3px #FF3B30, 0 0 26px rgba(255, 59, 48, 0.85);
+  }
+  20%, 40%, 60%, 80% {
+    box-shadow: inset 0 0 0 3px #34C759, 0 0 26px rgba(52, 199, 89, 0.85);
+  }
+  }
+  /* DÃ²ng gá»£i Ã½ nhá» trong modal */
+  .modal-hint {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #8b949e;
+  font-weight: 600;
+  }
+  .modal-hint strong { color: var(--accent); }
+  /* NÃºt ná»•i "âœ“ Xong": chá»‰ hiá»‡n khi á»Ÿ Cháº¿ Ä‘á»™ Chá»‰nh sá»­a (thoÃ¡t nhanh) */
+  .edit-toolbar {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: rgba(0, 22, 28, 0.72);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 18px var(--accent-glow), 0 6px 16px rgba(0, 0, 0, 0.6);
+  }
+  .edit-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  }
+  .edit-toolbar-btn:active { transform: scale(0.94); }
+  body.edit-mode .edit-toolbar { display: flex; }
+  /* Vòng tiến trình long-press ô trống (vào Edit Mode) */
+  body:not(.edit-mode) .grid-stack { touch-action: none; }
+  .longpress-ring {
+  position: fixed;
+  width: 72px;
+  height: 72px;
+  margin: -36px 0 0 -36px;
+  pointer-events: none;
+  z-index: 1500;
+  }
+  .longpress-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .longpress-ring circle { fill: none; stroke-width: 4; }
+  .longpress-ring-track { stroke: rgba(255, 255, 255, 0.15); }
+  .longpress-ring-fill {
+  stroke: var(--accent);
+  stroke-linecap: round;
+  stroke-dasharray: var(--lp-circ);
+  stroke-dashoffset: var(--lp-circ);
+  animation: longpress-fill var(--lp-dur) linear forwards;
+  }
+  @keyframes longpress-fill { to { stroke-dashoffset: 0; } }
+  /* LÆ°á»›i ná»n rÃµ hÆ¡n khi á»Ÿ Edit Mode (dá»… canh vá»‹ trÃ­) */
+  body.edit-mode .slot-cell {
+  border-color: rgba(0, 229, 255, 0.2);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.85),
+              inset 0 0 0 1px rgba(0, 229, 255, 0.08);
+  }
+  /* Cháº¿ Ä‘á»™ CHáº Y: áº©n háº³n viá»n/lÃ²ng Ã´ trá»‘ng Ä‘á»ƒ deck trÃ´ng nhÆ° thiáº¿t bá»‹ tháº­t;
+   chá»‰ hiá»‡n lÆ°á»›i á»Ÿ Cháº¿ Ä‘á»™ Chá»‰nh sá»­a (dá»… canh vá»‹ trÃ­). */
+  .slot-cell { transition: opacity 0.2s ease; }
+  body:not(.edit-mode) .slot-cell { opacity: 0; }
+  /* Run Mode: con trá» "báº¥m Ä‘Æ°á»£c"; Edit Mode: con trá» "kÃ©o Ä‘Æ°á»£c" */
+  body:not(.edit-mode) .grid-stack-item-content { cursor: pointer; }
+  body.edit-mode .grid-stack-item-content { cursor: pointer; }
+  .undo-toast {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1200;
+  display: none;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: rgba(0, 22, 28, 0.9);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: #e6edf3;
+  font-size: 13px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+  }
+  body.edit-mode .undo-toast { display: flex; }
+  .undo-toast button {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 4px 8px;
+  }
+  /* Edit Mode: widget thanh mot khoi tinh, chi tile cha nhan tap */
+  body.edit-mode .grid-stack-item-content > * { pointer-events: none; }
+  .drag-handle, .btn-remove-tile {
+  display: none;
+  position: absolute;
+  top: 12px;
+  z-index: 5;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  background: rgba(0, 22, 28, 0.85);
+  color: var(--accent);
+  font-size: 14px;
+  line-height: 1;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  }
+  /* Hitbox 36x36 quanh nut 28px */
+  .drag-handle::after, .btn-remove-tile::after { content: ""; position: absolute; inset: -4px; }
+  .drag-handle { right: 12px; cursor: grab; }
+  .drag-handle svg { width: 16px; height: 16px; pointer-events: none; }
+  .btn-remove-tile { left: 12px; cursor: pointer; }
+  body.edit-mode .drag-handle, body.edit-mode .btn-remove-tile { display: flex; }
+  @keyframes edit-jiggle {
+  0%, 100% { transform: rotate(-0.6deg); }
+  50% { transform: rotate(0.6deg); }
+  }
+  body.edit-mode .grid-stack-item:not(.ui-draggable-dragging):not(.ui-resizable-resizing) .grid-stack-item-content {
+  animation: edit-jiggle 0.26s ease-in-out infinite;
+  }
+  body.edit-mode .grid-stack-item:nth-child(even):not(.ui-draggable-dragging) .grid-stack-item-content {
+  animation-direction: reverse;
+  animation-delay: -0.1s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+  body.edit-mode .grid-stack-item .grid-stack-item-content { animation: none; }
+  }
+  /* áº¨n tay cáº§m resize khi á»Ÿ Run Mode */
+  body:not(.edit-mode) .ui-resizable-handle { display: none !important; }
+  /* =====================================================================
+   HIá»†U á»¨NG PHÃM 3D: NHáº¤N / RIPPLE / STATUS RING
+   ===================================================================== */
+  /* 1. Nháº¥n phÃ­m: lÃºn xuá»‘ng + nÃ©n bÃ³ng + sÃ¡ng viá»n LED (pháº£n há»“i tá»©c thÃ¬)
+   Hiá»‡u á»©ng cÆ¡ há»c chuáº©n: --press-transform + bÃ³ng lÃµm --press-shadow. */
+  .grid-stack-item-content.keycap-pressed,
+  body:not(.edit-mode) .grid-stack-item-content:active {
+  transform: var(--press-transform);
+  border-color: var(--accent) !important;
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.7),
+    0 0 18px var(--accent-glow),
+    inset 0 3px 8px rgba(0, 0, 0, 0.8) !important;
+  transition: transform 0.05s ease, box-shadow 0.05s ease,
+              border-color 0.05s ease;
+  }
+  /* 2. Ripple: sÃ³ng neon quÃ©t tá»« tÃ¢m icon ra viá»n trong 120ms */
+  .key-ripple {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 160%;
+  height: 160%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+  transform: translate(-50%, -50%) scale(0.05);
+  background: radial-gradient(circle,
+    rgba(0, 229, 255, 0.65) 0%,
+    rgba(0, 229, 255, 0.28) 40%,
+    rgba(0, 229, 255, 0) 72%);
+  opacity: 0.95;
+  animation: keyRipple 120ms ease-out forwards;
+  }
+  @keyframes keyRipple {
+  from { transform: translate(-50%, -50%) scale(0.05); opacity: 0.95; }
+  to   { transform: translate(-50%, -50%) scale(1);    opacity: 0; }
+  }
+  /* 3. Status Ring: lá»›p viá»n chá»›p tráº¡ng thÃ¡i náº±m trÃªn cÃ¹ng */
+  .grid-stack-item-content::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-key);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 4;
+  }
+  .grid-stack-item-content.status-success::after {
+  animation: ringSuccess 300ms ease-out;
+  }
+  .grid-stack-item-content.status-error::after {
+  animation: ringError 400ms ease-out;
+  }
+  @keyframes ringSuccess {
+  0% {
+    opacity: 1;
+    box-shadow: inset 0 0 0 3px rgba(46, 204, 113, 0.95),
+                inset 0 0 16px rgba(46, 204, 113, 0.75);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: inset 0 0 0 3px rgba(46, 204, 113, 0),
+                inset 0 0 0 rgba(46, 204, 113, 0);
+  }
+  }
+  @keyframes ringError {
+  0% {
+    opacity: 1;
+    box-shadow: inset 0 0 0 3px rgba(255, 71, 87, 0.95),
+                inset 0 0 16px rgba(255, 71, 87, 0.75);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: inset 0 0 0 3px rgba(255, 71, 87, 0),
+                inset 0 0 0 rgba(255, 71, 87, 0);
+  }
+  }
+  /* =====================================================================
+   P1 â€” DIá»†N Máº O "STREAM DECK THáº¬T"
+   (1) MÃ n hÃ¬nh LCD cho má»—i phÃ­m   (2) bá»‡ liá»n khá»‘i + vignette
+   (3) mÃ n "sÃ¡ng lÃªn" khi báº¥m      (4) nháº£ lÃ² xo (spring) khi tháº£
+   (5) tá»± tá»‘i khi ráº£nh             (6) Ã´ "CÃ i Ä‘áº·t Deck" (Cháº¿ Ä‘á»™ Cháº¡y/Edit + Äá»™ sÃ¡ng)
+   "MÃ n hÃ¬nh" = lá»›p ná»™i dung cá»§a phÃ­m (icon, hoáº·c Ä‘Æ¡n vá»‹ slider).
+   ===================================================================== */
+  /* (2) Bá»‡ liá»n khá»‘i: viá»n nhÃ´m máº£nh + tá»‘i dáº§n vá» 4 gÃ³c */
+  .deck-viewport::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.055),
+    inset 0 0 32px rgba(0, 0, 0, 0.6);
+  }
+  .deck-viewport::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(135% 115% at 50% 45%,
+    rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.5) 100%);
+  }
+  /* =====================================================================
+   PHÃM Äá»’NG Há»’ (mini_clock) â€” thiáº¿t káº¿ "LCD + watch face"
+   ---------------------------------------------------------------------
+   MÃ n hÃ¬nh tháº­t theo lÆ°á»›i 8x5 (panel 1280x800): 1x1 -> ~128x128 px,
+   2x1 -> ~288x128 px, 2x2 -> ~288x288 px. VÃ¬ váº­y má»i cá»¡ chá»¯ dÃ¹ng Ä‘Æ¡n vá»‹
+   container query (cqw/cqh) + fallback px -> widget luÃ´n cÃ¢n Ä‘á»‘i á»Ÿ Má»ŒI
+   kÃ­ch thÆ°á»›c Ã´ mÃ  khÃ´ng cáº§n Ä‘o báº±ng JS.
+   - .keycap-clock-digital : giá» hero + chip giÃ¢y + thanh quÃ©t giÃ¢y + ngÃ y
+   - .keycap-clock-analog  : máº·t sá»‘ SVG (vÃ nh, 60 váº¡ch, sá»‘ 12/3/6/9, cung
+                             giÃ¢y cháº¡y quanh vÃ nh, 3 kim)
+   - .keycap-clock-flip    : 4 táº¥m THáºº Láº¬T HH MM máº·t 24 GIá»œ (khÃ´ng AM/PM)
+   ===================================================================== */
