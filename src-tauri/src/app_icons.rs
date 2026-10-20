@@ -111,7 +111,7 @@ fn write_pair(dir: &Path, stem: &str, img: &DynamicImage) -> Result<IconPair, St
 
 /// "notepad" / "\"C:\\...\\app.exe\" --x" / đường dẫn đầy đủ -> file thật trên đĩa.
 fn resolve_target(target: &str) -> Result<PathBuf, String> {
-    let (exe, _args) = crate::split_launch_target(target);
+    let (exe, _args) = crate::actions::split_launch_target(target);
     let direct = PathBuf::from(&exe);
     if direct.exists() {
         return Ok(direct);

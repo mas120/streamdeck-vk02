@@ -161,7 +161,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **Token**: ~20k.
 
 ### P2-3 · `actions.rs` + test `net`
-- [ ] **File**: `src-tauri/src/lib.rs`, `net.rs`, tạo `actions.rs`.
+- [x] **File**: `src-tauri/src/lib.rs`, `net.rs`, tạo `actions.rs`.
 - **Việc**: chuyển `trigger_action`, `split_launch_target`; thêm test `net::is_safe_web_url` (http/https hợp lệ, `javascript:`, `file:`, chuỗi rỗng).
 - **Done**: `cargo test`; `npm.cmd run check`.
 - **Token**: ~20k.
@@ -283,7 +283,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - [ ] P1-3 · Đo lại
 - [x] P2-1 · audio.rs
 - [x] P2-2 · windows_info.rs
-- [ ] P2-3 · actions.rs
+- [x] P2-3 · actions.rs
 - [ ] P2-4 · windows.rs
 - [ ] P3-1 · Lõi registry
 - [ ] P3-2 · Migrate 3 widget đơn giản

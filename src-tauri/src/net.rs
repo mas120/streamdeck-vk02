@@ -84,7 +84,10 @@ mod tests {
     #[test]
     fn is_safe_web_url_requires_http_scheme() {
         assert!(is_safe_web_url("https://a.com/?x=1&y=2"));
+        assert!(is_safe_web_url("http://a.com/"));
+        assert!(!is_safe_web_url("javascript:alert(1)"));
         assert!(!is_safe_web_url("file:///c:/windows"));
         assert!(!is_safe_web_url("https://a.com/\n"));
+        assert!(!is_safe_web_url(""));
     }
 }
