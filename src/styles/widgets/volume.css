@@ -28,8 +28,8 @@
   transition: width 0.06s linear;
   box-shadow: inset 0 0 12px rgba(130, 215, 255, 0.32), 0 0 14px rgba(102, 217, 255, 0.22);
   }
-  /* NÃºm (thumb) kiá»ƒu iOS á»Ÿ MÃ‰P fill: vá»«a lÃ  "váº¡ch má»©c", vá»«a lÃ  Ä‘iá»ƒm máº¯t bÃ¡m
-   theo khi vuá»‘t. CÃ¹ng ngÃ´n ngá»¯ vá»›i .app-fill::after. */
+  /* Núm (thumb) kiểu iOS ở MÉP fill: vừa là "vạch mức", vừa là điểm mắt bám
+   theo khi vuốt. Cùng ngôn ngữ với .app-fill::after. */
   .volume-fill::after {
   content: "";
   position: absolute;
@@ -41,7 +41,7 @@
   background: #eaf7ff;
   box-shadow: 0 0 10px var(--fill-glow), 0 0 22px var(--fill-glow);
   }
-  /* Ã” CAO (h > w): capsule chuyá»ƒn Dá»ŒC â€” fill dÃ¢ng tá»« ÄÃY, nÃºm á»Ÿ Äá»ˆNH fill */
+  /* Ô CAO (h > w): capsule chuyển DỌC — fill dâng từ ĐÁY, núm ở ĐỈNH fill */
   .volume-deck-unit[data-orient="v"] {
   flex-direction: row;
   align-items: center;
@@ -74,10 +74,10 @@
   width: auto;
   height: 8px;
   }
-  /* --- ÄANG VUá»T slider (cá» data-dragging do wireCapsuleDrag báº­t/táº¯t) --------
-   1. Bá» transition: fill bÃ¡m Ä‘Ãºng ngÃ³n tay, háº¿t cáº£m giÃ¡c "trá»… tay" (má»—i bÆ°á»›c
-      throttle 20ms trÆ°á»›c Ä‘Ã¢y cÃ²n bá»‹ trÆ°á»£t thÃªm 60ms).
-   2. "MÃ n hÃ¬nh" sÃ¡ng lÃªn + viá»n cyan: cÃ³ pháº£n há»“i ráº±ng thao tÃ¡c Ä‘ang sá»‘ng. */
+  /* --- ĐANG VUỐT slider (cờ data-dragging do wireCapsuleDrag bật/tắt) --------
+   1. Bỏ transition: fill bám đúng ngón tay, hết cảm giác "trễ tay" (mỗi bước
+      throttle 20ms trước đây còn bị trượt thêm 60ms).
+   2. "Màn hình" sáng lên + viền cyan: có phản hồi rằng thao tác đang sống. */
   .grid-stack-item[data-dragging="1"] .volume-fill,
   .grid-stack-item[data-dragging="1"] .app-fill {
   transition: none;
@@ -89,7 +89,7 @@
     inset 0 0 0 1px rgba(0, 229, 255, 0.45),
     inset 0 3px 14px rgba(0, 0, 0, 0.9);
   }
-  /* HÃ ng Ä‘áº§u: icon squircle (báº¥m = táº¯t/báº­t tiáº¿ng) + sá»‘ % */
+  /* Hàng đầu: icon squircle (bấm = tắt/bật tiếng) + số % */
   .volume-core {
   display: flex;
   align-items: center;
@@ -97,16 +97,16 @@
   gap: 8px;
   min-width: 0;
   }
-  /* Icon squircle cá»§a Ã´ Ã¢m lÆ°á»£ng dÃ¹ng CHUNG hÃ¬nh khá»‘i vá»›i .app-icon-btn
-   (nÃªn khÃ´ng tá»± Ä‘áº·t width/height Ä‘á»ƒ khá»i ghi Ä‘Ã¨) â€” chá»‰ giá»¯ vai trÃ² nÃºt. */
+  /* Icon squircle của ô âm lượng dùng CHUNG hình khối với .app-icon-btn
+   (nên không tự đặt width/height để khỏi ghi đè) — chỉ giữ vai trò nút. */
   .vol-icon {
   flex: 0 0 auto;
   padding: 0;
   cursor: pointer;
   touch-action: none;
   }
-  /* Tráº¡ng thÃ¡i Táº®T TIáº¾NG: icon viá»n Ä‘á» + má» (nhÆ° .app-icon-btn.muted),
-   track xÃ¡m vÃ  máº¥t nÃºm -> nháº­n ra ngay cáº£ khi Ä‘á»©ng xa panel. */
+  /* Trạng thái TẮT TIẾNG: icon viền đỏ + mờ (như .app-icon-btn.muted),
+   track xám và mất núm -> nhận ra ngay cả khi đứng xa panel. */
   .volume-deck-unit.is-muted .vol-number {
   color: #8b949e;
   text-shadow: none;
@@ -133,10 +133,10 @@
   text-shadow: 0 0 12px rgba(102, 217, 255, 0.18);
   pointer-events: none;
   }
-  /* ===== Slider Ã‚m lÆ°á»£ng PER-APP (Windows Core Audio) =====
-   Ã” >= 2x1: icon squircle (báº¥m = táº¯t/báº­t tiáº¿ng) + tÃªn app + sá»‘ % + thanh gáº¡t.
-   Ã” 1x1  : chá»‰ icon squircle 56px + sá»‘ % + CHáº¤M LED tráº¡ng thÃ¡i á»Ÿ Ä‘Ã¡y keycap.
-   ToÃ n bá»™ bá» máº·t Ã´ Ä‘á»u vuá»‘t Ä‘Æ°á»£c (xem wireCapsuleDrag trong main.js). */
+  /* ===== Slider Âm lượng PER-APP (Windows Core Audio) =====
+   Ô >= 2x1: icon squircle (bấm = tắt/bật tiếng) + tên app + số % + thanh gạt.
+   Ô 1x1  : chỉ icon squircle 56px + số % + CHẤM LED trạng thái ở đáy keycap.
+   Toàn bộ bề mặt ô đều vuốt được (xem wireCapsuleDrag trong main.js). */
   .app-deck-unit {
   position: relative;
   width: 100%;
@@ -156,9 +156,9 @@
   justify-content: space-between;
   gap: 8px;
   }
-  /* Icon app á»Ÿ Äáº¦U thanh trÆ°á»£t, báº¥m vÃ o Ä‘á»ƒ báº­t/táº¯t tiáº¿ng */
+  /* Icon app ở ĐẦU thanh trượt, bấm vào để bật/tắt tiếng */
   .app-icon-btn {
-  width: 40px;    /* vÃ¹ng cháº¡m >= 40px (trÆ°á»›c Ä‘Ã¢y 30px, khÃ³ báº¥m báº±ng ngÃ³n tay) */
+  width: 40px;    /* vùng chạm >= 40px (trước đây 30px, khó bấm bằng ngón tay) */
   height: 40px;
   flex: 0 0 auto;
   padding: 0;
@@ -176,8 +176,8 @@
   touch-action: none;
   -webkit-user-drag: none;
   }
-  /* Hiá»‡u á»©ng hover CHá»ˆ báº­t khi thiáº¿t bá»‹ tháº­t sá»± cÃ³ chuá»™t (hover: hover).
-   Panel cáº£m á»©ng khÃ´ng cÃ³ hover -> trÃ¡nh tráº¡ng thÃ¡i "dÃ­nh" sau khi cháº¡m. */
+  /* Hiệu ứng hover CHỈ bật khi thiết bị thật sự có chuột (hover: hover).
+   Panel cảm ứng không có hover -> tránh trạng thái "dính" sau khi chạm. */
   @media (hover: hover) and (pointer: fine) {
   .app-icon-btn:hover {
     border-color: var(--accent);
@@ -198,7 +198,7 @@
   font-size: 22px;
   pointer-events: none;
   }
-  /* TÃªn app / tÃªn web Ä‘ang phÃ¡t (suy ra tá»« tiÃªu Ä‘á» cá»­a sá»•) */
+  /* Tên app / tên web đang phát (suy ra từ tiêu đề cửa sổ) */
   .app-name {
   flex: 1 1 auto;
   min-width: 0;
@@ -211,7 +211,7 @@
   text-overflow: ellipsis;
   pointer-events: none;
   }
-  /* Tráº¡ng thÃ¡i Ä‘ang táº¯t tiáº¿ng: viá»n Ä‘á» + icon tá»‘i Ä‘i */
+  /* Trạng thái đang tắt tiếng: viền đỏ + icon tối đi */
   .app-icon-btn.muted {
   border-color: var(--danger);
   box-shadow: 0 0 14px rgba(255, 71, 87, 0.55), var(--key-bevel);
@@ -231,11 +231,11 @@
   color: #8b949e;
   text-shadow: none;
   }
-  /* Thanh CAPSULE per-app: cÃ¹ng hÃ¬nh khá»‘i + cÃ¹ng chiá»u cao vá»›i .volume-track
-   -> hai loáº¡i fader (há»‡ thá»‘ng / per-app) trÃ´ng nhÆ° Má»˜T thÃ nh pháº§n duy nháº¥t. */
+  /* Thanh CAPSULE per-app: cùng hình khối + cùng chiều cao với .volume-track
+   -> hai loại fader (hệ thống / per-app) trông như MỘT thành phần duy nhất. */
   .app-track {
   width: 100%;
-  height: min(26px, 20cqh);   /* pháº£i khá»›p .volume-track */
+  height: min(26px, 20cqh);   /* phải khớp .volume-track */
   background: linear-gradient(180deg, rgba(5, 8, 14, 0.9), rgba(16, 20, 28, 0.96));
   border: 1px solid var(--track-edge);
   border-radius: 999px;
@@ -257,7 +257,7 @@
   transition: width 0.05s linear;
   pointer-events: none;
   }
-  /* NÃºm á»Ÿ MÃ‰P fill â€” cÃ¹ng ngÃ´n ngá»¯ vá»›i .volume-fill::after */
+  /* Núm ở MÉP fill — cùng ngôn ngữ với .volume-fill::after */
   .app-fill::after {
   content: "";
   position: absolute;
@@ -274,10 +274,10 @@
   box-shadow: none;
   }
   .app-deck-unit.is-muted .app-fill::after { opacity: 0; }
-  /* Ã” per-app CHÆ¯A gáº¯n Ä‘Æ°á»£c app nÃ o (data-state="off"): lÃ m má» cáº£ khá»‘i Ä‘á»ƒ Ä‘á»c
-   ra "Ã´ nÃ y Ä‘ang trá»‘ng" thay vÃ¬ "Ã´ bá»‹ lá»—i/Ä‘ang táº£i". */
+  /* Ô per-app CHƯA gắn được app nào (data-state="off"): làm mờ cả khối để đọc
+   ra "ô này đang trống" thay vì "ô bị lỗi/đang tải". */
   .app-deck-unit[data-state="off"] .app-track { opacity: 0.2; }
-  /* Ã” trá»‘ng: bá» "--" vÃ´ nghÄ©a, thay báº±ng cÃ¢u gá»£i Ã½ (.app-hint) */
+  /* Ô trống: bỏ "--" vô nghĩa, thay bằng câu gợi ý (.app-hint) */
   .app-deck-unit[data-state="off"] .app-percent { display: none; }
   .app-hint {
   display: none;
@@ -298,8 +298,8 @@
   filter: grayscale(1) brightness(0.7);
   opacity: 0.7;
   }
-  /* --- CHáº¤M LED 4px á»Ÿ ÄÃY keycap: tráº¡ng thÃ¡i á»©ng dá»¥ng -------------------
-   active = app Ä‘ang phÃ¡t Â· muted = Ä‘ang táº¯t tiáº¿ng Â· idle/off = Ä‘á»©ng yÃªn */
+  /* --- CHẤM LED 4px ở ĐÁY keycap: trạng thái ứng dụng -------------------
+   active = app đang phát · muted = đang tắt tiếng · idle/off = đứng yên */
   .app-led {
   display: none;
   position: absolute;
@@ -325,7 +325,7 @@
   box-shadow: 0 0 8px currentColor;
   }
   .app-deck-unit[data-state="idle"] .app-led { color: #7a8399; background: currentColor; }
-  /* --- Ã” 1x1: icon squircle giá»¯a Ã´ + sá»‘ % + LED (áº©n tÃªn app & thanh gáº¡t) --- */
+  /* --- Ô 1x1: icon squircle giữa ô + số % + LED (ẩn tên app & thanh gạt) --- */
   .app-deck-unit.is-mini { padding: 8px; gap: 4px; }
   .app-deck-unit.is-mini .app-head { flex-direction: column; gap: 5px; }
   .app-deck-unit.is-mini .app-name,
@@ -344,11 +344,11 @@
   }
   .app-deck-unit.is-mini .app-led { display: block; }
   /* =====================================================================
-   PHÃM POMODORO / TIMER â€” GLANCEABLE: khÃ´ng cÃ¢u chá»¯, chá»‰ Sá» Lá»šN + MÃ€U pha
-   + glyph tráº¡ng thÃ¡i + Ä‘áº§u cung tiáº¿n Ä‘á»™ (Ä‘á»c hiá»ƒu trong < 200ms).
+   PHÍM POMODORO / TIMER — GLANCEABLE: không câu chữ, chỉ SỐ LỚN + MÀU pha
+   + glyph trạng thái + đầu cung tiến độ (đọc hiểu trong < 200ms).
    ---------------------------------------------------------------------
-   - PHA (LÃ€M VIá»†C / NGHá»ˆ): Ä‘á»•i MÃ€U á»Ÿ Ä‘Ãºng 1 chá»— (.pomodoro-unit color)
-     -> vÃ²ng LED + sá»‘ giá» + Ä‘áº§u cung Äƒn theo báº±ng currentColor.
-   - TRáº NG THÃI: running = â–¶ + vÃ²ng "thá»Ÿ"; paused = âšâš (vÃ²ng má»);
-     idle = â–¶ má» nhÃ¡y (má»i cháº¡m). NhÃ£n chá»¯ náº±m á»Ÿ .pomo-sr + tooltip.
+   - PHA (LÀM VIỆC / NGHỈ): đổi MÀU ở đúng 1 chỗ (.pomodoro-unit color)
+     -> vòng LED + số giờ + đầu cung ăn theo bằng currentColor.
+   - TRẠNG THÁI: running = ▶ + vòng "thở"; paused = ❚❚ (vòng mờ);
+     idle = ▶ mờ nháy (mời chạm). Nhãn chữ nằm ở .pomo-sr + tooltip.
    ===================================================================== */

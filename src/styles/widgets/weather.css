@@ -9,18 +9,18 @@
   overflow: hidden;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  container-type: size;      /* báº­t Ä‘Æ¡n vá»‹ cqw/cqh cho cÃ¡c pháº§n tá»­ con */
+  container-type: size;      /* bật đơn vị cqw/cqh cho các phần tử con */
   z-index: 2;
   --wx-ink: rgba(255, 255, 255, 0.94);
   --wx-ink-2: rgba(255, 255, 255, 0.85);
   --wx-ink-3: rgba(255, 255, 255, 0.6);
   --wx-bg: linear-gradient(145deg, #18222d 0%, #11171e 100%);
-  --wx-scrim: 0.3;           /* lÃ m dá»‹u 30% Ä‘á»™ chÃ³i cá»§a gradient */
+  --wx-scrim: 0.3;           /* làm dịu 30% độ chói của gradient */
   background: linear-gradient(180deg, rgba(14, 19, 26, 0.82), rgba(9, 13, 18, 0.95)), var(--wx-bg);
   color: var(--wx-ink);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), inset 0 -1px 1px rgba(0, 0, 0, 0.4), 0 4px 10px rgba(0, 0, 0, 0.35);
   }
-  /* Lá»›p LÃ€M Dá»ŠU: tá»‘i 30% + tá»‘i dáº§n vá» Ä‘Ã¡y -> gradient khÃ´ng bá»‹ "chÃ¡y" */
+  /* Lớp LÀM DỊU: tối 30% + tối dần về đáy -> gradient không bị "cháy" */
   .weather-unit.keycap-weather::after {
   content: "";
   position: absolute;
@@ -32,8 +32,8 @@
       rgba(0, 0, 0, calc(0.52 * var(--wx-scrim))) 100%),
     rgba(0, 0, 0, calc(0.62 * var(--wx-scrim)));
   }
-  /* --- 6 Ná»€N theo báº£ng mÃ u spec (náº¯ng / nhiá»u mÃ¢y / mÆ°a / dÃ´ng / Ä‘Ãªm / lá»—i)
-   + 4 tÃ´ng phá»¥ (Ã­t mÃ¢y, mÆ°a phÃ¹n, tuyáº¿t, sÆ°Æ¡ng mÃ¹) Äƒn cÃ¹ng thang mÃ u ---- */
+  /* --- 6 NỀN theo bảng màu spec (nắng / nhiều mây / mưa / dông / đêm / lỗi)
+   + 4 tông phụ (ít mây, mưa phùn, tuyết, sương mù) ăn cùng thang màu ---- */
   .keycap-weather[data-tint="sun"]     { --wx-bg: linear-gradient(145deg, #152b3c 0%, #0f1c27 100%); --wx-scrim: 0.4; }
   .keycap-weather[data-tint="partly"]  { --wx-bg: linear-gradient(145deg, #1d2d3c 0%, #111c29 100%); }
   .keycap-weather[data-tint="cloud"]   { --wx-bg: linear-gradient(145deg, #18222d 0%, #11171e 100%); }
@@ -43,15 +43,15 @@
   .keycap-weather[data-tint="snow"]    { --wx-bg: linear-gradient(145deg, #1a2433 0%, #101920 100%); }
   .keycap-weather[data-tint="storm"]   { --wx-bg: linear-gradient(145deg, #1c1d2d 0%, #121722 100%); }
   .keycap-weather[data-tint="error"]   { --wx-bg: linear-gradient(145deg, #282021 0%, #181315 100%); }
-  /* Ban Ä‘Ãªm (is_day = 0): má»i tráº¡ng thÃ¡i dÃ¹ng tÃ­m navy cho dá»‹u máº¯t */
+  /* Ban đêm (is_day = 0): mọi trạng thái dùng tím navy cho dịu mắt */
   .keycap-weather[data-night="1"]      { --wx-bg: linear-gradient(135deg, #1b1642, #392873); }
   .keycap-weather[data-night="1"] .wx-art { opacity: 0.9; }
-  /* Skin PHáº²NG: ná»n Ä‘en; mÃ u giá»¯ nguyÃªn á»Ÿ minh hoáº¡ nÃªn Ã´ váº«n "cÃ³ mÃ u" */
+  /* Skin PHẲNG: nền đen; màu giữ nguyên ở minh hoạ nên ô vẫn "có màu" */
   .keycap-weather[data-skin="flat"]    { --wx-bg: #111317; }
   .keycap-weather[data-skin="flat"]::after { display: none; }
-  /* Ná»™i dung luÃ´n náº±m TRÃŠN lá»›p lÃ m dá»‹u */
+  /* Nội dung luôn nằm TRÊN lớp làm dịu */
   .keycap-weather > * { position: relative; z-index: 1; }
-  /* --- 4 VÃ™NG Bá» Cá»¤C (máº·c Ä‘á»‹nh 3x1 = 4 cá»™t: 1fr | 1px | 1.04fr | 1.02fr) --- */
+  /* --- 4 VÙNG BỐ CỤC (mặc định 3x1 = 4 cột: 1fr | 1px | 1.04fr | 1.02fr) --- */
   .wx-body {
   position: relative;
   z-index: 1;
@@ -66,7 +66,7 @@
   grid-template-rows: minmax(0, 1fr);
   grid-template-areas: "hero divider meta art";
   }
-  /* Cá»™t TRÃI: tÃ¬nh tráº¡ng trá»i + sá»‘ nhiá»‡t Ä‘á»™ cá»±c lá»›n */
+  /* Cột TRÁI: tình trạng trời + số nhiệt độ cực lớn */
   .weather-hero {
   grid-area: hero;
   display: flex;
@@ -76,7 +76,7 @@
   gap: min(0.8cqw, 2.4cqh);
   min-width: 0;
   }
-  /* Váº¡ch ngÄƒn: 1px rgba(255,255,255,.2), cao 60% â€” chá»‰ hiá»‡n á»Ÿ Ã´ >= 3 cá»™t */
+  /* Vạch ngăn: 1px rgba(255,255,255,.2), cao 60% — chỉ hiện ở ô >= 3 cột */
   .wx-divider {
   display: none;
   grid-area: divider;
@@ -85,7 +85,7 @@
   height: 60%;
   background: rgba(255, 255, 255, 0.2);
   }
-  /* Cá»™t GIá»®A: thá»©/ngÃ y + ghim Ä‘á»‹nh vá»‹ tÃªn thÃ nh phá»‘ (+ chá»‰ sá»‘ á»Ÿ Ã´ 2x2) */
+  /* Cột GIỮA: thứ/ngày + ghim định vị tên thành phố (+ chỉ số ở ô 2x2) */
   .wx-meta {
   grid-area: meta;
   display: flex;
@@ -95,7 +95,7 @@
   gap: min(1.2cqw, 2.6cqh);
   min-width: 0;
   }
-  /* Cá»™t PHáº¢I: khá»‘i minh hoáº¡ â€” tá»± cáº¯t vÃ  Ä‘áº©y trÃ n mÃ©p pháº£i ~15% */
+  /* Cột PHẢI: khối minh hoạ — tự cắt và đẩy tràn mép phải ~15% */
   .wx-art {
   grid-area: art;
   display: flex;
@@ -109,7 +109,7 @@
   width: 100%;
   height: 100%;
   }
-  /* TÃŒNH TRáº NG TRá»œI: chá»¯ PhÃ¡pâ€“Viá»‡t 13px, hÆ¡i má» (85%) */
+  /* TÌNH TRẠNG TRỜI: chữ Pháp–Việt 13px, hơi mờ (85%) */
   .weather-cond {
   font-size: 13px;
   font-size: min(10.6cqw, 8.8cqh);
@@ -133,7 +133,7 @@
   letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
   }
-  /* KÃ½ hiá»‡u Â°C NHá»Ž + má», nÃ¢ng lÃªn Ä‘á»‰nh sá»‘ Ä‘á»ƒ sá»‘ váº«n lÃ  "hero" cá»§a Ã´ */
+  /* Ký hiệu °C NHỎ + mờ, nâng lên đỉnh số để số vẫn là "hero" của ô */
   .weather-degree {
   font-size: 20px;
   font-size: min(6.2cqw, 13.5cqh);
@@ -143,15 +143,15 @@
   color: rgba(255, 255, 255, 0.6);
   letter-spacing: 0;
   }
-  /* HÃŒNH MINH HOáº : mÃ u gradient náº±m NGAY TRONG <svg> (fill="url(#wxg-â€¦)"),
-   CSS chá»‰ cÃ²n glow/Ä‘á»™ má» -> Ã´ 2 skin Ä‘á»u giá»¯ Ä‘Æ°á»£c "cá»¥m minh hoáº¡ cÃ³ mÃ u". */
+  /* HÌNH MINH HOẠ: màu gradient nằm NGAY TRONG <svg> (fill="url(#wxg-…)"),
+   CSS chỉ còn glow/độ mờ -> ô 2 skin đều giữ được "cụm minh hoạ có màu". */
   .weather-icon { display: block; flex: none; }
   .weather-icon svg { display: block; width: 100%; height: 100%; overflow: visible; }
   .wx-halo { filter: blur(0.7px); }
   .wx-sun, .wx-moon, .wx-bolt, .wx-ray { filter: drop-shadow(0 0 4px rgba(255, 209, 102, 0.45)); }
   .wx-flake, .wx-star { opacity: 0.95; }
   .wx-drop { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35)); }
-  /* --- ANIMATION VI MÃ”: má»—i icon Tá»I ÄA 2 Lá»šP (má»i lá»›p Ä‘á»u gáº¯n .wx-anim) --- */
+  /* --- ANIMATION VI MÔ: mỗi icon TỐI ĐA 2 LỚP (mọi lớp đều gắn .wx-anim) --- */
   .wx-anim { animation-iteration-count: infinite; animation-timing-function: ease-in-out; }
   .wx-anim-spin { transform-box: fill-box; transform-origin: center; animation: wxSpin 20s linear infinite; }
   .wx-anim-drift { animation: wxDrift 7s ease-in-out infinite; }
@@ -167,9 +167,9 @@
   @keyframes wxTwinkle { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
   @keyframes wxBreathe { 0%, 100% { opacity: 0.1; } 50% { opacity: 0.24; } }
   @keyframes wxBlink { 0%, 62% { opacity: 1; } 63%, 100% { opacity: 0.3; } }
-  /* ÄANG Táº¢I: minh hoáº¡ XOAY Má»œ (sá»‘ cÅ© váº«n giá»¯ náº¿u Ä‘Ã£ cÃ³ cache -> khÃ´ng nhÃ¡y) */
+  /* ĐANG TẢI: minh hoạ XOAY MỜ (số cũ vẫn giữ nếu đã có cache -> không nháy) */
   .keycap-weather.is-loading .weather-icon { opacity: 0.45; animation: wxSpin 1.4s linear infinite; }
-  /* --- Cá»™t GIá»®A: thá»©/ngÃ y "T5, 08/10" + ghim Ä‘á»‹nh vá»‹ tÃªn thÃ nh phá»‘ --- */
+  /* --- Cột GIỮA: thứ/ngày "T5, 08/10" + ghim định vị tên thành phố --- */
   .weather-date, .weather-place {
   font-size: 13px;
   font-size: min(8cqw, 8.4cqh);
@@ -183,13 +183,13 @@
   .weather-place { display: flex; align-items: center; gap: 0.28em; }
   .wx-glyph-pin { width: 1.05em; height: 1.05em; flex: none; }
   .weather-city { min-width: 0; font-weight: 700; letter-spacing: 0.02em; }
-  /* Ã” NGANG (3x1 / 2x1) dÃ¹ng tÃªn RÃšT Gá»ŒN ("TP.HCM"); Ã´ 2x2 hiá»‡n tÃªn Ä‘áº§y Ä‘á»§ */
+  /* Ô NGANG (3x1 / 2x1) dùng tên RÚT GỌN ("TP.HCM"); ô 2x2 hiện tên đầy đủ */
   .wx-meta .wc-full { display: none; }
   .wx-meta .wc-short { display: inline; }
   .keycap-weather.is-big .wc-full { display: inline; }
   .keycap-weather.is-big .wc-short { display: none; }
-  /* --- Chá»‰ sá»‘ phá»¥: GLYPH MÃ€U + Sá» (bá» emoji + chá»¯ "km/h" + tÃªn chá»‰ sá»‘) ---
-   Chá»‰ hiá»‡n á»Ÿ Ã´ lá»›n >= 2x2; má»—i chá»‰ sá»‘ má»™t mÃ u nÃªn nháº­n ra tá»©c thÃ¬. */
+  /* --- Chỉ số phụ: GLYPH MÀU + SỐ (bỏ emoji + chữ "km/h" + tên chỉ số) ---
+   Chỉ hiện ở ô lớn >= 2x2; mỗi chỉ số một màu nên nhận ra tức thì. */
   .weather-stats {
   display: none;
   align-items: center;
@@ -213,7 +213,7 @@
   .weather-stat[data-stat="hum"] .wx-glyph   { color: #6fd8ff; }
   .weather-stat[data-stat="feels"] .wx-glyph { color: #ffb067; }
   .weather-stat[data-stat="wind"] .wx-glyph  { color: #8ce0b4; }
-  /* --- BADGE "Dá»® LIá»†U CÅ¨": chá»‰ hiá»‡n khi Máº¤T Máº NG + cache quÃ¡ 30 phÃºt --- */
+  /* --- BADGE "DỮ LIỆU CŨ": chỉ hiện khi MẤT MẠNG + cache quá 30 phút --- */
   .wx-badge {
   position: absolute;
   top: 8px;
@@ -238,7 +238,7 @@
   .wx-badge-icon { width: 1.15em; height: 1.15em; flex: none; }
   .wx-badge-text { letter-spacing: 0.04em; }
   /* ===================== TIER: 2x1 / 2x2 / 1x2 / 1x1 ===================== */
-  /* 3x1 (máº·c Ä‘á»‹nh): 4 cá»™t + váº¡ch ngÄƒn cao 60% */
+  /* 3x1 (mặc định): 4 cột + vạch ngăn cao 60% */
   .keycap-weather.is-wide3 .wx-body {
   grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1.04fr) minmax(0, 0.82fr);
   }
@@ -248,7 +248,7 @@
   .keycap-weather.is-wide3 .weather-place { font-size: 12px; }
   .keycap-weather.is-wide3 .weather-city { min-width: 0; }
   .keycap-weather.is-wide3 .wx-divider { display: block; }
-  /* 2x1: Bá»Ž váº¡ch ngÄƒn; ngÃ y + TP gom 1 dÃ²ng nhá» DÆ¯á»šI sá»‘ Â°C; minh hoáº¡ gÃ³c pháº£i */
+  /* 2x1: BỎ vạch ngăn; ngày + TP gom 1 dòng nhỏ DƯỚI số °C; minh hoạ góc phải */
   .keycap-weather.is-short:not(.is-wide3) .wx-body {
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.86fr);
   grid-template-rows: minmax(0, 1fr) auto;
@@ -263,7 +263,7 @@
   height: min(80cqw, 128cqh);
   transform: translateX(5%);
   }
-  /* 2x2: minh hoáº¡ Lá»šN phÃ­a trÃªn; dÆ°á»›i lÃ  Â°C + text + giÃ³/Ä‘á»™ áº©m */
+  /* 2x2: minh hoạ LỚN phía trên; dưới là °C + text + gió/độ ẩm */
   .keycap-weather.is-big .wx-body {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
   grid-template-rows: minmax(0, 1fr) auto;
@@ -283,7 +283,7 @@
   .keycap-weather.is-big .weather-degree { font-size: max(14px, min(7.2cqw, 7cqh)); }
   .keycap-weather.is-big .weather-date,
   .keycap-weather.is-big .weather-place { font-size: max(13px, min(6.4cqw, 6.6cqh)); }
-  /* 1x1: CHá»ˆ minh hoáº¡ thu nhá» + sá»‘ Â°C */
+  /* 1x1: CHỈ minh hoạ thu nhỏ + số °C */
   .keycap-weather.is-mini .wx-body {
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1.02fr) auto;
@@ -303,7 +303,7 @@
   .keycap-weather.is-mini .weather-hero { align-items: center; }
   .keycap-weather.is-mini .weather-value { font-size: min(32cqw, 26cqh); }
   .keycap-weather.is-mini .weather-degree { font-size: min(14cqw, 12cqh); margin-top: 0.1em; }
-  /* 1x2 (Ã´ cao háº¹p): minh hoáº¡ trÃªn, Â°C giá»¯a, ngÃ y + TP á»Ÿ Ä‘Ã¡y */
+  /* 1x2 (ô cao hẹp): minh hoạ trên, °C giữa, ngày + TP ở đáy */
   .keycap-weather.is-tall .wx-body {
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1.06fr) auto auto;
@@ -320,7 +320,7 @@
   }
   .keycap-weather.is-tall .wx-meta { align-items: center; }
   .keycap-weather.is-tall .weather-value { font-size: min(30cqw, 14cqh); }
-  /* --- Ã” CHá»œ / Lá»–I: tÃ´ng Ä‘á» + icon cáº£nh bÃ¡o; .weather-cond nÃ³i rÃµ lÃ½ do --- */
+  /* --- Ô CHỜ / LỖI: tông đỏ + icon cảnh báo; .weather-cond nói rõ lý do --- */
   .weather-unit.is-error .weather-value { color: #ffd7db; }
   .weather-unit.is-error .weather-degree { color: #ffb3ba; }
   .weather-unit.is-error .weather-place,
@@ -331,22 +331,22 @@
   filter: drop-shadow(0 0 7px rgba(255, 107, 122, 0.75));
   }
   .weather-unit.is-error .weather-stats { display: none !important; }
-  /* --- GIáº¢M CHUYá»‚N Äá»˜NG: táº¯t Háº¾T animation vi mÃ´ cá»§a Ã´ thá»i tiáº¿t --- */
+  /* --- GIẢM CHUYỂN ĐỘNG: tắt HẾT animation vi mô của ô thời tiết --- */
   @media (prefers-reduced-motion: reduce) {
   .weather-unit .wx-anim,
   .weather-unit .weather-icon { animation: none !important; }
   }
-  /* --- DECK Ráº¢NH (screensaver): háº¡ sÃ¡ng cÃ²n 40% + Äá»¨NG má»i animation --- */
+  /* --- DECK RẢNH (screensaver): hạ sáng còn 40% + ĐỨNG mọi animation --- */
   body.idle .weather-unit.keycap-weather { filter: brightness(0.4) saturate(0.72); }
   body.idle .weather-unit .wx-anim,
   body.idle .weather-unit .weather-icon { animation: none !important; }
   /* =====================================================================
-   Lá»šP CHá»® áº¨N THá»Š GIÃC (.wx-sr / .pomo-sr)
+   LỚP CHỮ ẨN THỊ GIÁC (.wx-sr / .pomo-sr)
    ---------------------------------------------------------------------
-   NguyÃªn táº¯c "glanceable": KHÃ”NG Ä‘áº·t cÃ¢u chá»¯ tÄ©nh lÃªn máº·t Ã´. ToÃ n bá»™ nhÃ£n
-   mÃ´ táº£ (tÃªn thÃ nh phá»‘ Ä‘áº§y Ä‘á»§, tráº¡ng thÃ¡i trá»i, pha pomodoro, "Ä‘ang cháº¡y")
-   váº«n náº±m trong DOM Ä‘á»ƒ screen-reader Ä‘á»c Ä‘Æ°á»£c; khi rÃª chuá»™t thÃ¬ hiá»‡n á»Ÿ
-   tooltip (title) cá»§a widget.
+   Nguyên tắc "glanceable": KHÔNG đặt câu chữ tĩnh lên mặt ô. Toàn bộ nhãn
+   mô tả (tên thành phố đầy đủ, trạng thái trời, pha pomodoro, "đang chạy")
+   vẫn nằm trong DOM để screen-reader đọc được; khi rê chuột thì hiện ở
+   tooltip (title) của widget.
    ===================================================================== */
   .wx-sr,
   .pomo-sr {
@@ -362,9 +362,9 @@
   clip-path: inset(50%);
   pointer-events: none;
   }
-  /* (1) MÃ n hÃ¬nh LCD: khung tá»‘i lá»t lÃ²ng keycap (chá»«a mÃ©p ~10px má»—i bÃªn).
-   .volume-deck-unit Náº°M TRONG danh sÃ¡ch nÃ y: Ã´ Ã¢m lÆ°á»£ng há»‡ thá»‘ng dÃ¹ng Ä‘Ãºng
-   "mÃ n hÃ¬nh" chuáº©n nhÆ° má»i widget khÃ¡c (thá»‘ng nháº¥t ngÃ´n ngá»¯ Cyber-Glass). */
+  /* (1) Màn hình LCD: khung tối lọt lòng keycap (chừa mép ~10px mỗi bên).
+   .volume-deck-unit NẰM TRONG danh sách này: ô âm lượng hệ thống dùng đúng
+   "màn hình" chuẩn như mọi widget khác (thống nhất ngôn ngữ Cyber-Glass). */
   :is(.deck-icon-core, .volume-deck-unit, .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit) {
   width: calc(100% - 20px);
   height: calc(100% - 20px);
@@ -376,7 +376,7 @@
   filter: brightness(var(--screen-brightness, 1));
   transition: filter 0.15s ease, box-shadow 0.15s ease;
   }
-  /* (3) Nháº¥n phÃ­m: mÃ n hÃ¬nh "sÃ¡ng lÃªn" + viá»n neon */
+  /* (3) Nhấn phím: màn hình "sáng lên" + viền neon */
   .grid-stack-item-content.keycap-pressed :is(.deck-icon-core, .volume-deck-unit, .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit),
   body:not(.edit-mode) .grid-stack-item-content:active :is(.deck-icon-core, .volume-deck-unit, .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit) {
   filter: brightness(1.42) saturate(1.15);
@@ -385,7 +385,7 @@
     inset 0 0 18px rgba(0, 229, 255, 0.28),
     0 0 16px var(--accent-glow);
   }
-  /* (5) Tá»± tá»‘i "mÃ n hÃ¬nh" khi deck ráº£nh (screensaver) */
+  /* (5) Tự tối "màn hình" khi deck rảnh (screensaver) */
   body.idle :is(.deck-icon-core, .volume-deck-unit, .app-deck-unit, .pomodoro-unit, .clock-unit, .weather-unit) {
   filter: brightness(0.4) saturate(0.6);
   }
@@ -396,8 +396,8 @@
     0 4px 10px rgba(0, 0, 0, 0.6),
     var(--key-bevel) !important;
   }
-  /* ===== Äiá»u khiá»ƒn bÃªn trong modal "CÃ i Äáº·t Deck" ===== */
-  /* Segmented control: Cháº¡y / Chá»‰nh sá»­a */
+  /* ===== Điều khiển bên trong modal "Cài Đặt Deck" ===== */
+  /* Segmented control: Chạy / Chỉnh sửa */
   .seg-control {
   display: flex;
   gap: 6px;
@@ -423,7 +423,7 @@
   background: var(--accent);
   color: #001018;
   }
-  /* HÃ ng thanh trÆ°á»£t Ä‘á»™ sÃ¡ng */
+  /* Hàng thanh trượt độ sáng */
   .settings-range-row {
   display: flex;
   align-items: center;
@@ -459,7 +459,7 @@
   color: var(--accent);
   font-variant-numeric: tabular-nums;
   }
-  /* HÃ ng nháº­p thá»i lÆ°á»£ng Pomodoro trong modal CÃ i Ä‘áº·t phÃ­m */
+  /* Hàng nhập thời lượng Pomodoro trong modal Cài đặt phím */
   .pomo-duration-row {
   display: flex;
   gap: 10px;

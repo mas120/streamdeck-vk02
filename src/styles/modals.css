@@ -109,7 +109,7 @@
   .btn-save { background: var(--accent); color: #000; }
   .btn-cancel { background: #22283a; color: #fff; }
   .btn-delete { background: var(--danger); color: #fff; }
-  /* NÃºt phÃ¡ huá»· Ä‘ang CHá»œ xÃ¡c nháº­n (cháº¡m láº§n 2) -> Ä‘á»•i sang mÃ u cáº£nh bÃ¡o */
+  /* Nút phá huỷ đang CHỜ xác nhận (chạm lần 2) -> đổi sang màu cảnh báo */
   .btn-delete.is-armed { background: var(--warn); color: #1a1200; }
   .settings-note {
   margin-top: 10px;
@@ -119,10 +119,10 @@
   overflow-wrap: anywhere;
   }
   /* =======================================================================
-   SD-LOOK â€” giao diá»‡n phÃ­m giá»‘ng Stream Deck THáº¬T
-   (dÃ¡n tá»« deck-keys-streamdeck.css, GIá»® nguyÃªn ná»™i dung, chá»‰ Ä‘á»•i header)
+   SD-LOOK — giao diện phím giống Stream Deck THẬT
+   (dán từ deck-keys-streamdeck.css, GIỮ nguyên nội dung, chỉ đổi header)
    -----------------------------------------------------------------------
-   - Má»i rule Ä‘á»u cÃ³ tiá»n tá»‘ body.sd-look nÃªn tháº¯ng cÃ¡c !important á»Ÿ trÃªn.
-   - Báº­t á»Ÿ main.js: document.body.classList.add('sd-look');
-   - Gá»¡ lá»—i / so sÃ¡nh: bá» class 'sd-look' khá»i <body> lÃ  vá» giao diá»‡n cÅ©.
+   - Mọi rule đều có tiền tố body.sd-look nên thắng các !important ở trên.
+   - Bật ở main.js: document.body.classList.add('sd-look');
+   - Gỡ lỗi / so sánh: bỏ class 'sd-look' khỏi <body> là về giao diện cũ.
    ======================================================================= */

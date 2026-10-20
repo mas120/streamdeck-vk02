@@ -76,8 +76,16 @@ Nếu AI mới vào dự án, đọc theo thứ tự này:
 - Khi sửa, kiểm tra các trạng thái `muted`, `active`, `idle`, `off` và đồng bộ khi đổi kích thước.
 
 ### Bongo Cat
-- Logic ở `src/widgets/bongo-cat.js`, SVG/cấu hình tách riêng.
+- Logic ở `src/widgets/bongo-cat.js`, SVG/cấu hình tách riêng; CSS ở `src/styles/widgets/bongo.css`.
 - Giữ xử lý pointer/keyboard và giới hạn animation; tránh gộp vào scheduler timer khác.
+- SVG vẽ tay theo phong cách Bongo Cat: `<g class="bongo-head">` (tai + đầu + mặt) nhận transform `--look-x/--look-y` khi rê chuột; riêng `<g class="bongo-ears">` xoay quanh đáy giữa hai tai theo `--ear-turn` (chuột quơ sang trái → tai nghiêng trái). Vì app trên panel VK02 bị `ClipCursor` giữ chuột ở màn chính nên `pointermove` trên widget không bao giờ chạy: `lib.rs` phát sự kiện `bongo-cursor` (vị trí con trỏ chuẩn hoá theo màn chính, ~22 lần/giây) và frontend áp `--look-x/--look-y/--ear-turn` cho mọi widget. Bàn phím sinh bằng `bongoKeyboardMarkup()`.
+- Bàn phím là layout **75%** (84 phím, 16u/hàng, 6 hàng: Esc/F1-F12 + 5 hàng chính), mỗi phím có legend như bàn phím thật; ký tự phụ (shift symbol) hiện nhỏ ở góc trên trái. Dữ liệu layout nằm trong `KEY_ROWS`; `code` trùng tên `rdev::Key` để Rust gửi đúng phím.
+- Hình học scene do `bongoGeometry(square)` tính: 2x1 dùng `viewBox="0 0 320 190"`, 2x2 dùng `viewBox="0 0 300 300"`; bàn phím neo đáy, mèo ngồi phía sau.
+- Mỗi phím là `<g class="bongo-key" data-code data-side>`; khi bấm phím thật, Rust gửi `{hand, action, code}`, frontend sáng đúng phím (`is-lit`) và đưa bàn tay tới phím đó (`--paw-dx/--paw-dy`), nhả phím thì tay về home F/J. `state.down` là Map code→tay nên gõ 2 tay không tắt nhầm.
+- KPS = số lần nhấn trong 1 giây gần nhất, tự về `KPS 0.0` sau 1 giây; đếm mọi phím bàn phím thật.
+- Pointer bị bỏ qua khi `body.idle` hoặc `body.edit-mode`; chạm trực tiếp lên phím nào thì mèo gõ phím đó.
+- Hook Rust `src-tauri/src/bongo.rs` dùng **`WH_KEYBOARD_LL` và tự cài lại hook mỗi giây** để luôn đứng đầu chuỗi hook (`SetWindowsHookEx` luôn chèn lên đầu), nhờ đó vẫn thấy được phím dấu (s/f/r/x/j) mà bộ gõ tiếng Việt (EVKey/Unikey Telex/VNI) cố tình chặn. EVKey bơm bản sao phím qua `SendInput` với cờ `LLKHF_INJECTED`, nên ta **bỏ qua sự kiện injected** để chỉ còn đúng phím vật lý — không nhân đôi, không dính Backspace ảo của bộ gõ. VKey được đổi sang mã kiểu `rdev` (`KeyQ`, `Num1`, `Return`...) và emit kèm `hand`. Debug: đặt biến môi trường `BONGO_DEBUG=1` để xem log phím. Test: `cargo test bongo --lib`.
+
 
 ### Todo List
 - Logic ở `src/widgets/todo.js`, lưu trữ ở `src/todo-store.js`; CSS ở `src/styles/widgets/todo.css`.

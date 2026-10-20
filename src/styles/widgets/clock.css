@@ -7,10 +7,10 @@
   gap: 3px;
   padding: 6px 8px;
   overflow: hidden;
-  container-type: size;   /* báº­t Ä‘Æ¡n vá»‹ cqw/cqh cho cÃ¡c pháº§n tá»­ con */
+  container-type: size;   /* bật đơn vị cqw/cqh cho các phần tử con */
   z-index: 2;
   }
-  /* Quáº§ng sÃ¡ng phÃ­a sau sá»‘/kim: mÃ n hÃ¬nh "phÃ¡t sÃ¡ng" thay vÃ¬ pháº³ng */
+  /* Quầng sáng phía sau số/kim: màn hình "phát sáng" thay vì phẳng */
   .clock-unit::before {
   content: "";
   position: absolute;
@@ -37,9 +37,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
   }
-  /* Máº·t sá»‘ analog á»Ÿ Ã´ 1x1: nhÆ°á»ng chá»— cho máº·t sá»‘ -> áº©n nhÃ£n */
+  /* Mặt số analog ở ô 1x1: nhường chỗ cho mặt số -> ẩn nhãn */
   .keycap-clock-analog.is-mini .clock-label { display: none; }
-  /* --- (a) DIGITAL: giá» hero (TRáº®NG TUYáº¾T, mono) + ngÃ y á»Ÿ gÃ³c + chip giÃ¢y --- */
+  /* --- (a) DIGITAL: giờ hero (TRẮNG TUYẾT, mono) + ngày ở góc + chip giây --- */
   .keycap-clock-digital { color: #f4f8ff; }
   .clock-top {
   display: flex;
@@ -76,10 +76,10 @@
   font-variant-numeric: tabular-nums;
   font-weight: 700;
   letter-spacing: 0.7px;
-  /* LÃ m dá»‹u chip giÃ¢y: giá» hero váº«n lÃ  Ä‘iá»ƒm nháº¥n sá»‘ 1 trÃªn Ã´ */
+  /* Làm dịu chip giây: giờ hero vẫn là điểm nhấn số 1 trên ô */
   opacity: 0.75;
   }
-  /* Cháº¥m nháº¥p nhÃ¡y trong chip giÃ¢y (nhá»‹p 1 giÃ¢y) */
+  /* Chấm nhấp nháy trong chip giây (nhịp 1 giây) */
   .clock-pulse {
   width: 0.42em;
   height: 0.42em;
@@ -112,8 +112,8 @@
   font-size: 60px;
   font-size: 21cqw;
   }
-  /* Chá»¯ hero: gradient tráº¯ng -> tráº¯ng xanh ráº¥t nháº¡t (giá»¯ tÃ´ng "tráº¯ng tuyáº¿t").
-   Chá»‰ báº­t khi trÃ¬nh duyá»‡t há»— trá»£ background-clip:text. */
+  /* Chữ hero: gradient trắng -> trắng xanh rất nhạt (giữ tông "trắng tuyết").
+   Chỉ bật khi trình duyệt hỗ trợ background-clip:text. */
   @supports (background-clip: text) or (-webkit-background-clip: text) {
   .clock-time {
     background: linear-gradient(180deg, #ffffff 0%, #f2f8ff 52%, #cfe4f7 100%);
@@ -141,9 +141,9 @@
   background: linear-gradient(90deg, rgba(0, 229, 255, 0.35), var(--accent));
   box-shadow: 0 0 8px rgba(0, 229, 255, 0.75);
   }
-  /* Chá»‰ báº­t transition SAU khung hÃ¬nh Ä‘áº§u (thanh quÃ©t khÃ´ng "cháº¡y khá»Ÿi Ä‘á»™ng") */
+  /* Chỉ bật transition SAU khung hình đầu (thanh quét không "chạy khởi động") */
   .keycap-clock-digital.is-animating .clock-bar-fill { transition: width 1s linear; }
-  /* --- (b) ANALOG: máº·t sá»‘ watch-face (vÃ nh, váº¡ch, sá»‘, cung giÃ¢y, 3 kim) --- */
+  /* --- (b) ANALOG: mặt số watch-face (vành, vạch, số, cung giây, 3 kim) --- */
   .keycap-clock-analog { padding: 7px 7px 5px; }
   .clock-bezel {
   display: flex;
@@ -191,7 +191,7 @@
   .clock-rim { fill: none; stroke: url(#clockRimGrad); stroke-width: 2.2; }
   .clock-dial { fill: url(#clockDialGrad); stroke: rgba(255, 255, 255, 0.07); stroke-width: 0.6; }
   .clock-glare { fill: url(#clockGlareGrad); }
-  /* 60 váº¡ch phÃºt + 12 váº¡ch giá»; 12/3/6/9 Ä‘áº­m neon */
+  /* 60 vạch phút + 12 vạch giờ; 12/3/6/9 đậm neon */
   .clock-tick {
   stroke: rgba(255, 255, 255, 0.16);
   stroke-width: 0.7;
@@ -203,7 +203,7 @@
   stroke-width: 1.9;
   filter: drop-shadow(0 0 2.4px rgba(0, 229, 255, 0.85));
   }
-  /* Sá»‘ 12 / 3 / 6 / 9 trÃªn máº·t sá»‘ */
+  /* Số 12 / 3 / 6 / 9 trên mặt số */
   .clock-num {
   fill: rgba(233, 246, 255, 0.8);
   font-family: var(--font-num);
@@ -212,7 +212,7 @@
   text-anchor: middle;
   dominant-baseline: middle;
   }
-  /* Cung giÃ¢y cháº¡y quanh vÃ nh: 1 vÃ²ng Ä‘áº§y = 1 phÃºt (JS ghi --sec-offset) */
+  /* Cung giây chạy quanh vành: 1 vòng đầy = 1 phút (JS ghi --sec-offset) */
   .clock-arc-track {
   fill: none;
   stroke: rgba(0, 229, 255, 0.13);
@@ -225,21 +225,21 @@
   stroke-width: 1.7;
   stroke-linecap: round;
   stroke-dasharray: 286.51;
-  /* JS ghi --sec-offset (0..286.51) Ä‘á»ƒ cung cháº¡y Ä‘Ãºng tiáº¿n Ä‘á»™ trong phÃºt */
+  /* JS ghi --sec-offset (0..286.51) để cung chạy đúng tiến độ trong phút */
   stroke-dashoffset: var(--sec-offset, 286.51);
   filter: drop-shadow(0 0 3px rgba(0, 229, 255, 0.9));
   }
-  /* Kim: xoay quanh tÃ¢m (50,50) theo biáº¿n --angle do JS ghi vÃ o */
+  /* Kim: xoay quanh tâm (50,50) theo biến --angle do JS ghi vào */
   .clock-hand {
   transform-box: view-box;
   transform-origin: 50% 50%;
   transform: rotate(var(--angle, 0deg));
   }
-  /* Chá»‰ báº­t transition SAU khung hÃ¬nh Ä‘áº§u Ä‘á»ƒ kim khÃ´ng "quay khá»Ÿi Ä‘á»™ng" */
+  /* Chỉ bật transition SAU khung hình đầu để kim không "quay khởi động" */
   .keycap-clock-analog.is-animating .clock-hand { transition: transform 0.1s linear; }
   .hand-hour { fill: #eaf6ff; filter: drop-shadow(0 0 3px rgba(234, 246, 255, 0.45)); }
   .hand-minute { fill: #bfeaff; filter: drop-shadow(0 0 3.5px rgba(0, 229, 255, 0.5)); }
-  /* Kim giÃ¢y Ä‘á» neon + Ä‘á»‘i trá»ng â€” Ä‘iá»ƒm nháº¥n cá»§a máº·t sá»‘ */
+  /* Kim giây đỏ neon + đối trọng — điểm nhấn của mặt số */
   .hand-second {
   stroke: #ff4d6d;
   stroke-width: 1.1;
@@ -247,7 +247,7 @@
   filter: drop-shadow(0 0 5px rgba(255, 77, 109, 0.85));
   }
   .hand-second circle { fill: #ff4d6d; stroke: none; }
-  /* Cá»­a sá»• ngÃ y trÃªn máº·t sá»‘ */
+  /* Cửa sổ ngày trên mặt số */
   .clock-date-mini {
   fill: var(--accent);
   font-family: var(--font-num);
@@ -260,16 +260,16 @@
   .clock-center-cap { fill: #0a1120; stroke: rgba(0, 229, 255, 0.45); stroke-width: 0.8; }
   .clock-center-dot { fill: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
   /* ---------------------------------------------------------------------
-   (c) THáºº Láº¬T (flip) 24 GIá»œ: 4 táº¥m HH MM, má»—i táº¥m 2 ná»­a TÄ¨NH + 2 LÃ Láº¬T
-   - Máº·t 24 GIá»œ (0h..23h) nÃªn KHÃ”NG cÃ³ nhÃ£n AM/PM: 4 táº¥m sá»‘ lÃ  toÃ n bá»™
-     ná»™i dung nhÃ¬n tháº¥y, khÃ´ng chá»¯ nÃ o chen vÃ o.
-   - Ã” khuyáº¿n nghá»‹ 2x1. Má»—i .flip-card Tá»° lÃ  container (container-type:
-     size) nÃªn sá»‘ Ä‘o theo CHÃNH bá» ngang táº¥m -> 4 táº¥m luÃ´n Ä‘á»u nhau á»Ÿ
-     má»i cá»¡ Ã´ (1x1 / 2x1 / 3x1 / 2x2), khÃ´ng phá»¥ thuá»™c bá» ngang cáº£ Ã´.
+   (c) THẺ LẬT (flip) 24 GIỜ: 4 tấm HH MM, mỗi tấm 2 nửa TĨNH + 2 LÁ LẬT
+   - Mặt 24 GIỜ (0h..23h) nên KHÔNG có nhãn AM/PM: 4 tấm số là toàn bộ
+     nội dung nhìn thấy, không chữ nào chen vào.
+   - Ô khuyến nghị 2x1. Mỗi .flip-card TỰ là container (container-type:
+     size) nên số đo theo CHÍNH bề ngang tấm -> 4 tấm luôn đều nhau ở
+     mọi cỡ ô (1x1 / 2x1 / 3x1 / 2x2), không phụ thuộc bề ngang cả ô.
    --------------------------------------------------------------------- */
   .keycap-clock-flip {
-  --flip-ink: #f4f8ff;         /* mÃ u sá»‘ (ná»­a tÄ©nh + lÃ¡ láº­t) */
-  --flip-gap: 4px;             /* khe giá»¯a 4 táº¥m (dáº¥u hai cháº¥m cÃ³ khe riÃªng) */
+  --flip-ink: #f4f8ff;         /* màu số (nửa tĩnh + lá lật) */
+  --flip-gap: 4px;             /* khe giữa 4 tấm (dấu hai chấm có khe riêng) */
   gap: 2px;
   padding: 6px 6px 4px;
   }
@@ -281,7 +281,7 @@
   width: 100%;
   height: 100%;
   min-height: 0;
-  perspective: 260px;          /* chiá»u sÃ¢u cho lÃ¡ láº­t rotateX */
+  perspective: 260px;          /* chiều sâu cho lá lật rotateX */
   }
   .flip-card {
   position: relative;
@@ -292,7 +292,7 @@
   background: #0b0e15;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07),
               0 2px 6px rgba(0, 0, 0, 0.55);
-  container-type: size;        /* sá»‘ bÃªn trong Ä‘o theo bá» ngang Táº¤M */
+  container-type: size;        /* số bên trong đo theo bề ngang TẤM */
   transform-style: preserve-3d;
   overflow: hidden;
   }
@@ -308,7 +308,7 @@
   background: rgba(255, 255, 255, 0.04);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.85), 0 -1px 0 rgba(255, 255, 255, 0.04);
   }
-  /* Dáº¥u hai cháº¥m giá»¯a giá» vÃ  phÃºt: 2 cháº¥m trÃ²n, KHÃ”NG pháº£i chá»¯ */
+  /* Dấu hai chấm giữa giờ và phút: 2 chấm tròn, KHÔNG phải chữ */
   .flip-colon {
   flex: 0 0 auto;
   display: flex;
@@ -326,8 +326,8 @@
   background: var(--flip-ink);
   opacity: 0.55;
   }
-  /* 2 ná»­a TÄ¨NH (.flip-half) + 2 LÃ Láº¬T (.flip-fold) Ä‘á»u chiáº¿m ná»­a táº¥m; má»—i
-   khá»‘i cáº¯t 1 ná»­a con sá»‘ (sá»‘ cao gáº¥p Ä‘Ã´i ná»­a táº¥m -> xem .flip-digit). */
+  /* 2 nửa TĨNH (.flip-half) + 2 LÁ LẬT (.flip-fold) đều chiếm nửa tấm; mỗi
+   khối cắt 1 nửa con số (số cao gấp đôi nửa tấm -> xem .flip-digit). */
   .flip-half,
   .flip-fold {
   position: absolute;
@@ -350,7 +350,7 @@
   border-radius: 0 0 7px 7px;
   background: linear-gradient(180deg, #0f141d 0%, #05070b 100%);
   }
-  /* LÃ¡ láº­t lÃºc NGHá»ˆ náº±m vuÃ´ng gÃ³c (khuáº¥t) -> chá»‰ tháº¥y 2 ná»­a tÄ©nh. */
+  /* Lá lật lúc NGHỈ nằm vuông góc (khuất) -> chỉ thấy 2 nửa tĩnh. */
   .flip-fold-top {
   transform: rotateX(-90deg);
   transform-origin: 50% 100%;
@@ -365,7 +365,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  height: 200%;                /* gáº¥p Ä‘Ã´i ná»­a táº¥m -> sá»‘ náº±m Ä‘Ãºng tÃ¢m táº¥m */
+  height: 200%;                /* gấp đôi nửa tấm -> số nằm đúng tâm tấm */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -377,13 +377,13 @@
   text-shadow: 0 0 10px rgba(190, 214, 240, 0.22);
   font-size: min(150cqw, 92cqh);
   }
-  /* Ná»­a TRÃŠN láº¥y pháº§n trÃªn cá»§a sá»‘, ná»­a DÆ¯á»šI láº¥y pháº§n dÆ°á»›i (khá»›p á»Ÿ khe giá»¯a) */
+  /* Nửa TRÊN lấy phần trên của số, nửa DƯỚI lấy phần dưới (khớp ở khe giữa) */
   .flip-top > .flip-digit,
   .flip-fold-top > .flip-digit { top: 0; }
   .flip-bottom > .flip-digit,
   .flip-fold-bottom > .flip-digit { bottom: 0; }
-  /* 2 NHá»ŠP Láº¬T: lÃ¡ TRÃŠN láº­t xuá»‘ng (0-300ms) Rá»’I lÃ¡ DÆ¯á»šI Ä‘Ã¡p xuá»‘ng (300-600ms).
-   JS gá»¡ .is-flipping khi animationend cá»§a lÃ¡ dÆ°á»›i -> animation cháº¡y láº¡i. */
+  /* 2 NHỊP LẬT: lá TRÊN lật xuống (0-300ms) RỒI lá DƯỚI đáp xuống (300-600ms).
+   JS gỡ .is-flipping khi animationend của lá dưới -> animation chạy lại. */
   .flip-card.is-flipping > .flip-fold-top {
   animation: flipFoldTop 300ms ease-in;
   }
@@ -398,28 +398,28 @@
   0% { transform: rotateX(90deg); }
   100% { transform: rotateX(0deg); }
   }
-  /* Cá»¡ Ã´: 1x1 (is-mini) bá» dáº¥u hai cháº¥m cho 4 táº¥m rá»™ng ra; Ã´ rá»™ng (is-short/
-   is-big) ná»›i khe giá»¯a cÃ¡c táº¥m cho thoÃ¡ng. */
+  /* Cỡ ô: 1x1 (is-mini) bỏ dấu hai chấm cho 4 tấm rộng ra; ô rộng (is-short/
+   is-big) nới khe giữa các tấm cho thoáng. */
   .keycap-clock-flip.is-mini { --flip-gap: 2px; padding: 4px; }
   .keycap-clock-flip.is-mini .flip-colon { display: none; }
   .keycap-clock-flip.is-mini .flip-card { border-radius: 4px; }
   .keycap-clock-flip.is-short { --flip-gap: 6px; }
   .keycap-clock-flip.is-big { --flip-gap: 8px; padding: 8px; }
   /* =====================================================================
-   PHÃM THá»œI TIáº¾T (weather_widget) â€” 3x1 Máº¶C Äá»ŠNH, CO THEO Cá»  Ã”
+   PHÍM THỜI TIẾT (weather_widget) — 3x1 MẶC ĐỊNH, CO THEO CỠ Ô
    ---------------------------------------------------------------------
-   2 SKIN (data-skin, chá»n trong modal "CÃ i Äáº·t PhÃ­m Báº¥m"):
-     Â· soft (MÃ€U Dá»ŠU â€” máº·c Ä‘á»‹nh): ná»n GRADIENT full-bleed Ä‘á»•i theo tráº¡ng
-       thÃ¡i trá»i (data-tint) + ngÃ y/Ä‘Ãªm (data-night="1" -> tÃ­m navy); má»™t
-       lá»›p scrim tá»‘i 30% phá»§ trÃªn gradient -> "lÃ m dá»‹u 30% Ä‘á»™ chÃ³i".
-     Â· flat (PHáº²NG): ná»n #111317; mÃ u CHá»ˆ cÃ²n á»Ÿ cá»¥m minh hoáº¡ SVG.
-   Bá» Cá»¤C â€” 4 vÃ¹ng trong .wx-body:
-     [.weather-hero: tÃ¬nh tráº¡ng trá»i + nhiá»‡t Ä‘á»™ Lá»šN] | [.wx-divider 1px/60%]
-     | [.wx-meta: "T5, 08/10" + ðŸ“tÃªn TP (+ giÃ³/Ä‘á»™ áº©m á»Ÿ Ã´ 2x2)]
-     | [.wx-art: minh hoáº¡ SVG trÃ n mÃ©p pháº£i ~15%]
-     Â· 3x1 (is-short.is-wide3): Ä‘á»§ 4 cá»™t;
-     Â· 2x1 (is-short): bá» váº¡ch ngÄƒn, ngÃ y + TP gom 1 dÃ²ng nhá» DÆ¯á»šI sá»‘ Â°C;
-     Â· 2x2 (is-big): minh hoáº¡ Lá»šN phÃ­a trÃªn, dÆ°á»›i lÃ  Â°C + text + giÃ³/Ä‘á»™ áº©m;
-     Â· 1x1 (is-mini): chá»‰ minh hoáº¡ thu nhá» + sá»‘ Â°C.
-   Cá»¡ chá»¯/icon dÃ¹ng cqw/cqh nÃªn cÃ¢n Ä‘á»‘i á»Ÿ má»i cá»¡ Ã´.
+   2 SKIN (data-skin, chọn trong modal "Cài Đặt Phím Bấm"):
+     · soft (MÀU DỊU — mặc định): nền GRADIENT full-bleed đổi theo trạng
+       thái trời (data-tint) + ngày/đêm (data-night="1" -> tím navy); một
+       lớp scrim tối 30% phủ trên gradient -> "làm dịu 30% độ chói".
+     · flat (PHẲNG): nền #111317; màu CHỈ còn ở cụm minh hoạ SVG.
+   BỐ CỤC — 4 vùng trong .wx-body:
+     [.weather-hero: tình trạng trời + nhiệt độ LỚN] | [.wx-divider 1px/60%]
+     | [.wx-meta: "T5, 08/10" + 📍tên TP (+ gió/độ ẩm ở ô 2x2)]
+     | [.wx-art: minh hoạ SVG tràn mép phải ~15%]
+     · 3x1 (is-short.is-wide3): đủ 4 cột;
+     · 2x1 (is-short): bỏ vạch ngăn, ngày + TP gom 1 dòng nhỏ DƯỚI số °C;
+     · 2x2 (is-big): minh hoạ LỚN phía trên, dưới là °C + text + gió/độ ẩm;
+     · 1x1 (is-mini): chỉ minh hoạ thu nhỏ + số °C.
+   Cỡ chữ/icon dùng cqw/cqh nên cân đối ở mọi cỡ ô.
    ===================================================================== */

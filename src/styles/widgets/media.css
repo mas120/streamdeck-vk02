@@ -113,4 +113,10 @@
   .media-btn { min-width: 44px; height: 44px; }
   .media-play { min-width: 52px; height: 52px; }
   }
+  /* Ô rộng >= 2 cột: tên nghệ sĩ chiếm trọn một dòng, thời lượng xuống dòng
+     riêng để chuỗi "30:47 / 2:35:03" không bóp tên thành "Huỳnh...". */
+  @container (min-width: 240px) and (min-height: 120px) {
+  .media-artist-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1px; }
+  .media-time { justify-self: end; font-size: 11px; line-height: 1.2; }
+  }
   body.idle .media-unit { filter: brightness(0.4) saturate(0.6); }

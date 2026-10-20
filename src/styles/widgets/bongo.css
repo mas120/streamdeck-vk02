@@ -1,4 +1,4 @@
-  .bongo-cat-widget {
+.bongo-cat-widget {
   position: relative;
   width: 100%;
   height: 100%;
@@ -12,11 +12,13 @@
   background: radial-gradient(130% 120% at 50% 10%, #151b26 0%, #0c0f17 100%);
   color: var(--text-soft);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -2px 5px rgba(0, 0, 0, 0.5);
-  }
-  .bongo-cat-widget.hide-kps .bongo-kps {
+}
+
+.bongo-cat-widget.hide-kps .bongo-kps {
   display: none;
-  }
-  .bongo-kps {
+}
+
+.bongo-kps {
   position: absolute;
   top: 5px;
   right: 7px;
@@ -26,8 +28,9 @@
   color: var(--accent);
   font-family: var(--font-num);
   line-height: 1;
-  }
-  .bongo-scene {
+}
+
+.bongo-scene {
   position: relative;
   width: 100%;
   height: 100%;
@@ -35,123 +38,178 @@
   align-items: flex-end;
   justify-content: center;
   overflow: hidden;
-  }
-  .bongo-svg {
+}
+
+.bongo-svg {
   width: 100%;
   height: 100%;
   overflow: hidden;
   position: relative;
   z-index: 2;
-  }
-  .bongo-trackpad {
-  fill: #161c27;
-  stroke: rgba(255, 255, 255, 0.08);
+}
+
+/* --- Mèo --- */
+.bongo-ear {
+  fill: #fbfbfb;
+  stroke: #2f3743;
   stroke-width: 2.2;
   stroke-linejoin: round;
-  }
-  .bongo-trackpad-mark {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.42);
-  stroke-width: 1;
-  }
-  .bongo-cat-shape {
-  fill: #fff;
-  stroke: #3a4454;
-  stroke-width: 2.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+}
+
+.bongo-ear-inner {
+  fill: #f3a9b6;
+}
+
+.bongo-head {
   transform: translate(var(--look-x, 0px), var(--look-y, 0px));
   transition: transform 0.12s ease-out;
-  }
-  .bongo-ear-inner {
-  fill: #f07d8c;
-  }
-  .bongo-eyes {
-  fill: #3a4454;
-  stroke: #3a4454;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  }
-  .bongo-eyes path,
-  .bongo-whiskers {
+}
+
+/* Tai lắc theo hướng chuột: quơ sang trái thì tai nghiêng trái. */
+.bongo-ears {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transform: rotate(var(--ear-turn, 0deg));
+  transition: transform 0.14s cubic-bezier(0.3, 0.9, 0.4, 1);
+}
+
+.bongo-body {
+  fill: #fbfbfb;
+  stroke: #2f3743;
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+}
+
+.bongo-eye {
+  fill: #2f3743;
+}
+
+.bongo-eye-glint {
+  fill: #fff;
+}
+
+.bongo-blush {
+  fill: #ffc0cb;
+  opacity: 0.55;
+}
+
+.bongo-whiskers {
   fill: none;
-  stroke: #3a4454;
+  stroke: #3b4553;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  opacity: 0.75;
+}
+
+.bongo-nose {
+  fill: #f28fa1;
+}
+
+.bongo-mouth {
+  fill: none;
+  stroke: #2f3743;
   stroke-width: 1.7;
   stroke-linecap: round;
-  }
-  .bongo-keyboard-case {
-  fill: #11151f;
-  stroke: rgba(255, 255, 255, 0.08);
-  stroke-width: 2.2;
-  stroke-linejoin: round;
-  }
-  .bongo-keyboard-row,
-  .bongo-keyboard-cols {
-  fill: none;
-  stroke: #161c27;
-  stroke-width: 1.25;
-  stroke-linecap: round;
-  }
-  .bongo-key path {
-  fill: #f1f2ef;
-  stroke: #202328;
-  stroke-width: 1;
-  stroke-linejoin: round;
-  transition: fill 0.08s ease, transform 0.08s ease;
-  transform-box: fill-box;
-  transform-origin: center;
-  }
-  .bongo-key.is-lit path {
-  fill: var(--accent);
-  filter: drop-shadow(0 0 8px var(--accent-glow));
-  transform: translateY(1.5px);
-  }
-  .bongo-spacebar {
-  fill: #161c27;
-  stroke: rgba(255, 255, 255, 0.18);
-  stroke-width: 1;
-  stroke-linejoin: round;
-  }
-  .bongo-key.is-lit {
-  filter: none;
-  }
-  .bongo-arm {
-  transition: transform 0.11s ease-out;
-  transform-box: fill-box;
-  transform-origin: center;
+}
+
+/* --- Bàn phím 75% --- */
+.bongo-keyboard {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
+}
+
+.bongo-keyboard-case {
+  fill: #151b24;
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 2;
+}
+
+.bongo-key-rect {
+  fill: #333c49;
+  stroke: rgba(255, 255, 255, 0.07);
+  stroke-width: 0.7;
+  transition: fill 0.07s ease, stroke 0.07s ease;
+}
+
+.bongo-key .bongo-spacebar {
+  fill: #2a323e;
+}
+
+.bongo-legend {
+  fill: #b6c2d2;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  letter-spacing: 0;
+  paint-order: stroke;
   pointer-events: none;
-  }
-  .bongo-paw {
-  fill: #fff;
-  stroke: #3a4454;
-  stroke-width: 2.6;
+  user-select: none;
+  transition: fill 0.07s ease;
+}
+
+.bongo-legend-sub {
+  fill: #8695a8;
+  font-weight: 600;
+}
+
+.bongo-key.is-home .bongo-key-rect {
+  stroke: rgba(255, 255, 255, 0.22);
+}
+
+.bongo-key {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.07s ease;
+}
+
+.bongo-key.is-lit {
+  transform: translateY(0.7px);
+}
+
+.bongo-key.is-lit .bongo-key-rect {
+  fill: var(--accent);
+  stroke: rgba(255, 255, 255, 0.5);
+  filter: drop-shadow(0 0 5px var(--accent-glow));
+}
+
+.bongo-key.is-lit .bongo-legend {
+  fill: #07131b;
+}
+
+/* --- Tay --- */
+.bongo-arm {
+  transform: translate(var(--paw-dx, 0px), var(--paw-dy, 0px));
+  transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.35, 1);
+  pointer-events: none;
+}
+
+.bongo-paw {
+  fill: #fbfbfb;
+  stroke: #2f3743;
+  stroke-width: 2.4;
   stroke-linecap: round;
   stroke-linejoin: round;
-  }
-  .bongo-paw-line {
+}
+
+.bongo-paw-line {
   fill: none;
-  stroke: #3a4454;
-  stroke-width: 1.5;
+  stroke: #2f3743;
+  stroke-width: 1.3;
   stroke-linecap: round;
-  }
-  .bongo-paw-pad {
-  fill: #f17f8d;
-  stroke: #e9697a;
-  stroke-width: 0.8;
-  }
-  .bongo-cat-widget[data-action="down"][data-hand="left"] .bongo-arm-left {
-  transform: translate(3px, 7px) rotate(9deg);
-  }
-  .bongo-cat-widget[data-action="down"][data-hand="right"] .bongo-arm-right {
-  transform: translate(-3px, 7px) rotate(-9deg);
-  }
-  .bongo-cat-widget[data-action="up"] .bongo-arm {
-  transform: translate(0, 0) rotate(0deg);
-  }
-  body.idle .bongo-cat-widget {
+  opacity: 0.55;
+}
+
+.bongo-cat-widget[data-left="down"] .bongo-arm-left {
+  transform: translate(var(--paw-dx, 0px), calc(var(--paw-dy, 0px) + 1.5px));
+}
+
+.bongo-cat-widget[data-right="down"] .bongo-arm-right {
+  transform: translate(var(--paw-dx, 0px), calc(var(--paw-dy, 0px) + 1.5px));
+}
+
+body.idle .bongo-cat-widget {
   filter: brightness(0.62) saturate(0.8);
-  }
-  body.idle .weather-unit.keycap-weather {
+}
+
+body.idle .weather-unit.keycap-weather {
   opacity: 0.4;
   filter: brightness(0.4) saturate(0.8);
-  }
+}

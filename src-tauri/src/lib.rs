@@ -1,6 +1,6 @@
 use std::time::Duration;
 use ::windows::Win32::System::Com::{CoInitializeEx, CoUninitialize, COINIT_MULTITHREADED};
-use tauri::Manager;
+use tauri::{Emitter, Manager};
 
 mod actions;
 mod app_icons;
@@ -128,6 +128,46 @@ pub fn run() {
                                 std::thread::sleep(Duration::from_secs(1));
                             });
                         }
+
+                        // Vì chuột bị giữ ở màn chính nên `pointermove` trên widget không bao
+                        // giờ chạy. Phát vị trí con trỏ (chuẩn hoá theo màn chính) để mèo liếc
+                        // mắt và tai lắc theo hướng di chuyển chuột.
+                        let cursor_win = window.clone();
+                        std::thread::spawn(move || {
+                            let primary = cursor_win.primary_monitor().ok().flatten();
+                            let (px, py, pw, ph) = match primary {
+                                Some(m) => {
+                                    let p = m.position();
+                                    let s = m.size();
+                                    (
+                                        p.x as f64,
+                                        p.y as f64,
+                                        s.width.max(1) as f64,
+                                        s.height.max(1) as f64,
+                                    )
+                                }
+                                None => (0.0, 0.0, 1.0, 1.0),
+                            };
+                            loop {
+                                let mut pt =
+                                    ::windows::Win32::Foundation::POINT { x: 0, y: 0 };
+                                let ok = unsafe {
+                                    ::windows::Win32::UI::WindowsAndMessaging::GetCursorPos(
+                                        &mut pt,
+                                    )
+                                    .is_ok()
+                                };
+                                if ok {
+                                    let nx = ((pt.x as f64 - px) / pw).clamp(0.0, 1.0);
+                                    let ny = ((pt.y as f64 - py) / ph).clamp(0.0, 1.0);
+                                    let _ = cursor_win.emit(
+                                        "bongo-cursor",
+                                        serde_json::json!({ "x": nx, "y": ny }),
+                                    );
+                                }
+                                std::thread::sleep(Duration::from_millis(45));
+                            }
+                        });
                     }
                     None => {
                         // CHƯA có panel VK02 (đang phát triển trên 1 màn hình): giữ cửa sổ

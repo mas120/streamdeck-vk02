@@ -1,4 +1,4 @@
-﻿@font-face {
+@font-face {
   font-family: "JetBrains Mono";
   src: url("/fonts/jetbrains-mono-vietnamese-wght.woff2") format("woff2");
   font-weight: 100 800;
@@ -14,8 +14,8 @@
 }
 
 :root {
-  /* --- TOKENS: ngÃ´n ngá»¯ Cyber-Glass thá»‘ng nháº¥t -------------------------
-     Ná»n app gáº§n Ä‘en; keycap lÃ  "táº¥m kÃ­nh" 2 tÃ´ng + mÃ©p trÃªn pháº£n quang. */
+  /* --- TOKENS: ngôn ngữ Cyber-Glass thống nhất -------------------------
+     Nền app gần đen; keycap là "tấm kính" 2 tông + mép trên phản quang. */
   --bg: #090a0f;
   --slot-bg: #0b0d14;
   --slot-border: rgba(255, 255, 255, 0.03);
@@ -24,16 +24,16 @@
   --panel-glow: rgba(103, 183, 255, 0.10);
   --key-surface: linear-gradient(180deg, #141a22, #0d1117 55%, #090d12);
   --key-border: rgba(255, 255, 255, 0.05);
-  --key-border-top: rgba(255, 255, 255, 0.08);   /* mÃ©p trÃªn pháº£n quang */
-  --radius-key: 16px;                            /* bo gÃ³c chuáº©n keycap */
+  --key-border-top: rgba(255, 255, 255, 0.08);   /* mép trên phản quang */
+  --radius-key: 16px;                            /* bo góc chuẩn keycap */
   --radius-chip: 12px;                           /* squircle cho icon app */
   --widget-pad: 12px;
   --widget-pad-compact: 8px;
   --key-bevel: inset 0 1px 1px rgba(255, 255, 255, 0.25), inset 0 -2px 4px rgba(0, 0, 0, 0.8);
-  /* Hiá»‡u á»©ng cÆ¡ há»c khi NHáº¤N: lÃºn xuá»‘ng + bÃ³ng lÃµm vÃ o trong */
+  /* Hiệu ứng cơ học khi NHẤN: lún xuống + bóng lõm vào trong */
   --press-transform: scale(0.96) translateY(2px);
   --press-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.8);
-  /* Dáº£i gradient cá»§a Capsule Fader (kiá»ƒu iOS) */
+  /* Dải gradient của Capsule Fader (kiểu iOS) */
   --fill-from: #00c6ff;
   --fill-to: #0072ff;
   --fill-glow: rgba(0, 198, 255, 0.45);
@@ -48,16 +48,16 @@
   --track-bg: #090d15;
   --track-edge: rgba(255, 255, 255, 0.05);
   --screen-brightness: 1;
-    /* --- FONT THUáº¦N VIá»†T -------------------------------------------------
-     --font-ui : Æ°u tiÃªn font Há»† THá»NG Windows cÃ³ Äáº¦Y Äá»¦ Dáº¤U TIáº¾NG VIá»†T
-                 (Segoe UI Variable Text trÃªn Win 11, Segoe UI trÃªn Win 10),
-                 rá»“i má»›i tá»›i Inter / Noto Sans / Roboto / Arial / Tahoma.
-                 ÄÃƒ Bá»Ž "-apple-system" / "BlinkMacSystemFont": hai tÃªn nÃ y chá»‰
-                 tá»“n táº¡i trÃªn macOS nÃªn trÃªn panel VK02 chÃºng chá»‰ gÃ¢y khÃ³ Ä‘oÃ¡n
-                 font tháº­t sá»± Ä‘Æ°á»£c dÃ¹ng.
-     --font-num: mono cho DÃƒY Sá» (giá», mm:ss, %) + tabular-nums Ä‘á»ƒ sá»‘ KHÃ”NG
-                 "nháº£y" khi giÃ¡ trá»‹ Ä‘á»•i. Cascadia Mono / Consolas Ä‘á»u cÃ³ Ä‘á»§
-                 dáº¥u tiáº¿ng Viá»‡t nÃªn nhÃ£n cÃ³ dáº¥u lá»t vÃ o Ã´ sá»‘ váº«n hiá»ƒn thá»‹ Ä‘Ãºng. */
+    /* --- FONT THUẦN VIỆT -------------------------------------------------
+     --font-ui : ưu tiên font HỆ THỐNG Windows có ĐẦY ĐỦ DẤU TIẾNG VIỆT
+                 (Segoe UI Variable Text trên Win 11, Segoe UI trên Win 10),
+                 rồi mới tới Inter / Noto Sans / Roboto / Arial / Tahoma.
+                 ĐÃ BỎ "-apple-system" / "BlinkMacSystemFont": hai tên này chỉ
+                 tồn tại trên macOS nên trên panel VK02 chúng chỉ gây khó đoán
+                 font thật sự được dùng.
+     --font-num: mono cho DÃY SỐ (giờ, mm:ss, %) + tabular-nums để số KHÔNG
+                 "nhảy" khi giá trị đổi. Cascadia Mono / Consolas đều có đủ
+                 dấu tiếng Việt nên nhãn có dấu lọt vào ô số vẫn hiển thị đúng. */
   --font-ui: "Segoe UI Variable Text", "Segoe UI", system-ui, "Noto Sans",
              "Arial", "Tahoma", sans-serif;
   --font-num: "JetBrains Mono", "Cascadia Mono", "Consolas", ui-monospace, monospace;

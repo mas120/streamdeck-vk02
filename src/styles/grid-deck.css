@@ -10,9 +10,9 @@
   height: 100vh;
   overflow: hidden;
   background: var(--bg);
-  font-family: var(--font-ui);   /* font thuáº§n Viá»‡t â€” xem token á»Ÿ :root */
+  font-family: var(--font-ui);   /* font thuần Việt — xem token ở :root */
   }
-  /* Khung chá»©a toÃ n bá»™ deck â€” khoÃ¡ cá»©ng 100% viewport (<=> 1280x800 khi cá»­a sá»• 1280x800) */
+  /* Khung chứa toàn bộ deck — khoá cứng 100% viewport (<=> 1280x800 khi cửa sổ 1280x800) */
   .deck-viewport {
   width: 100vw;
   height: 100vh;
@@ -20,7 +20,7 @@
   overflow: hidden;
   position: relative;
   }
-  /* Container chá»©a cÃ¡c Ã´ ná»n tÄ©nh: Ä‘á»“ng bá»™ 100% há»‡ toáº¡ Ä‘á»™ vá»›i .grid-stack (cÃ¹ng gá»‘c 0,0) */
+  /* Container chứa các ô nền tĩnh: đồng bộ 100% hệ toạ độ với .grid-stack (cùng gốc 0,0) */
   .deck-backdrop {
   position: absolute;
   inset: 0;
@@ -35,25 +35,25 @@
   box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.92);
   box-sizing: border-box;
   }
-  /* Khung GridStack náº±m Ä‘Ã¨ lÃªn, cÃ¹ng gá»‘c toáº¡ Ä‘á»™ vá»›i .deck-backdrop */
+  /* Khung GridStack nằm đè lên, cùng gốc toạ độ với .deck-backdrop */
   .grid-stack {
   width: 100%;
   height: 100%;
   position: relative;
   z-index: 2;
   }
-  /* Ã” bao ngoÃ i do GridStack quáº£n lÃ½ (bounding box = w*cellWidth x h*cellHeight) */
+  /* Ô bao ngoài do GridStack quản lý (bounding box = w*cellWidth x h*cellHeight) */
   .grid-stack-item {
   padding: 0;
   box-sizing: border-box;
-  /* Cho phÃ©p kÃ©o tháº£ cáº£m á»©ng mÆ°á»£t, khÃ´ng bá»‹ WebView2/Windows cÆ°á»›p gesture */
+  /* Cho phép kéo thả cảm ứng mượt, không bị WebView2/Windows cướp gesture */
   touch-action: none;
   }
-  /* PhÃ­m báº¥m 3D â€” lá»t lÃ²ng chÃ­nh xÃ¡c bÃªn trong bounding box (GridStack tá»± inset theo margin) */
+  /* Phím bấm 3D — lọt lòng chính xác bên trong bounding box (GridStack tự inset theo margin) */
   .grid-stack-item-content {
   background: var(--key-surface) !important;
   border: 1px solid var(--key-border) !important;
-  border-top: 1px solid var(--key-border-top) !important;   /* mÃ©p trÃªn pháº£n quang */
+  border-top: 1px solid var(--key-border-top) !important;   /* mép trên phản quang */
   border-radius: var(--radius-key) !important;
   box-shadow:
     0 6px 14px rgba(0, 0, 0, 0.55),
@@ -85,8 +85,8 @@
   pointer-events: none;
   z-index: 3;
   }
-  /* Widget "mÃ n hÃ¬nh" (LCD) KHÃ”NG nháº­n lá»›p gloss máº¡nh nhÆ° keycap trÆ¡n: giáº£m Ä‘á»™
-   sÃ¡ng Ä‘á»ƒ máº·t LCD khÃ´ng bá»‹ "báº¹t" vÃ  khÃ´ng lá»™ dáº£i sÃ¡ng cong trÃªn Ã´ rá»™ng. */
+  /* Widget "màn hình" (LCD) KHÔNG nhận lớp gloss mạnh như keycap trơn: giảm độ
+   sáng để mặt LCD không bị "bẹt" và không lộ dải sáng cong trên ô rộng. */
   .grid-stack-item[data-type="volume_slider"] .grid-stack-item-content::before,
   .grid-stack-item[data-type="app_slider"] .grid-stack-item-content::before,
   .grid-stack-item[data-type="pomodoro"] .grid-stack-item-content::before,
@@ -95,23 +95,23 @@
   .grid-stack-item[data-type="bongo_cat"] .grid-stack-item-content::before {
   opacity: 0.5;
   }
-  /* Cá» Ã KHÃ”NG cÃ³ rule hover cho keycap (.grid-stack-item-content):
-   trÃªn panel cáº£m á»©ng VK02, WebView2 Ã¡p tráº¡ng thÃ¡i hover ngay khi cháº¡m vÃ 
-   GIá»® NGUYÃŠN cho tá»›i khi cháº¡m chá»— khÃ¡c -> phÃ­m vá»«a cháº¡m bá»‹ "dÃ­nh" viá»n
-   cyan sÃ¡ng mÃ£i. Pháº£n há»“i cháº¡m Ä‘Ã£ cÃ³ :active + .keycap-pressed. */
+  /* CỐ Ý KHÔNG có rule hover cho keycap (.grid-stack-item-content):
+   trên panel cảm ứng VK02, WebView2 áp trạng thái hover ngay khi chạm và
+   GIỮ NGUYÊN cho tới khi chạm chỗ khác -> phím vừa chạm bị "dính" viền
+   cyan sáng mãi. Phản hồi chạm đã có :active + .keycap-pressed. */
   .deck-icon-core {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;   /* icon tá»± canh theo cqw/cqh; khÃ´ng chá»«a mÃ©p ná»¯a Ä‘á»ƒ chiáº¿m ~65% phÃ­m */
+  padding: 0;   /* icon tự canh theo cqw/cqh; không chừa mép nữa để chiếm ~65% phím */
   position: relative;
   z-index: 2;
-  container-type: size;   /* báº­t cqw/cqh cho icon squircle */
+  container-type: size;   /* bật cqw/cqh cho icon squircle */
   }
-  /* Icon app 1x1: chiáº¿m ~72% bá» rá»™ng "mÃ n hÃ¬nh" (â‰ˆ 62â€“66% phÃ­m), squircle 12px.
-   TrÆ°á»›c Ä‘Ã¢y 56px / 46cqw â‰ˆ 1/3 phÃ­m nÃªn icon trÃ´ng nhá» vÃ  láº¡c lÃµng. */
+  /* Icon app 1x1: chiếm ~72% bề rộng "màn hình" (≈ 62–66% phím), squircle 12px.
+   Trước đây 56px / 46cqw ≈ 1/3 phím nên icon trông nhỏ và lạc lõng. */
   .icon-chip {
   width: 92px;
   width: min(72cqw, 72cqh);
@@ -137,8 +137,8 @@
   line-height: 1;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
   }
-  /* --- Tuá»³ chá»n khá»›p áº£nh: data-fit="contain" (Vá»«a khung, máº·c Ä‘á»‹nh) | "cover" (Phá»§ kÃ­n) ---
-   Phá»§ kÃ­n: áº£nh tráº£i háº¿t máº·t phÃ­m (bá» khung LCD 10px), cáº¯t theo bo gÃ³c keycap. */
+  /* --- Tuỳ chọn khớp ảnh: data-fit="contain" (Vừa khung, mặc định) | "cover" (Phủ kín) ---
+   Phủ kín: ảnh trải hết mặt phím (bỏ khung LCD 10px), cắt theo bo góc keycap. */
   .deck-icon-core[data-fit="cover"] {
   width: 100%;
   height: 100%;
@@ -155,7 +155,7 @@
   filter: none;
   }
   .deck-icon-core[data-fit="cover"] .icon-emoji { font-size: min(78cqw, 78cqh); }
-  /* --- Icon dá»± phÃ²ng khi áº£nh bá»‹ vá»¡: glyph trung tÃ­nh + tÃªn app --- */
+  /* --- Icon dự phòng khi ảnh bị vỡ: glyph trung tính + tên app --- */
   .icon-fallback {
   display: flex;
   flex-direction: column;
@@ -181,15 +181,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
   }
-  /* NÃºt icon nhá» cá»§a slider: chá»‰ hiá»‡n glyph (tÃªn app Ä‘Ã£ náº±m á»Ÿ hÃ ng tÃªn) */
+  /* Nút icon nhỏ của slider: chỉ hiện glyph (tên app đã nằm ở hàng tên) */
   .app-icon-btn .icon-fallback { padding: 18%; gap: 0; }
   .app-icon-btn .icon-fallback-name { display: none; }
   .app-deck-unit.is-mini .app-icon-btn .icon-fallback { padding: 10%; gap: 2px; }
   .app-deck-unit.is-mini .app-icon-btn .icon-fallback-name { display: block; font-size: 12px; }
-  /* ÄÃ£ cÃ³ nhÃ£n chá»“ng lÃªn thÃ¬ khÃ´ng láº·p tÃªn app á»Ÿ icon dá»± phÃ²ng */
+  /* Đã có nhãn chồng lên thì không lặp tên app ở icon dự phòng */
   .grid-stack-item-content:has(.key-title) .icon-fallback-name { display: none; }
-  /* --- NHÃƒN (title) chá»“ng lÃªn icon, giá»‘ng Stream Deck ---
-   Vá»‹ trÃ­: data-pos = top | middle | bottom; cá»¡ chá»¯: --title-size; Ä‘á»• bÃ³ng: data-shadow="1". */
+  /* --- NHÃN (title) chồng lên icon, giống Stream Deck ---
+   Vị trí: data-pos = top | middle | bottom; cỡ chữ: --title-size; đổ bóng: data-shadow="1". */
   .key-title {
   position: absolute;
   left: 6px;
@@ -219,15 +219,15 @@
     0 2px 10px rgba(0, 0, 0, 0.7);
   }
   /* =====================================================================
-   FADER CAPSULE THá»NG NHáº¤T (dÃ¹ng cho Cáº¢ Ã¢m lÆ°á»£ng há»‡ thá»‘ng láº«n per-app).
+   FADER CAPSULE THỐNG NHẤT (dùng cho CẢ âm lượng hệ thống lẫn per-app).
    ---------------------------------------------------------------------
-   - .volume-deck-unit: "mÃ n hÃ¬nh" LCD cá»§a phÃ­m Ã¢m lÆ°á»£ng há»‡ thá»‘ng; bá»‘ cá»¥c
-     dá»c gá»“m hÃ ng Ä‘áº§u (.volume-core) + thanh capsule (.volume-track).
-     HÃ¬nh khá»‘i/ná»n/viá»n láº¥y tá»« rule LCD dÃ¹ng chung á»Ÿ cuá»‘i file.
-   - .volume-fill : lá»›p tiáº¿n Ä‘á»™ bÃªn trong capsule, rá»™ng theo --fill-percent,
-     gradient cyan #00C6FF -> #0072FF, "nÃºm" sÃ¡ng á»Ÿ mÃ©p fill.
-   - --fill-percent (0..100): JS ghi trá»±c tiáº¿p khi vuá»‘t (throttle 20ms).
-   - data-orient="v" (Ã´ CAO hÆ¡n rá»™ng): capsule chuyá»ƒn Dá»ŒC, fill tá»« ÄÃY.
+   - .volume-deck-unit: "màn hình" LCD của phím âm lượng hệ thống; bố cục
+     dọc gồm hàng đầu (.volume-core) + thanh capsule (.volume-track).
+     Hình khối/nền/viền lấy từ rule LCD dùng chung ở cuối file.
+   - .volume-fill : lớp tiến độ bên trong capsule, rộng theo --fill-percent,
+     gradient cyan #00C6FF -> #0072FF, "núm" sáng ở mép fill.
+   - --fill-percent (0..100): JS ghi trực tiếp khi vuốt (throttle 20ms).
+   - data-orient="v" (ô CAO hơn rộng): capsule chuyển DỌC, fill từ ĐÁY.
    ===================================================================== */
   .volume-deck-unit {
   display: flex;
@@ -243,5 +243,5 @@
   touch-action: none;
   z-index: 2;
   }
-  /* Thanh CAPSULE cá»§a Ã´ Ã¢m lÆ°á»£ng há»‡ thá»‘ng: bo trÃ²n 999px, lÃ²ng tá»‘i + viá»n máº£nh.
-   Chiá»u cao khá»›p .app-track -> hai loáº¡i fader nhÃ¬n nhÆ° Má»˜T thÃ nh pháº§n. */
+  /* Thanh CAPSULE của ô âm lượng hệ thống: bo tròn 999px, lòng tối + viền mảnh.
+   Chiều cao khớp .app-track -> hai loại fader nhìn như MỘT thành phần. */

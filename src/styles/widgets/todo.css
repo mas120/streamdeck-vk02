@@ -31,7 +31,6 @@
   .todo-item span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
                     transition: opacity 0.2s ease, text-decoration-color 0.2s ease; }
   .todo-item:not(.done):first-child span { color: var(--txt-1, #f2f6fc); font-weight: 700; }
-  .todo-item:not(.done):first-child .todo-box { border-color: var(--accent); box-shadow: 0 0 7px var(--accent-glow); }
   .todo-item.is-completing { pointer-events: none; }
   .todo-item.is-completing span { color: var(--txt-3, #7d879b); text-decoration: line-through;
                                   text-decoration-color: var(--txt-3, #7d879b); opacity: 0.55; }

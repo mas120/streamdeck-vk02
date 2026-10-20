@@ -4,11 +4,11 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  container-type: size;   /* báº­t cqw/cqh cho sá»‘ giá» + glyph */
-  color: var(--pomo-work);   /* pha LÃ€M VIá»†C (Ä‘á» cam) */
+  container-type: size;   /* bật cqw/cqh cho số giờ + glyph */
+  color: var(--pomo-work);   /* pha LÀM VIỆC (đỏ cam) */
   z-index: 2;
   }
-  .pomodoro-unit[data-mode="break"] { color: var(--pomo-break); }   /* pha NGHá»ˆ */
+  .pomodoro-unit[data-mode="break"] { color: var(--pomo-break); }   /* pha NGHỈ */
   .pomodoro-ring {
   position: absolute;
   left: 50%;
@@ -32,7 +32,7 @@
   }
   .timer-progress.work  { filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 15px rgba(255, 90, 77, 0.5)); }
   .timer-progress.break { filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 15px rgba(70, 217, 119, 0.5)); }
-  /* Cháº¥m sÃ¡ng á»Ÿ Ä‘áº§u cung: cÃ²n bao nhiÃªu thá»i gian = nhÃ¬n 1 cÃ¡i lÃ  biáº¿t */
+  /* Chấm sáng ở đầu cung: còn bao nhiêu thời gian = nhìn 1 cái là biết */
   .timer-head {
   fill: #ffffff;
   transform-box: view-box;
@@ -59,14 +59,14 @@
   font-family: var(--font-num);
   font-variant-numeric: tabular-nums;
   font-weight: 800;
-  font-size: 32px;                /* sá»‘ mm:ss hero á»Ÿ Ã´ 2x2 */
-  font-size: min(17cqw, 22cqh);   /* 1x1 / 2x1 / 2x2 Ä‘á»u lá»t lÃ²ng vÃ²ng LED */
+  font-size: 32px;                /* số mm:ss hero ở ô 2x2 */
+  font-size: min(17cqw, 22cqh);   /* 1x1 / 2x1 / 2x2 đều lọt lòng vòng LED */
   letter-spacing: 0.02em;
   line-height: 1;
   color: #fff;
   transition: color 0.3s ease, text-shadow 0.3s ease;
   }
-  /* Sá»‘ giá» Äƒn mÃ u pha -> nháº­n ra LÃ€M VIá»†C / NGHá»ˆ NGAY, khÃ´ng cáº§n Ä‘á»c chá»¯ */
+  /* Số giờ ăn màu pha -> nhận ra LÀM VIỆC / NGHỈ NGAY, không cần đọc chữ */
   .pomodoro-unit[data-mode="work"] .timer-time {
   color: #ffe2de;
   text-shadow: 0 0 14px rgba(255, 90, 77, 0.8);
@@ -75,7 +75,7 @@
   color: #d8ffe4;
   text-shadow: 0 0 14px rgba(70, 217, 119, 0.8);
   }
-  /* Glyph tráº¡ng thÃ¡i: â–¶ Ä‘ang cháº¡y Â· âšâš táº¡m dá»«ng Â· â–¶ má» nhÃ¡y khi chá» cháº¡m */
+  /* Glyph trạng thái: ▶ đang chạy · ❚❚ tạm dừng · ▶ mờ nháy khi chờ chạm */
   .pomodoro-mark {
   display: inline-flex;
   align-items: center;
@@ -90,8 +90,8 @@
   .pomodoro-mark .glyph-pause { display: none; }
   .pomodoro-unit[data-state="paused"] .glyph-play { display: none; }
   .pomodoro-unit[data-state="paused"] .glyph-pause { display: block; }
-  /* Ã” 1x1: bá» glyph tráº¡ng thÃ¡i -> nhÆ°á»ng trá»n diá»‡n tÃ­ch cho sá»‘ mm:ss + vÃ²ng LED
-   (tráº¡ng thÃ¡i váº«n Ä‘á»c Ä‘Æ°á»£c qua mÃ u vÃ²ng + animation thá»Ÿ). */
+  /* Ô 1x1: bỏ glyph trạng thái -> nhường trọn diện tích cho số mm:ss + vòng LED
+   (trạng thái vẫn đọc được qua màu vòng + animation thở). */
   .pomodoro-unit.is-mini .pomodoro-mark { display: none; }
   .pomodoro-unit[data-state="idle"] .pomodoro-mark { opacity: 0.42; animation: pomoReady 2.2s ease-in-out infinite; }
   .pomodoro-unit[data-state="idle"] .timer-progress { opacity: 0.55; }
@@ -101,16 +101,16 @@
   .pomodoro-unit[data-state="paused"] .pomodoro-mark { color: var(--warn); }
   .pomodoro-unit[data-state="paused"] .timer-progress,
   .pomodoro-unit[data-state="paused"] .timer-head { opacity: 0.4; }
-  /* Nhá»‹p "thá»Ÿ" ráº¥t nháº¹: máº¯t nháº­n ra Ä‘á»“ng há»“ ÄANG cháº¡y mÃ  khÃ´ng gÃ¢y nhiá»…u */
+  /* Nhịp "thở" rất nhẹ: mắt nhận ra đồng hồ ĐANG chạy mà không gây nhiễu */
   @keyframes pomoBreathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.68; } }
   @keyframes pomoReady { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.85; } }
-  /* TÃ´n trá»ng cÃ i Ä‘áº·t giáº£m chuyá»ƒn Ä‘á»™ng cá»§a há»‡ Ä‘iá»u hÃ nh */
+  /* Tôn trọng cài đặt giảm chuyển động của hệ điều hành */
   @media (prefers-reduced-motion: reduce) {
   .pomodoro-unit .timer-progress,
   .pomodoro-unit .timer-head,
   .pomodoro-unit .pomodoro-mark { animation: none !important; }
   }
-  /* Chá»›p nhÃ¡y viá»n LED ~1.5s khi háº¿t giá» */
+  /* Chớp nháy viền LED ~1.5s khi hết giờ */
   .grid-stack-item-content.pomo-finish .pomodoro-unit {
   animation: pomoFinishBlink 1.5s ease-in-out;
   }
@@ -126,7 +126,7 @@
     box-shadow: inset 0 0 0 3px #34C759, 0 0 26px rgba(52, 199, 89, 0.85);
   }
   }
-  /* DÃ²ng gá»£i Ã½ nhá» trong modal */
+  /* Dòng gợi ý nhỏ trong modal */
   .modal-hint {
   font-size: 11px;
   line-height: 1.5;
@@ -134,7 +134,7 @@
   font-weight: 600;
   }
   .modal-hint strong { color: var(--accent); }
-  /* NÃºt ná»•i "âœ“ Xong": chá»‰ hiá»‡n khi á»Ÿ Cháº¿ Ä‘á»™ Chá»‰nh sá»­a (thoÃ¡t nhanh) */
+  /* Nút nổi "✓ Xong": chỉ hiện khi ở Chế độ Chỉnh sửa (thoát nhanh) */
   .edit-toolbar {
   position: absolute;
   top: 10px;
@@ -191,17 +191,17 @@
   animation: longpress-fill var(--lp-dur) linear forwards;
   }
   @keyframes longpress-fill { to { stroke-dashoffset: 0; } }
-  /* LÆ°á»›i ná»n rÃµ hÆ¡n khi á»Ÿ Edit Mode (dá»… canh vá»‹ trÃ­) */
+  /* Lưới nền rõ hơn khi ở Edit Mode (dễ canh vị trí) */
   body.edit-mode .slot-cell {
   border-color: rgba(0, 229, 255, 0.2);
   box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.85),
               inset 0 0 0 1px rgba(0, 229, 255, 0.08);
   }
-  /* Cháº¿ Ä‘á»™ CHáº Y: áº©n háº³n viá»n/lÃ²ng Ã´ trá»‘ng Ä‘á»ƒ deck trÃ´ng nhÆ° thiáº¿t bá»‹ tháº­t;
-   chá»‰ hiá»‡n lÆ°á»›i á»Ÿ Cháº¿ Ä‘á»™ Chá»‰nh sá»­a (dá»… canh vá»‹ trÃ­). */
+  /* Chế độ CHẠY: ẩn hẳn viền/lòng ô trống để deck trông như thiết bị thật;
+   chỉ hiện lưới ở Chế độ Chỉnh sửa (dễ canh vị trí). */
   .slot-cell { transition: opacity 0.2s ease; }
   body:not(.edit-mode) .slot-cell { opacity: 0; }
-  /* Run Mode: con trá» "báº¥m Ä‘Æ°á»£c"; Edit Mode: con trá» "kÃ©o Ä‘Æ°á»£c" */
+  /* Run Mode: con trỏ "bấm được"; Edit Mode: con trỏ "kéo được" */
   body:not(.edit-mode) .grid-stack-item-content { cursor: pointer; }
   body.edit-mode .grid-stack-item-content { cursor: pointer; }
   .undo-toast {
@@ -275,13 +275,13 @@
   @media (prefers-reduced-motion: reduce) {
   body.edit-mode .grid-stack-item .grid-stack-item-content { animation: none; }
   }
-  /* áº¨n tay cáº§m resize khi á»Ÿ Run Mode */
+  /* Ẩn tay cầm resize khi ở Run Mode */
   body:not(.edit-mode) .ui-resizable-handle { display: none !important; }
   /* =====================================================================
-   HIá»†U á»¨NG PHÃM 3D: NHáº¤N / RIPPLE / STATUS RING
+   HIỆU ỨNG PHÍM 3D: NHẤN / RIPPLE / STATUS RING
    ===================================================================== */
-  /* 1. Nháº¥n phÃ­m: lÃºn xuá»‘ng + nÃ©n bÃ³ng + sÃ¡ng viá»n LED (pháº£n há»“i tá»©c thÃ¬)
-   Hiá»‡u á»©ng cÆ¡ há»c chuáº©n: --press-transform + bÃ³ng lÃµm --press-shadow. */
+  /* 1. Nhấn phím: lún xuống + nén bóng + sáng viền LED (phản hồi tức thì)
+   Hiệu ứng cơ học chuẩn: --press-transform + bóng lõm --press-shadow. */
   .grid-stack-item-content.keycap-pressed,
   body:not(.edit-mode) .grid-stack-item-content:active {
   transform: var(--press-transform);
@@ -293,7 +293,7 @@
   transition: transform 0.05s ease, box-shadow 0.05s ease,
               border-color 0.05s ease;
   }
-  /* 2. Ripple: sÃ³ng neon quÃ©t tá»« tÃ¢m icon ra viá»n trong 120ms */
+  /* 2. Ripple: sóng neon quét từ tâm icon ra viền trong 120ms */
   .key-ripple {
   position: absolute;
   left: 50%;
@@ -315,7 +315,7 @@
   from { transform: translate(-50%, -50%) scale(0.05); opacity: 0.95; }
   to   { transform: translate(-50%, -50%) scale(1);    opacity: 0; }
   }
-  /* 3. Status Ring: lá»›p viá»n chá»›p tráº¡ng thÃ¡i náº±m trÃªn cÃ¹ng */
+  /* 3. Status Ring: lớp viền chớp trạng thái nằm trên cùng */
   .grid-stack-item-content::after {
   content: "";
   position: absolute;
@@ -356,13 +356,13 @@
   }
   }
   /* =====================================================================
-   P1 â€” DIá»†N Máº O "STREAM DECK THáº¬T"
-   (1) MÃ n hÃ¬nh LCD cho má»—i phÃ­m   (2) bá»‡ liá»n khá»‘i + vignette
-   (3) mÃ n "sÃ¡ng lÃªn" khi báº¥m      (4) nháº£ lÃ² xo (spring) khi tháº£
-   (5) tá»± tá»‘i khi ráº£nh             (6) Ã´ "CÃ i Ä‘áº·t Deck" (Cháº¿ Ä‘á»™ Cháº¡y/Edit + Äá»™ sÃ¡ng)
-   "MÃ n hÃ¬nh" = lá»›p ná»™i dung cá»§a phÃ­m (icon, hoáº·c Ä‘Æ¡n vá»‹ slider).
+   P1 — DIỆN MẠO "STREAM DECK THẬT"
+   (1) Màn hình LCD cho mỗi phím   (2) bệ liền khối + vignette
+   (3) màn "sáng lên" khi bấm      (4) nhả lò xo (spring) khi thả
+   (5) tự tối khi rảnh             (6) ô "Cài đặt Deck" (Chế độ Chạy/Edit + Độ sáng)
+   "Màn hình" = lớp nội dung của phím (icon, hoặc đơn vị slider).
    ===================================================================== */
-  /* (2) Bá»‡ liá»n khá»‘i: viá»n nhÃ´m máº£nh + tá»‘i dáº§n vá» 4 gÃ³c */
+  /* (2) Bệ liền khối: viền nhôm mảnh + tối dần về 4 góc */
   .deck-viewport::before {
   content: "";
   position: absolute;
@@ -383,14 +383,14 @@
     rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.5) 100%);
   }
   /* =====================================================================
-   PHÃM Äá»’NG Há»’ (mini_clock) â€” thiáº¿t káº¿ "LCD + watch face"
+   PHÍM ĐỒNG HỒ (mini_clock) — thiết kế "LCD + watch face"
    ---------------------------------------------------------------------
-   MÃ n hÃ¬nh tháº­t theo lÆ°á»›i 8x5 (panel 1280x800): 1x1 -> ~128x128 px,
-   2x1 -> ~288x128 px, 2x2 -> ~288x288 px. VÃ¬ váº­y má»i cá»¡ chá»¯ dÃ¹ng Ä‘Æ¡n vá»‹
-   container query (cqw/cqh) + fallback px -> widget luÃ´n cÃ¢n Ä‘á»‘i á»Ÿ Má»ŒI
-   kÃ­ch thÆ°á»›c Ã´ mÃ  khÃ´ng cáº§n Ä‘o báº±ng JS.
-   - .keycap-clock-digital : giá» hero + chip giÃ¢y + thanh quÃ©t giÃ¢y + ngÃ y
-   - .keycap-clock-analog  : máº·t sá»‘ SVG (vÃ nh, 60 váº¡ch, sá»‘ 12/3/6/9, cung
-                             giÃ¢y cháº¡y quanh vÃ nh, 3 kim)
-   - .keycap-clock-flip    : 4 táº¥m THáºº Láº¬T HH MM máº·t 24 GIá»œ (khÃ´ng AM/PM)
+   Màn hình thật theo lưới 8x5 (panel 1280x800): 1x1 -> ~128x128 px,
+   2x1 -> ~288x128 px, 2x2 -> ~288x288 px. Vì vậy mọi cỡ chữ dùng đơn vị
+   container query (cqw/cqh) + fallback px -> widget luôn cân đối ở MỌI
+   kích thước ô mà không cần đo bằng JS.
+   - .keycap-clock-digital : giờ hero + chip giây + thanh quét giây + ngày
+   - .keycap-clock-analog  : mặt số SVG (vành, 60 vạch, số 12/3/6/9, cung
+                             giây chạy quanh vành, 3 kim)
+   - .keycap-clock-flip    : 4 tấm THẺ LẬT HH MM mặt 24 GIỜ (không AM/PM)
    ===================================================================== */

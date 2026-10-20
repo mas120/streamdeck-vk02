@@ -3,7 +3,7 @@
   --sd-tile-border: rgba(211, 224, 241, 0.15);
   --sd-tile-hover: rgba(211, 224, 241, 0.4);
   }
-  /* ---- 1. THÃ‚N PHÃM: pháº³ng, Ä‘en, khÃ´ng viá»n 3 lá»›p, khÃ´ng bevel/gloss ------- */
+  /* ---- 1. THÂN PHÍM: phẳng, đen, không viền 3 lớp, không bevel/gloss ------- */
   body.sd-look .grid-stack-item-content {
   background: var(--sd-body) !important;
   border: 1px solid var(--sd-tile-border) !important;
@@ -12,7 +12,7 @@
   box-shadow:
     0 5px 14px rgba(0, 0, 0, 0.42),
     inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
-  transition: transform 0.12s ease-out;                  /* bá» overshoot "lÃ² xo" */
+  transition: transform 0.12s ease-out;                  /* bỏ overshoot "lò xo" */
   }
   @media (hover: hover) and (pointer: fine) {
   body.sd-look:not(.edit-mode) .grid-stack-item:not(.ui-draggable-dragging) .grid-stack-item-content:hover:not(:active):not(.keycap-pressed),
@@ -25,30 +25,30 @@
   border-color: var(--accent) !important;
   box-shadow: 0 0 0 1px var(--accent-glow), 0 0 0 3px rgba(125, 200, 255, 0.12) !important;
   }
-  /* Gloss cÅ© (14% tráº¯ng, náº±m TRÃŠN áº£nh) lÃ m báº¡c ná»­a trÃªn icon -> chá»‰ cÃ²n
-   má»™t vá»‡t pháº£n chiáº¿u kÃ­nh ráº¥t nháº¹ */
+  /* Gloss cũ (14% trắng, nằm TRÊN ảnh) làm bạc nửa trên icon -> chỉ còn
+   một vệt phản chiếu kính rất nhẹ */
   body.sd-look .grid-stack-item-content::before {
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 45%);
   }
   body.sd-look .grid-stack-item[data-type] .grid-stack-item-content::before { opacity: 1; }
-  /* Bá»‡ viá»n sÃ¡ng + tá»‘i 4 gÃ³c lÃ m cáº£ hÃ ng phÃ­m ngoÃ i rÃ¬a tá»‘i hÆ¡n phÃ­m giá»¯a;
-   mÃ n LCD tháº­t thÃ¬ Ä‘á»u sÃ¡ng nhÆ° nhau */
+  /* Bệ viền sáng + tối 4 góc làm cả hàng phím ngoài rìa tối hơn phím giữa;
+   màn LCD thật thì đều sáng như nhau */
   body.sd-look .deck-viewport::before { box-shadow: none; }
-  /* ---- 2. MÃ€N HÃŒNH LCD: trÃ n kÃ­n máº·t phÃ­m (bá» khung 10px) ------------------ */
+  /* ---- 2. MÀN HÌNH LCD: tràn kín mặt phím (bỏ khung 10px) ------------------ */
   body.sd-look :is(.deck-icon-core, .volume-deck-unit, .app-deck-unit,
                  .pomodoro-unit, .clock-unit, .weather-unit, .media-unit,
-                 .mic-deck-unit, .shutdown-unit) {
+                 .todo-unit, .mic-deck-unit, .shutdown-unit) {
   width: 100%;
   height: 100%;
-  border-radius: 0;                /* thÃ¢n phÃ­m Ä‘Ã£ bo + cáº¯t (overflow: hidden) */
+  border-radius: 0;                /* thân phím đã bo + cắt (overflow: hidden) */
   background: var(--sd-body);
   box-shadow: none;
   }
-  /* Ã” THá»œI TIáº¾T: giá»¯ Ná»€N GRADIENT cá»§a skin Ä‘ang chá»n (khÃ´ng bá»‹ Ã©p vá» #000) */
+  /* Ô THỜI TIẾT: giữ NỀN GRADIENT của skin đang chọn (không bị ép về #000) */
   body.sd-look .weather-unit.keycap-weather { background: var(--wx-bg); }
-  /* ---- 3. ICON: áº£nh/icon app láº¥p Ä‘áº§y phÃ­m nhÆ° áº£nh 144x144 cá»§a Elgato ------- */
+  /* ---- 3. ICON: ảnh/icon app lấp đầy phím như ảnh 144x144 của Elgato ------- */
   body.sd-look .icon-chip {
   width: 100%;
   height: 100%;
@@ -57,9 +57,9 @@
   }
   body.sd-look .deck-icon-core img { filter: none; object-fit: contain; }
   body.sd-look .deck-icon-core .icon-emoji { font-size: min(56cqw, 56cqh); filter: none; }
-  /* Glyph/logo vector: chá»«a ~20% mÃ©p Ä‘á»ƒ chiáº¿m ~58% phÃ­m (báº£n vector khÃ´ng
-   cÃ³ áº£nh ná»n nÃªn khÃ´ng Ä‘Æ°á»£c trÃ n kÃ­n). Khai bÃ¡o láº¡i kÃ­ch thÆ°á»›c á»Ÿ Ä‘Ã¢y cho
-   cháº¯c, khÃ´ng phá»¥ thuá»™c thá»© tá»± náº¡p cá»§a icons.css. */
+  /* Glyph/logo vector: chừa ~20% mép để chiếm ~58% phím (bản vector không
+   có ảnh nền nên không được tràn kín). Khai báo lại kích thước ở đây cho
+   chắc, không phụ thuộc thứ tự nạp của icons.css. */
   body.sd-look .icon-chip:has(> .icon-vec) { padding: 21%; }
   body.sd-look .icon-chip > .icon-vec { width: 100%; height: 100%; display: flex; }
   body.sd-look .icon-chip > .icon-vec svg { width: 100%; height: 100%; }
@@ -82,7 +82,7 @@
   background: transparent;
   box-shadow: none;
   }
-    /* ---- 4. NHáº¤N PHÃM: lÃºn nháº¹ + tá»‘i Ä‘i, KHÃ”NG neon/ripple ------------------- */
+    /* ---- 4. NHẤN PHÍM: lún nhẹ + tối đi, KHÔNG neon/ripple ------------------- */
   body.sd-look .grid-stack-item-content.keycap-pressed,
   body.sd-look:not(.edit-mode) .grid-stack-item-content:active {
   transform: scale(0.95);
@@ -99,7 +99,7 @@
   box-shadow: none;
   }
   body.sd-look .key-ripple { display: none; }
-  /* ---- 5. PHÃM TRá»NG: váº«n lÃ  phÃ­m Ä‘en (mÃ n táº¯t), khÃ´ng biáº¿n máº¥t ------------- */
+  /* ---- 5. PHÍM TRỐNG: vẫn là phím đen (màn tắt), không biến mất ------------- */
   body.sd-look:not(.edit-mode) .slot-cell {
   opacity: 0.12;
   background: #050506;
@@ -116,7 +116,7 @@
   color: rgba(6, 182, 212, 0.65);
   font: 600 20px/1 var(--font-ui);
   }
-  /* ---- 6. Káº¾T QUáº¢: dáº¥u âœ“ xanh / âš  vÃ ng nhÆ° Stream Deck (thay vÃ²ng viá»n) ---- */
+  /* ---- 6. KẾT QUẢ: dấu ✓ xanh / ⚠ vàng như Stream Deck (thay vòng viền) ---- */
   body.sd-look .grid-stack-item-content.status-success::after,
   body.sd-look .grid-stack-item-content.status-error::after {
   background-color: rgba(0, 0, 0, 0.55);
@@ -124,7 +124,7 @@
   background-position: center;
   background-size: 44%;
   box-shadow: none;
-  animation: sdResult 900ms ease-out forwards;   /* khá»›p setTimeout 930ms á»Ÿ flashKeycap */
+  animation: sdResult 900ms ease-out forwards;   /* khớp setTimeout 930ms ở flashKeycap */
   }
   body.sd-look .grid-stack-item-content.status-success::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2334d27b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12.5l5 5L20 6.5'/%3E%3C/svg%3E");
@@ -138,29 +138,29 @@
   75%  { opacity: 1; }
   100% { opacity: 0; }
   }
-  /* ---- 7. NHÃƒN: sÃ¡t mÃ©p hÆ¡n má»™t chÃºt, Ä‘áº­m vá»«a ------------------------------ */
+  /* ---- 7. NHÃN: sát mép hơn một chút, đậm vừa ------------------------------ */
   body.sd-look .key-title { left: 4px; right: 4px; font-weight: 700; }
   body.sd-look .key-title[data-pos="top"]    { top: 6px; }
   body.sd-look .key-title[data-pos="bottom"] { bottom: 6px; }
   /* =======================================================================
-   NGÃ”N NGá»® THá»Š GIÃC THá»NG NHáº¤T (Ä‘áº·t SAU sd-look nÃªn tháº¯ng theo thá»© tá»±)
+   NGÔN NGỮ THỊ GIÁC THỐNG NHẤT (đặt SAU sd-look nên thắng theo thứ tự)
    -----------------------------------------------------------------------
-   Vai trÃ² mÃ u â€” má»—i mÃ u nháº¥n chá»‰ lÃ m Má»˜T viá»‡c:
-     Â· CYAN  (--accent)  : thao tÃ¡c / tÆ°Æ¡ng tÃ¡c â€” fader, vÃ²ng giá»¯ phÃ­m,
-                           pha LÃ€M VIá»†C Ä‘ang cháº¡y, phÃ­m Ä‘Æ°á»£c chá»n.
-     Â· XANH LÃ (--ok)    : tráº¡ng thÃ¡i tá»‘t â€” pha NGHá»ˆ.
-     Â· Äá»Ž    (--danger)  : táº¯t tiáº¿ng, lá»—i.
-     Â· VÃ€NG  (--warn)    : táº¡m dá»«ng / cáº£nh bÃ¡o.
-     Â· CÃ²n láº¡i lÃ  THANG XÃM trung tÃ­nh (chá»¯ phá»¥, glyph chá»‰ sá»‘, thanh giÃ¢y).
-   KhÃ´ng cÃ²n: gradient tint á»Ÿ Ä‘á»“ng há»“/thá»i tiáº¿t, glow Ä‘á»-cam cá»§a Pomodoro,
-   chip cyan cá»§a giÃ¢y, glyph chá»‰ sá»‘ 3 mÃ u, bÃ¡nh rÄƒng tráº¯ng chÃ³i.
-   Cá»¡ chá»¯ tá»‘i thiá»ƒu trÃªn Ã´ 2x1: 13px (panel cáº£m á»©ng, nhÃ¬n tá»« xa).
+   Vai trò màu — mỗi màu nhấn chỉ làm MỘT việc:
+     · CYAN  (--accent)  : thao tác / tương tác — fader, vòng giữ phím,
+                           pha LÀM VIỆC đang chạy, phím được chọn.
+     · XANH LÁ (--ok)    : trạng thái tốt — pha NGHỈ.
+     · ĐỎ    (--danger)  : tắt tiếng, lỗi.
+     · VÀNG  (--warn)    : tạm dừng / cảnh báo.
+     · Còn lại là THANG XÁM trung tính (chữ phụ, glyph chỉ số, thanh giây).
+   Không còn: gradient tint ở đồng hồ/thời tiết, glow đỏ-cam của Pomodoro,
+   chip cyan của giây, glyph chỉ số 3 màu, bánh răng trắng chói.
+   Cỡ chữ tối thiểu trên ô 2x1: 13px (panel cảm ứng, nhìn từ xa).
    ======================================================================= */
   body.sd-look {
   --ok: #46d977;
-  --txt-1: #f2f6fc;           /* chá»¯ chÃ­nh */
-  --txt-2: #aab4c5;           /* chá»¯ phá»¥ */
-  --txt-3: #7d879b;           /* nhÃ£n má» */
+  --txt-1: #f2f6fc;           /* chữ chính */
+  --txt-2: #aab4c5;           /* chữ phụ */
+  --txt-3: #7d879b;           /* nhãn mờ */
   --accent: #06b6d4;
   --accent-glow: rgba(6, 182, 212, 0.22);
   --pomo-work: #83b96f;
@@ -217,6 +217,22 @@
   border-radius: 0;
   box-shadow: none !important;
   }
+  /* Ô 2x2+: tách số khỏi tán cây và chừa chỗ cho nút "Dừng phiên".
+     Ring thu nhẹ để stroke không bị nút cắt; cây hạ xuống, số nâng lên. */
+  body.sd-look .pomodoro-unit.forest-theme.is-big .pomodoro-ring {
+  width: 84%;
+  height: 84%;
+  }
+  body.sd-look .pomodoro-unit.forest-theme.is-big .pomodoro-center {
+  transform: translateY(-27px);
+  }
+  body.sd-look .pomodoro-unit.forest-theme.is-big .forest-tree {
+  bottom: -22%;
+  }
+  body.sd-look .pomodoro-unit.forest-theme.is-big .tree-full svg,
+  body.sd-look .pomodoro-unit.forest-theme.is-big .tree-dead svg {
+  transform: scale(1.6);
+  }
   body.sd-look .pomodoro-unit.forest-theme .timer-progress {
   stroke: var(--pomo-work) !important;
   stroke-width: 4 !important;
@@ -246,9 +262,7 @@
   box-shadow: none;
   }
   body.sd-look .keycap-clock-flip .flip-card::after {
-  display: block;
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: none;
+  display: none;
   }
   body.sd-look .keycap-clock-flip .flip-half {
   background: transparent;
@@ -262,15 +276,20 @@
   color: var(--txt-1);
   text-shadow: 0 0 12px rgba(6, 182, 212, 0.14);
   }
-  /* ---- 1. Bá»Ž TINT / QUáº¦NG GRADIENT cÅ© cá»§a Äá»’NG Há»’ ------------------------ */
+  /* ---- 1. BỎ TINT / QUẦNG GRADIENT cũ của ĐỒNG HỒ ------------------------ */
   body.sd-look .clock-unit::before { display: none; }
-  /* Ã” thá»i tiáº¿t GIá»® lá»›p scrim ::after â€” Ä‘Ã³ chÃ­nh lÃ  "lÃ m dá»‹u 30% Ä‘á»™ chÃ³i" */
+  /* Ô thời tiết GIỮ lớp scrim ::after — đó chính là "làm dịu 30% độ chói" */
   body.sd-look .clock-time { filter: none; }
-  /* ---- 1b. THáºº Láº¬T: bá» quáº§ng sÃ¡ng -> chá»‰ cÃ²n "mÃ n hÃ¬nh" pháº³ng nhÆ° cÃ¡c widget */
+  /* ---- 1b. THẺ LẬT: bỏ quầng sáng -> chỉ còn "màn hình" phẳng như các widget */
   body.sd-look .flip-digit { text-shadow: none; }
   body.sd-look .flip-card { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18); }
-  body.sd-look .flip-colon i { opacity: 0.4; }
-  /* ---- 2. Äá»’NG Há»’: bá» chip giÃ¢y (giÃ¢y Ä‘Ã£ cÃ³ thanh quÃ©t), ngÃ y to hÆ¡n ------- */
+  body.sd-look .flip-colon { gap: clamp(8px, 7cqh, 16px); }
+  body.sd-look .flip-colon i {
+  width: clamp(4px, 1.8cqh, 6px);
+  height: clamp(4px, 1.8cqh, 6px);
+  opacity: 0.85;
+  }
+  /* ---- 2. ĐỒNG HỒ: bỏ chip giây (giây đã có thanh quét), ngày to hơn ------- */
   body.sd-look .clock-secs-chip { display: none; }
   body.sd-look .keycap-clock-digital:not(.is-mini):not(.is-big) .clock-top {
   font-size: max(13px, min(7cqw, 12cqh));
@@ -279,18 +298,18 @@
   body.sd-look .clock-bar { height: 4px; background: rgba(255, 255, 255, 0.08); box-shadow: none; }
   body.sd-look .keycap-clock-digital.is-big .clock-bar { height: 6px; }
   body.sd-look .clock-bar-fill { background: rgba(255, 255, 255, 0.6); box-shadow: none; }
-  /* ---- 3. THá»œI TIáº¾T: giá»¯ nguyÃªn Bá» Cá»¤C 4 VÃ™NG cá»§a skin ---------------------
-   Chá»‰ tinh chá»‰nh cho panel cáº£m á»©ng nhÃ¬n tá»« xa: chá»¯ phá»¥ tá»‘i thiá»ƒu 13px vÃ 
-   glyph chá»‰ sá»‘ vá» thang xÃ¡m (háº¿t 3 mÃ u) cho Ä‘Ãºng ngÃ´n ngá»¯ giao diá»‡n. */
+  /* ---- 3. THỜI TIẾT: giữ nguyên BỐ CỤC 4 VÙNG của skin ---------------------
+   Chỉ tinh chỉnh cho panel cảm ứng nhìn từ xa: chữ phụ tối thiểu 13px và
+   glyph chỉ số về thang xám (hết 3 màu) cho đúng ngôn ngữ giao diện. */
   body.sd-look .keycap-weather.is-short:not(.is-wide3) .weather-cond,
   body.sd-look .keycap-weather.is-short:not(.is-wide3) .weather-date,
   body.sd-look .keycap-weather.is-short:not(.is-wide3) .weather-place { font-size: max(13px, min(6.6cqw, 9cqh)); }
   body.sd-look .keycap-weather.is-short .weather-value { font-size: max(28px, min(13cqw, 33cqh)); }
   body.sd-look .keycap-weather.is-big .weather-stat { font-size: max(13px, min(4.8cqw, 6cqh)); }
   body.sd-look .weather-stat { color: var(--txt-2); }
-  body.sd-look .weather-stat .wx-glyph { color: var(--txt-3) !important; }  /* háº¿t 3 mÃ u glyph */
+  body.sd-look .weather-stat .wx-glyph { color: var(--txt-3) !important; }  /* hết 3 màu glyph */
   body.sd-look .weather-degree { color: rgba(255, 255, 255, 0.62); }
-  /* ---- 4. FADER Há»† THá»NG: glyph loa + nhÃ£n + sá»‘ % to --------------------- */
+  /* ---- 4. FADER HỆ THỐNG: glyph loa + nhãn + số % to --------------------- */
   body.sd-look .vol-glyph { width: 26px; height: 26px; color: var(--txt-1); pointer-events: none; }
   body.sd-look .vol-glyph .vg-x { display: none; }
   body.sd-look .volume-deck-unit[data-level="0"] .vg-w1,
@@ -314,15 +333,22 @@
   pointer-events: none;
   }
   body.sd-look .volume-deck-unit[data-orient="v"] .vol-label { display: none; }
+  /* Khoảng hở icon -> track: ghi đè gap: min(5cqw, 4cqh) của skin gốc. Vì
+   .volume-deck-unit tự là container (container-type: size), cq* trong chính
+   thuộc tính của nó rơi về viewport -> gap phình ~28px và track bị đẩy xuống
+   sát đáy. Dùng px cố định cho ô NGANG (ô dọc giữ gap riêng ở volume.css). */
+  body.sd-look .volume-deck-unit[data-orient="h"] {
+  gap: 14px;
+  }
   body.sd-look .volume-deck-unit .vol-number {
-  font-size: clamp(18px, 20cqh, 28px) !important;   /* trÆ°á»›c Ä‘Ã³ chá»‰ ~10px trÃªn Ã´ 2x1 */
+  font-size: clamp(18px, 20cqh, 28px) !important;   /* trước đó chỉ ~10px trên ô 2x1 */
   color: var(--txt-1);
   text-shadow: none;
   }
   body.sd-look .volume-deck-unit[data-orient="v"] .vol-number { font-size: clamp(15px, 14cqw, 22px) !important; }
   body.sd-look .volume-fill::after,
   body.sd-look .app-fill::after { box-shadow: 0 0 6px var(--fill-glow); }
-  /* ---- 5. CHIP ICON: pháº³ng, bá» bevel; to hÆ¡n á»Ÿ Ã´ >= 2x1 ----------------- */
+  /* ---- 5. CHIP ICON: phẳng, bỏ bevel; to hơn ở ô >= 2x1 ----------------- */
   body.sd-look .app-icon-btn {
   border: 0;
   background: #15171f;
@@ -334,7 +360,15 @@
   }
   body.sd-look .app-deck-unit:not(.is-mini) .app-icon-btn,
   body.sd-look .volume-deck-unit[data-orient="h"] .vol-icon { width: 48px; height: 48px; }
-  /* ---- 6. Ã” APP: tÃªn (Ä‘áº­m) trÃªn, gá»£i Ã½ (má») ngay dÆ°á»›i; tráº¡ng thÃ¡i trá»‘ng rÃµ rÃ ng */
+  /* Icon loa của fader hệ thống: CHỈ là vùng chạm 48px, không vẽ khung vuông
+   (không nền, không viền, không bevel). Trạng thái tắt tiếng vẫn giữ khung đỏ
+   của .app-icon-btn.muted nên :not(.muted) ở đây là đủ. */
+  body.sd-look .volume-deck-unit[data-orient="h"] .vol-icon:not(.muted) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  }
+  /* ---- 6. Ô APP: tên (đậm) trên, gợi ý (mờ) ngay dưới; trạng thái trống rõ ràng */
   body.sd-look .app-text {
   flex: 1 1 auto;
   min-width: 0;
@@ -354,7 +388,7 @@
   box-shadow: none;
   background: transparent;
   }
-  /* ---- 7. POMODORO: bá»›t glow, sá»‘ tráº¯ng, glyph pha (khÃ´ng chá»‰ dá»±a vÃ o mÃ u) -- */
+  /* ---- 7. POMODORO: bớt glow, số trắng, glyph pha (không chỉ dựa vào màu) -- */
   body.sd-look .pomodoro-unit { color: var(--pomo-work); }
   body.sd-look .pomodoro-unit[data-mode="break"] { color: var(--pomo-break); }
   body.sd-look .timer-progress.work,
@@ -381,6 +415,6 @@
   body.sd-look .pomodoro-unit.is-mini .pomo-meta { display: none; }
   body.sd-look .pomodoro-mark { width: min(9cqw, 11cqh); height: min(9cqw, 11cqh); }
   /* =======================================================================
-   WIDGET TO-DO (todo_list) â€” cÃ¹ng ngÃ´n ngá»¯ thá»‘ng nháº¥t: xÃ¡m trung tÃ­nh,
-   xanh lÃ¡ CHá»ˆ khi xong háº¿t. Sá»‘ dÃ²ng hiá»‡n ra theo chiá»u cao Ã´ (má»—i dÃ²ng 34px).
+   WIDGET TO-DO (todo_list) — cùng ngôn ngữ thống nhất: xám trung tính,
+   xanh lá CHỈ khi xong hết. Số dòng hiện ra theo chiều cao ô (mỗi dòng 34px).
    ======================================================================= */
