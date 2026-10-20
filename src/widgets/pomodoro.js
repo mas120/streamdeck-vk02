@@ -472,6 +472,10 @@ widgetRegistry.registerWidget({
   label: 'Pomodoro',
   icon: '🌲',
   defaultSize: [2, 2],
+  configFields: [
+    { key: 'work', type: 'number', label: 'Phút làm việc', min: 1, max: 180 },
+    { key: 'break', type: 'number', label: 'Phút nghỉ', min: 1, max: 120 },
+  ],
   create: ({ el, content, services }) => {
     const widget = services.pomodoroWidget;
     widget.prepare(el);

@@ -115,6 +115,7 @@ widgetRegistry.registerWidget({
   label: 'Micro',
   icon: '🎙️',
   defaultSize: [1, 1],
+  fixedSize: true,
   create: ({ el, services }) => {
     const widget = services.micWidget;
     return {

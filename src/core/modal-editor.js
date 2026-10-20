@@ -1,3 +1,5 @@
+import { widgetRegistry } from './widget-registry.js';
+
 export function createModalEditor(services) {
   const {
     grid,
@@ -104,21 +106,22 @@ export function createModalEditor(services) {
     await iconUI.importFile(file);
   });
 
+  /** Modal đọc schema của widget đã đăng ký: field nào có mặt thì hiện nhóm đó. */
+  const hasField = (type, key) =>
+    (widgetRegistry.getWidget(type)?.configFields || []).some((field) => field.key === key);
+
   function syncModalTypeFields() {
     const type = selType.value;
+    const definition = widgetRegistry.getWidget(type);
     grpTarget.style.display = type === 'open_url' || type === 'launch_app' ? 'flex' : 'none';
-    grpApp.style.display = type === 'app_slider' ? 'flex' : 'none';
-    grpPomodoro.style.display = type === 'pomodoro' ? 'flex' : 'none';
-    grpClock.style.display = type === 'mini_clock' ? 'flex' : 'none';
-    grpWeather.style.display = type === 'weather_widget' ? 'flex' : 'none';
-    grpBongo.style.display = type === 'bongo_cat' ? 'flex' : 'none';
+    grpApp.style.display = hasField(type, 'app') ? 'flex' : 'none';
+    grpPomodoro.style.display = hasField(type, 'work') ? 'flex' : 'none';
+    grpClock.style.display = hasField(type, 'face') ? 'flex' : 'none';
+    grpWeather.style.display = hasField(type, 'city') ? 'flex' : 'none';
+    grpBongo.style.display = hasField(type, 'kps') ? 'flex' : 'none';
     grpFit.style.display = type === 'open_url' || type === 'launch_app' ? 'flex' : 'none';
-    // Cỡ ô chỉ chọn khi tạo mới; clock/weather/bongo có cỡ riêng theo cấu hình.
-    const fixedSize =
-      type === 'mini_clock' ||
-      type === 'weather_widget' ||
-      type === 'bongo_cat' ||
-      type === 'mic_widget';
+    // Cỡ ô chỉ chọn khi tạo mới; widget khai báo fixedSize tự quyết định cỡ.
+    const fixedSize = !!definition?.fixedSize;
     grpTileSize.style.display = !currentEditingEl && !fixedSize ? 'flex' : 'none';
     Array.from(selTileSize.options).forEach((option) => {
       const [, height] = option.value.split('x').map(Number);

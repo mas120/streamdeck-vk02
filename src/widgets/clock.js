@@ -334,6 +334,12 @@ widgetRegistry.registerWidget({
   label: 'Đồng hồ',
   icon: '🕒',
   defaultSize: [1, 1],
+  fixedSize: true,
+  configFields: [
+    { key: 'face', type: 'select', label: 'Mặt đồng hồ', options: ['digital', 'flip', 'analog'] },
+    { key: 'tz', type: 'number', label: 'Múi giờ', min: -12, max: 14 },
+    { key: 'label', type: 'text', label: 'Nhãn thành phố' },
+  ],
   create: ({ el, services }) => {
     const widget = services.clockWidget;
     return {

@@ -27,14 +27,51 @@ function normalizeDefinition(definition) {
     throw new TypeError('registerWidget: ' + type + ' thiếu hàm create()');
   }
   const size = Array.isArray(definition.defaultSize) ? definition.defaultSize : null;
+  const configFields = normalizeConfigFields(type, definition.configFields);
   return Object.freeze({
     label: type,
     icon: '',
     defaultSize: size && size.length === 2 ? [Number(size[0]) || 1, Number(size[1]) || 1] : null,
-    configFields: [],
     ...definition,
     type: type.trim(),
+    configFields,
   });
+}
+
+/** Kiểu field mà modal biết cách dựng. `icon`/`app`/`city` là field đặc thù. */
+export const FIELD_TYPES = Object.freeze([
+  'text',
+  'number',
+  'select',
+  'color',
+  'checkbox',
+  'icon',
+  'app',
+  'city',
+]);
+
+function normalizeConfigFields(type, fields) {
+  if (fields == null) return Object.freeze([]);
+  if (!Array.isArray(fields)) {
+    throw new TypeError('registerWidget: configFields của ' + type + ' phải là mảng');
+  }
+  const seen = new Set();
+  const normalized = fields.map((field) => {
+    if (!field || typeof field.key !== 'string' || !field.key) {
+      throw new TypeError('registerWidget: configFields của ' + type + ' thiếu key');
+    }
+    if (seen.has(field.key)) {
+      throw new TypeError('registerWidget: configFields của ' + type + ' trùng key ' + field.key);
+    }
+    seen.add(field.key);
+    if (!FIELD_TYPES.includes(field.type)) {
+      throw new TypeError(
+        'registerWidget: configFields của ' + type + ' có type không hỗ trợ: ' + field.type
+      );
+    }
+    return Object.freeze({ ...field, label: field.label || field.key });
+  });
+  return Object.freeze(normalized);
 }
 
 export function createWidgetRegistry() {

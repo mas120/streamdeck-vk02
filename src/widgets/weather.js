@@ -566,6 +566,13 @@ widgetRegistry.registerWidget({
   label: 'Thời tiết',
   icon: '🌤️',
   defaultSize: [3, 1],
+  fixedSize: true,
+  configFields: [
+    { key: 'city', type: 'city', label: 'Thành phố' },
+    { key: 'lat', type: 'number', label: 'Vĩ độ' },
+    { key: 'lon', type: 'number', label: 'Kinh độ' },
+    { key: 'skin', type: 'select', label: 'Skin', options: ['soft', 'flat'] },
+  ],
   create: ({ el, services }) => {
     const widget = services.weatherWidget;
     return {

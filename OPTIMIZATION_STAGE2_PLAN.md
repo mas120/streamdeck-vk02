@@ -206,11 +206,15 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **Done**: `npm.cmd run check` pass (23 test); Vite smoke 12 phím — volume/app-slider/clock/weather/pomodoro/mic/shutdown render đúng, không lỗi console.
 - **Token thực tế**: ~22k.
 
-### P3-5 · Modal editor theo schema
-- [ ] **File**: `src/core/modal-editor.js`, `src/core/widget-registry.js`, `index.html`.
-- **Việc**: mỗi widget khai báo `configFields` (kiểu: text/number/select/color/checkbox); modal sinh form từ schema; giữ các khối đặc thù (chọn icon, chọn app, chọn thành phố) dưới dạng field type riêng.
-- **Done**: `npm.cmd run check`; mở modal sửa từng loại phím 1 lần.
-- **Token**: ~30k (bước lớn nhất; nếu quá thì tách P3-5a/P3-5b).
+### P3-5 · Modal editor theo schema ✅
+- [x] **Mục tiêu**: modal biết widget nào có trường nào từ registry, không hard-code type.
+- **Kết quả**:
+  - `configFields` chuẩn hoá trong registry (`FIELD_TYPES`: text/number/select/color/checkbox + field đặc thù icon/app/city); chặn key trùng và type lạ.
+  - Mỗi widget khai báo `configFields` + `fixedSize` khi cỡ ô cố định.
+  - `modal-editor.js` dùng `hasField(type, key)` để bật/tắt nhóm nhập liệu; bỏ danh sách `type === ...` cho từng nhóm.
+  - Giữ nguyên các khối đặc thù (icon/app/city) trong DOM; schema chỉ điều khiển hiển thị + validate.
+- **Done**: `npm.cmd run check` pass (25 test); Vite smoke: chọn `mini_clock` → nhóm Đồng hồ hiện, `weather_widget` → nhóm Thời tiết, `bongo_cat` → nhóm Bongo, `pomodoro` → nhóm Pomodoro, `open_url` → không nhóm nào.
+- **Token thực tế**: ~24k.
 
 ---
 

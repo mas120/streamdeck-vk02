@@ -208,6 +208,7 @@ widgetRegistry.registerWidget({
   label: 'Âm lượng ứng dụng',
   icon: '🎚️',
   defaultSize: [2, 1],
+  configFields: [{ key: 'app', type: 'app', label: 'Ứng dụng' }],
   create: ({ el, content, services }) => {
     const widget = services.appSliderWidget;
     return {

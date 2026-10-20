@@ -43,3 +43,38 @@ test('descriptor được đóng băng (không sửa tại chỗ)', () => {
   const def = registry.registerWidget(descriptor('demo'));
   assert.equal(Object.isFrozen(def), true);
 });
+
+test('configFields được chuẩn hoá, giữ thứ tự và từ chối type lạ', () => {
+  const registry = createWidgetRegistry();
+  const def = registry.registerWidget(
+    descriptor('demo', {
+      configFields: [
+        { key: 'city', type: 'city' },
+        { key: 'size', type: 'select', options: ['1x1', '2x1'] },
+      ],
+    })
+  );
+  assert.deepEqual(
+    def.configFields.map((f) => f.key),
+    ['city', 'size']
+  );
+  assert.equal(def.configFields[0].label, 'city');
+  assert.equal(Object.isFrozen(def.configFields), true);
+
+  assert.throws(
+    () => registry.registerWidget(descriptor('bad', { configFields: [{ key: 'x', type: 'wat' }] })),
+    /type không hỗ trợ/
+  );
+  assert.throws(
+    () =>
+      registry.registerWidget(
+        descriptor('dup', {
+          configFields: [
+            { key: 'a', type: 'text' },
+            { key: 'a', type: 'text' },
+          ],
+        })
+      ),
+    /trùng key/
+  );
+});

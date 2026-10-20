@@ -517,6 +517,11 @@ widgetRegistry.registerWidget({
   label: 'Bongo Cat',
   icon: '🐱',
   defaultSize: [2, 1],
+  fixedSize: true,
+  configFields: [
+    { key: 'size', type: 'select', label: 'Cỡ', options: ['2x1', '2x2'] },
+    { key: 'kps', type: 'checkbox', label: 'Hiện KPS' },
+  ],
   create: ({ el, services }) => {
     const widget = services.bongoCatWidget;
     el.__bongoState = { events: [] };
