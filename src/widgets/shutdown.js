@@ -1,5 +1,6 @@
 import { isEditMode } from '../core/mode-manager.js';
 import { hydrateVectorIcons, loadIconSet, vectorMarkup } from '../icons.js';
+import { widgetRegistry } from '../core/widget-registry.js';
 import '../styles/widgets/shutdown.css';
 
 export function createShutdownWidget({ invokeCmd, flashKeycap }) {
@@ -139,3 +140,18 @@ export function createShutdownWidget({ invokeCmd, flashKeycap }) {
 
   return { type: 'shutdown_widget', markup, setup, destroy };
 }
+
+widgetRegistry.registerWidget({
+  type: 'shutdown_widget',
+  label: 'Tắt máy',
+  icon: '⏻',
+  defaultSize: [1, 1],
+  create: ({ el, services }) => {
+    const widget = services.shutdownWidget;
+    return {
+      markup: widget.markup(),
+      setup: () => widget.setup(el),
+      destroy: () => widget.destroy(el),
+    };
+  },
+});

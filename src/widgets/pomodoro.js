@@ -20,6 +20,8 @@ function formatMMSS(totalSeconds) {
   return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 }
 
+import { widgetRegistry } from '../core/widget-registry.js';
+
 export function createPomodoroWidget({ TREE_SVGS, applyWidgetTier, clampInt, saveCurrentLayout }) {
   let audioContext = null;
 
@@ -464,3 +466,22 @@ export function createPomodoroWidget({ TREE_SVGS, applyWidgetTier, clampInt, sav
     saveRunning,
   };
 }
+
+widgetRegistry.registerWidget({
+  type: 'pomodoro',
+  label: 'Pomodoro',
+  icon: '🌲',
+  defaultSize: [2, 2],
+  create: ({ el, content, services }) => {
+    const widget = services.pomodoroWidget;
+    widget.prepare(el);
+    return {
+      markup: widget.markup(),
+      setup: () => {
+        widget.setup(el);
+        widget.render(el);
+      },
+      destroy: () => widget.destroy(el),
+    };
+  },
+});

@@ -1,5 +1,6 @@
 import { wireCapsuleDrag } from './volume.js';
 import { isEditMode, playKeySound } from '../core/mode-manager.js';
+import { widgetRegistry } from '../core/widget-registry.js';
 
 export function createAppSliderWidget(services) {
   let audioSessionCache = [];
@@ -201,3 +202,22 @@ export function createAppSliderWidget(services) {
     getSessions: () => audioSessionCache,
   };
 }
+
+widgetRegistry.registerWidget({
+  type: 'app_slider',
+  label: 'Âm lượng ứng dụng',
+  icon: '🎚️',
+  defaultSize: [2, 1],
+  create: ({ el, content, services }) => {
+    const widget = services.appSliderWidget;
+    return {
+      markup: widget.markup(services.formatIconSource(el.dataset.icon, el.dataset.icon2x)),
+      setup: () => {
+        widget.setup(content, el);
+        widget.update(el);
+        widget.refresh().then(() => widget.update(el));
+      },
+      destroy: () => widget.destroy(el),
+    };
+  },
+});

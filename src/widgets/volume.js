@@ -1,6 +1,7 @@
 import { isEditMode, playKeySound } from '../core/mode-manager.js';
 import { clampInt } from '../core/utils.js';
 import { volumeValueFromKey } from './volume-controls.js';
+import { widgetRegistry } from '../core/widget-registry.js';
 
 const CAPSULE_THROTTLE_MS = 20;
 let runtime = null;
@@ -272,3 +273,24 @@ export function createVolumeWidget(services) {
     destroy() {},
   };
 }
+
+widgetRegistry.registerWidget({
+  type: 'volume_slider',
+  label: 'Âm lượng',
+  icon: '🔊',
+  defaultSize: [2, 1],
+  create: ({ el, content, services }) => {
+    const widget = services.volumeWidget;
+    const currentVolume = services.clampInt(parseInt(el.dataset.target, 10), 0, 100, 50);
+    const icon = services.isVectorIcon(el.dataset.icon)
+      ? services.vectorMarkup(el.dataset.icon)
+      : services.isDefaultVolIcon(el.dataset.icon)
+        ? services.VOL_GLYPH
+        : el.dataset.icon;
+    return {
+      markup: widget.markup(icon, currentVolume),
+      setup: () => widget.setup(content, el),
+      destroy: () => widget.destroy(),
+    };
+  },
+});

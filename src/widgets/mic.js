@@ -1,5 +1,6 @@
 import { playKeySound } from '../core/mode-manager.js';
 import { hydrateVectorIcons, loadIconSet, vectorMarkup } from '../icons.js';
+import { widgetRegistry } from '../core/widget-registry.js';
 
 export function createMicWidget({ invokeCmd, flashKeycap, applyWidgetTier }) {
   const clamp01 = (value) => Math.min(1, Math.max(0, Number.isFinite(value) ? value : 0));
@@ -108,3 +109,18 @@ export function createMicWidget({ invokeCmd, flashKeycap, applyWidgetTier }) {
 
   return { type: 'mic_widget', markup, setup, syncState, destroy };
 }
+
+widgetRegistry.registerWidget({
+  type: 'mic_widget',
+  label: 'Micro',
+  icon: '🎙️',
+  defaultSize: [1, 1],
+  create: ({ el, services }) => {
+    const widget = services.micWidget;
+    return {
+      markup: widget.markup(),
+      setup: () => widget.setup(el),
+      destroy: () => widget.destroy(el),
+    };
+  },
+});

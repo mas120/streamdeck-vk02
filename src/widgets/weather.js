@@ -6,6 +6,7 @@ import {
   flashKeycap,
 } from '../core/mode-manager.js';
 import { liveWidgetRegistry } from '../core/registry.js';
+import { widgetRegistry } from '../core/widget-registry.js';
 import { clockDateShort } from './clock.js';
 import { clampFloat, escapeHtml } from '../core/utils.js';
 
@@ -559,3 +560,21 @@ export function createWeatherWidget(services) {
     },
   };
 }
+
+widgetRegistry.registerWidget({
+  type: 'weather_widget',
+  label: 'Thời tiết',
+  icon: '🌤️',
+  defaultSize: [3, 1],
+  create: ({ el, services }) => {
+    const widget = services.weatherWidget;
+    return {
+      markup: widget.markup(parseWeatherCfg(el).city),
+      setup: () => {
+        widget.setup(el);
+        widget.update(widget.register(el));
+      },
+      destroy: () => widget.destroy(el),
+    };
+  },
+});

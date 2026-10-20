@@ -1,4 +1,5 @@
 import { TODO_KEY, loadTodos, saveTodos } from '../todo-store.js';
+import { widgetRegistry } from '../core/widget-registry.js';
 
 export function createTodoWidget({
   applyWidgetTier,
@@ -154,3 +155,21 @@ export function createTodoWidget({
     storageKey: TODO_KEY,
   };
 }
+
+widgetRegistry.registerWidget({
+  type: 'todo_list',
+  label: 'Việc cần làm',
+  icon: '📝',
+  defaultSize: [2, 2],
+  create: ({ el, services }) => {
+    const widget = services.todoWidget;
+    return {
+      markup: widget.markup(),
+      setup: () => {
+        widget.setup(el);
+        widget.update(widget.register(el), true);
+      },
+      destroy: () => widget.destroy(el),
+    };
+  },
+});

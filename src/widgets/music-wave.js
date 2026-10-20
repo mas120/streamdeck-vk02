@@ -1,3 +1,4 @@
+import { widgetRegistry } from '../core/widget-registry.js';
 import '../styles/widgets/music-wave.css';
 
 const BAR_COUNT = 36;
@@ -82,3 +83,18 @@ export function createMusicWaveWidget({ getTauri, invokeCmd }) {
 
   return { type: 'music_wave', markup, setup, destroy };
 }
+
+widgetRegistry.registerWidget({
+  type: 'music_wave',
+  label: 'Sóng nhạc',
+  icon: '🌊',
+  defaultSize: [3, 1],
+  create: ({ el, services }) => {
+    const widget = services.musicWaveWidget;
+    return {
+      markup: widget.markup(),
+      setup: () => widget.setup(el),
+      destroy: () => widget.destroy(el),
+    };
+  },
+});

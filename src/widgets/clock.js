@@ -1,4 +1,5 @@
 import { isEditMode, keyContent, pressFeedback, releaseFeedback } from '../core/mode-manager.js';
+import { widgetRegistry } from '../core/widget-registry.js';
 
 export const CLOCK_DEFAULT = { face: 'digital', tz: 7, label: 'HÀ NỘI' };
 const CLOCK_WEEKDAY = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
@@ -327,3 +328,21 @@ export const clockWidget = {
   update,
   destroy,
 };
+
+widgetRegistry.registerWidget({
+  type: 'mini_clock',
+  label: 'Đồng hồ',
+  icon: '🕒',
+  defaultSize: [1, 1],
+  create: ({ el, services }) => {
+    const widget = services.clockWidget;
+    return {
+      markup: widget.markup(parseClockCfg(el)),
+      setup: () => {
+        widget.setup(el);
+        widget.update(widget.register(el), { applyWidgetTier: services.applyWidgetTier });
+      },
+      destroy: () => widget.destroy(el),
+    };
+  },
+});

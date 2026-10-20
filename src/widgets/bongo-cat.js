@@ -1,4 +1,5 @@
 import { keyContent } from '../core/mode-manager.js';
+import { widgetRegistry } from '../core/widget-registry.js';
 
 export function normalizeBongoSize(value) {
   const v = String(value || '2x1')
@@ -510,3 +511,19 @@ export const bongoCatWidget = {
   },
   setupKeyboardListener: setupBongoCatEventListener,
 };
+
+widgetRegistry.registerWidget({
+  type: 'bongo_cat',
+  label: 'Bongo Cat',
+  icon: '🐱',
+  defaultSize: [2, 1],
+  create: ({ el, services }) => {
+    const widget = services.bongoCatWidget;
+    el.__bongoState = { events: [] };
+    return {
+      markup: widget.markup(parseBongoCfg(el)),
+      setup: () => widget.setup(el),
+      destroy: () => widget.destroy(el),
+    };
+  },
+});

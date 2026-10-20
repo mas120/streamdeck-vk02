@@ -191,23 +191,20 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **Done**: `npm.cmd run check` pass (23 test).
 - **Token thực tế**: ~22k.
 
-### P3-2 · Migrate 3 widget đơn giản
-- [ ] **File**: `src/widgets/shutdown.js`, `mic.js`, `music-wave.js`, `app.js`, `widget-renderer.js`.
-- **Việc**: chuyển 3 widget sang `registerWidget`; xoá các nhánh `if (type === ...)` tương ứng.
-- **Done**: `npm.cmd run check`; thử tay: shutdown dialog, mic toggle, music wave chạy.
-- **Token**: ~20k.
+### P3-2 · Migrate 3 widget đơn giản ✅
+- [x] **Kết quả**: `shutdown_widget`, `mic_widget`, `music_wave` tự đăng ký descriptor trong module (side-effect khi import), renderer bỏ 3 nhánh `if/else`. `create()` lấy widget instance từ `ctx.services`.
+- **Done**: `npm.cmd run check`; Vite smoke 12 phím — `.shutdown-unit`, `.mic-deck-unit` render đúng, không lỗi console.
+- **Token thực tế**: ~18k.
 
-### P3-3 · Migrate widget "sống"
-- [ ] **File**: `clock.js`, `weather.js`, `pomodoro.js`, `bongo-cat.js`, `app.js`, `registry.js`.
-- **Việc**: chuyển tiếp, chú ý phần `registerLiveWidget`/`unregisterLiveWidget` và `el.__pomo`; giữ nguyên hành vi.
-- **Done**: `npm.cmd run check`; đồng hồ, thời tiết, pomodoro, bongo hoạt động.
-- **Token**: ~25k.
+### P3-3 · Migrate widget "sống" ✅
+- [x] **Kết quả**: `mini_clock`, `weather_widget`, `pomodoro`, `bongo_cat` đăng ký trong module; giữ nguyên `registerLiveWidget`/`__pomo`/`__bongoState`. Clock truyền `applyWidgetTier` qua `ctx.services`.
+- **Done**: `npm.cmd run check`; Vite smoke — clock chạy (`15:30`), pomodoro/weather/bongo markup đúng, không lỗi.
+- **Token thực tế**: ~16k.
 
-### P3-4 · Migrate widget còn lại (volume, app-slider, media, todo) + xoá nhánh cũ
-- [ ] **File**: `volume.js`, `app-slider.js`, `media.js`, `todo.js`, `widget-renderer.js`, `app.js`.
-- **Việc**: hoàn tất migrate; xoá toàn bộ dispatch `if/else` trong renderer; `app.js` chỉ còn khởi tạo registry + service context.
-- **Done**: `npm.cmd run check`; smoke tay đủ 12 phím.
-- **Token**: ~25k.
+### P3-4 · Migrate widget còn lại (volume, app-slider, media, todo) + xoá nhánh cũ ✅
+- [x] **Kết quả**: 4 widget còn lại đăng ký; `widget-renderer.js` còn ~65 dòng, không còn bảng dispatch; chỉ giữ fallback icon cho `open_url`/`launch_app`. Test renderer viết lại theo vòng đời registry.
+- **Done**: `npm.cmd run check` pass (23 test); Vite smoke 12 phím — volume/app-slider/clock/weather/pomodoro/mic/shutdown render đúng, không lỗi console.
+- **Token thực tế**: ~22k.
 
 ### P3-5 · Modal editor theo schema
 - [ ] **File**: `src/core/modal-editor.js`, `src/core/widget-registry.js`, `index.html`.

@@ -1,4 +1,5 @@
 import { isEditMode, playKeySound } from '../core/mode-manager.js';
+import { widgetRegistry } from '../core/widget-registry.js';
 
 const ICONS = {
   prev: '<svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z" fill="currentColor"/></svg>',
@@ -258,3 +259,18 @@ export function createMediaWidget({ invokeCmd, applyWidgetTier, openUrl, flashKe
 
   return { type: 'media_player', markup, setup, syncAll, tick };
 }
+
+widgetRegistry.registerWidget({
+  type: 'media_player',
+  label: 'Media',
+  icon: '🎵',
+  defaultSize: [3, 1],
+  create: ({ content, services }) => {
+    const widget = services.mediaWidget;
+    return {
+      markup: widget.markup(),
+      setup: () => widget.setup(content),
+      destroy: () => widget.destroy?.(content),
+    };
+  },
+});
