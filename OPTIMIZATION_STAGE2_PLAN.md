@@ -63,16 +63,17 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **Bước tiếp theo tách riêng**: P0-2b (sửa smoke/preview), P0-2c (format toàn bộ) — xem dưới.
 - **Token thực tế**: ~30k.
 
-### P0-2b · Sửa suite `smoke` + `preview` cũ
-- [ ] **Mục tiêu**: đưa 2 suite tĩnh vào gate, bắt drift markup/CSS thật.
-- **File**: `scripts/smoke.mjs`, `scripts/check-preview.mjs`, `scripts/_sources.mjs`, `src/widgets/pomodoro.js`, `src/styles/widgets/weather.css`.
-- **Việc**:
-  - Thay `extractFn('renderPomodoro')` bằng hàm hiện có (kiểm tra tên thật trong `pomodoro.js`).
-  - Cập nhật assertion pomodoro theo markup mới (glyph + `--pomo-ratio`, `.pomo-sr`).
-  - Cập nhật 5 assertion weather CSS (font 48px, translateX(15%), layout 2x1, bảng gradient).
-  - Khi pass: thêm `check:smoke` + `check:preview` vào `check:full`.
-- **Done**: `npm.cmd run check:smoke` + `npm.cmd run check:preview` pass; `check:full` pass.
-- **Token**: ~25k.
+### P0-2b · Sửa suite `smoke` + `preview` cũ ✅
+- [x] **Mục tiêu**: đưa 2 suite tĩnh vào gate, bắt drift markup/CSS thật.
+- **Kết quả**:
+  - `smoke.mjs`: thay `renderPomodoro` → `renderState`; assertion pomodoro theo markup forest (`forest-dial`, `forest-tree`, `forest-btn`, pathLength 263.894).
+  - Assertion weather cập nhật theo CSS mới (nhiệt độ 48px đậm, °C 20px mờ, `translateX(5%)`, 2x1 `:not(.is-wide3)`, 9 tông gradient 145deg).
+  - `weatherIconGroup`: gộp `drizzle` vào `rain`; assertion Rust đọc `weather.rs` thay vì `lib.rs`.
+  - `preview.mjs`/`check-preview.mjs`: bỏ ô "Cài đặt" (đã gỡ khỏi lưới), dựng pomodoro từ markup forest.
+  - `check:smoke` 128 PASS / 0 FAIL; `check:preview` PREVIEW OK.
+  - `check:full` đã thêm `check:smoke` + `check:preview`.
+- **Done**: `npm.cmd run check:full` pass.
+- **Token thực tế**: ~28k.
 
 ### P0-2c · Format toàn bộ (tuỳ chọn)
 - [ ] **File**: toàn bộ `src/**/*.{js,css}`, `*.{html,js,json}`.

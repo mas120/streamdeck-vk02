@@ -84,14 +84,7 @@ check('có ô âm lượng capsule ở 3 cỡ + ô tắt tiếng (1x1/2x1/1x2/mu
 check('fader: có thanh capsule + núm + nhánh DỌC trong preview',
   h.includes('volume-track') && h.includes('volume-fill')
   && h.includes('data-orient=' + q + 'v' + q) && h.includes('volume-deck-unit is-muted'));
-/* --- PHÍM "CÀI ĐẶT DECK" 1x1: mặt phím không còn chữ --- */
-const setCells = (h.match(/class="grid-stack-item" data-type="settings"/g) || []).length;
-check('có 2 ô Cài đặt 1x1 (bình thường / đang chỉnh sửa)', setCells === 2, 'thực tế=' + setCells);
-check('ô Cài đặt: KHÔNG còn chữ "NHẤP ĐÔI" trên mặt ô + không còn CSS .settings-hint',
-  !h.includes('settings-hint') && !/>NHẤP ĐÔI</.test(h) && h.includes('settings-ring-progress'));
-check('ô Cài đặt: vòng trạng thái được đặt dashoffset theo tỉ lệ giữ (đúng 2 ô)',
-  (h.match(/settings-ring-progress" style="stroke-dashoffset:/g) || []).length === 2,
-  'thực tế=' + (h.match(/settings-ring-progress" style="stroke-dashoffset:/g) || []).length);
+/* --- PHÍM "CÀI ĐẶT DECK" đã bỏ khỏi lưới (mở bằng nút thanh công cụ) --- */
 console.log('kích thước: ' + Math.round(statSync(file).size / 1024) + ' kB');
 console.log(bad === 0 ? '\nPREVIEW OK' : '\nPREVIEW CÓ LỖI: ' + bad);
 process.exit(bad === 0 ? 0 : 1);

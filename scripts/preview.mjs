@@ -60,15 +60,8 @@ const volCell = (w, h, pct, muted = false) => {
   return keycap('volume_slider', w, h, inner);
 };
 
-/* Ô "CÀI ĐẶT DECK" (luôn 1x1): markup THẬT lấy từ createWidget trong main.js.
-   Mặt phím KHÔNG có chữ — chỉ bánh răng + vòng trạng thái. ratio = tỉ lệ vòng
-   đã sáng (0 = chưa vào Chế độ Chỉnh sửa, 0.65 = đang chỉnh sửa). */
-const SETTINGS_CIRC = 282.743;                 // 2*pi*45, khớp .settings-ring-progress
-const setStart = jsSrc.indexOf('<div class="deck-icon-core settings-core">');
-const settingsRaw = jsSrc.slice(setStart, jsSrc.indexOf('`;', setStart));
-const settingsCell = (ratio) => keycap('settings', 160, 160,
-  settingsRaw.replace('class="settings-ring-progress"',
-    `class="settings-ring-progress" style="stroke-dashoffset:${(SETTINGS_CIRC * (1 - ratio)).toFixed(2)}"`));
+/* Ô "CÀI ĐẶT DECK" đã bỏ khỏi lưới (mở bằng nút trên thanh công cụ) — không
+   còn dựng ô xem trước. */
 
 /* Cỡ ô (px) -> class tier ĐÚNG như applyWidgetTier() trong app (is-mini/short/big/tall)
    để preview phản ánh đúng layout thật, không chỉ markup. Ô thật = 160px/lưới. */
@@ -120,19 +113,20 @@ const errCell = (w, h) => keycap('weather_widget', w, h,
       + api.WX_G_WARN + '</svg></span>')
     .replace('class="weather-cond">Đang tải…<', 'class="weather-cond">CHƯA KẾT NỐI<'));
 
-/* Markup Pomodoro THẬT (lấy từ createWidget) + gán pha/trạng thái y như renderPomodoro */
-const POMO_CIRC = 2 * Math.PI * 45;
-const pomoStart = jsSrc.indexOf('<div class="pomodoro-unit"');
+/* Markup Pomodoro THẬT (lấy từ markup() của pomodoro.js) + gán pha/trạng thái */
+const POMO_CIRC = 263.894;
+const pomoStart = jsSrc.indexOf('<div class="pomodoro-unit');
 const pomoRaw = jsSrc.slice(pomoStart, jsSrc.indexOf('`;', pomoStart));
 const pomoCell = (w, h, o) => keycap('pomodoro', w, h,
   pomoRaw
-    .replace('class="pomodoro-unit"', `class="pomodoro-unit ${tiers(w, h)}"`)
-    .replace('data-mode="work" data-state="idle" style="--pomo-ratio:1"',
-      `data-mode="${o.mode}" data-state="${o.state}" style="--pomo-ratio:${o.ratio}" title="${o.title}"`)
-    .replace('class="timer-progress work"',
-      `class="timer-progress ${o.mode}" style="stroke-dasharray:${POMO_CIRC.toFixed(2)};`
+    .replace('class="pomodoro-unit forest-theme"', `class="pomodoro-unit forest-theme ${tiers(w, h)}"`)
+    .replace('data-mode="work" data-state="idle" data-tree="seed"',
+      `data-mode="${o.mode}" data-state="${o.state}" data-tree="${o.tree || 'seed'}" title="${o.title}"`)
+    .split('class="timer-progress work"').join(
+      `class="timer-progress ${o.mode}" style="stroke-dasharray:${POMO_CIRC};`
       + `stroke-dashoffset:${(POMO_CIRC * (1 - o.ratio)).toFixed(2)}"`)
-    .replace('class="timer-time">25:00<', `class="timer-time">${o.time}<`));
+    .replace('class="timer-time pomo-time-display">25:00<',
+      `class="timer-time pomo-time-display">${o.time}<`));
 
 const rows = [
   ['FADER ÂM LƯỢNG — capsule THỐNG NHẤT (hệ thống & per-app cùng một ẩn dụ): 1x1 / 2x1 / ô CAO 1x2 / tắt tiếng', [
@@ -141,7 +135,7 @@ const rows = [
     volCell(160, 320, 60),
     volCell(320, 160, 45, true)
   ]],
-  ['POMODORO — PHA "LÀM VIỆC" (đỏ cam): chờ chạm ▶ / tạm dừng ❚❚ / đang chạy ▶ (nhấp nháy nhẹ)', [
+  ['POMODORO — PHA "LÀM VIỆC" (cyan): chờ chạm / tạm dừng / đang chạy (cây mọc dần)', [
     pomoCell(320, 160, { mode: 'work', state: 'idle', ratio: 1, time: '25:00', title: 'POMODORO · CHẠM ĐỂ CHẠY' }),
     pomoCell(320, 160, { mode: 'work', state: 'paused', ratio: 0.62, time: '15:22', title: 'LÀM VIỆC · TẠM DỪNG' }),
     pomoCell(320, 160, { mode: 'work', state: 'running', ratio: 0.35, time: '08:44', title: 'LÀM VIỆC · ĐANG CHẠY' })
@@ -186,10 +180,6 @@ const rows = [
     wxLoadingCell(480, 160, { city: 'TP. HỒ CHÍ MINH', code: 2, night: '0', tint: 'cloud' }),
     wxCell(480, 160, { city: 'TP. HỒ CHÍ MINH', code: 3, night: '1', tint: 'cloud', temp: 25, cond: 'Nhiều mây', date: 'T5, 08/10', hum: 88, feels: 27, wind: 8, stale: true }),
     errCell(320, 160)
-  ]],
-  ['PHÍM "CÀI ĐẶT DECK" 1x1 — mặt phím KHÔNG có chữ: chỉ bánh răng + vòng trạng thái (bình thường / đang ở Chế độ Chỉnh sửa)', [
-    settingsCell(0),
-    settingsCell(0.65)
   ]]
 ];
 

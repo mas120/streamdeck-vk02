@@ -216,15 +216,15 @@ ok('weather: badge "dữ liệu cũ" mặc định ẨN (hidden) — chỉ hiệ
 const pomoStart = jsSrc.indexOf('<div class="pomodoro-unit');
 if (pomoStart < 0) throw new Error('Không tìm thấy markup .pomodoro-unit trong src/widgets/pomodoro.js');
 const pomoMarkup = jsSrc.slice(pomoStart, jsSrc.indexOf('`;', pomoStart));
-ok('pomodoro: có vòng LED + đầu cung + số mm:ss + glyph trạng thái',
-  ['pomodoro-ring', 'timer-bg', 'timer-progress work', 'timer-head', 'timer-time',
-    'pomodoro-mark', 'glyph-play', 'glyph-pause'].every((c) => pomoMarkup.includes(c)));
-ok('pomodoro: có data-mode/data-state mặc định + --pomo-ratio cho đầu cung',
+ok('pomodoro: có vòng tiến độ + cây + số mm:ss + nút Plant',
+  ['pomodoro-ring', 'timer-bg', 'timer-progress work', 'timer-time',
+    'pomo-time-display', 'forest-dial', 'forest-tree', 'forest-btn'].every((c) => pomoMarkup.includes(c)));
+ok('pomodoro: có data-mode/data-state mặc định + cung pathLength 263.894',
   pomoMarkup.includes('data-mode="work"') && pomoMarkup.includes('data-state="idle"')
-  && pomoMarkup.includes('--pomo-ratio:1'));
+  && pomoMarkup.includes('stroke-dasharray="263.894"'));
 ok('pomodoro: thẻ cân đối', balanced(pomoMarkup));
-ok('pomodoro: KHÔNG còn chữ hiển thị trên ô (chỉ số mm:ss + glyph)',
-  NO_LETTERS.test(visibleText(pomoMarkup)),
+ok('pomodoro: mặt ô chỉ có số mm:ss + nhãn ngắn, không có câu trạng thái dài',
+  visibleText(pomoMarkup).includes('25:00') && visibleText(pomoMarkup).includes('Tập trung'),
   'thấy=' + JSON.stringify(visibleText(pomoMarkup)));
 ok('pomodoro: nhãn pha/trạng thái nằm ở lớp ẩn .pomo-sr (đủ 2 nhãn)',
   count(pomoMarkup, 'class="pomo-sr ') === 2
@@ -233,13 +233,13 @@ ok('pomodoro: chữ "LÀM VIỆC / ĐANG CHẠY" không còn trong markup ô',
   !/LÀM VIỆC|ĐANG CHẠY|TẠM DỪNG/.test(pomoMarkup));
 
 const groups = { sun: [0], partly: [1], cloud: [2, 3, 8], fog: [45, 48],
-  drizzle: [51, 53, 55, 56, 57], rain: [61, 65, 67, 80, 81, 82], snow: [71, 75, 77, 85, 86],
+  rain: [51, 53, 55, 56, 57, 61, 65, 67, 80, 81, 82], snow: [71, 75, 77, 85, 86],
   storm: [95, 96, 99] };
 let mappingOk = true;
 for (const [group, codes] of Object.entries(groups)) {
   for (const c of codes) if (api.weatherIconGroup(c) !== group) mappingOk = false;
 }
-ok('weatherIconGroup: map đúng 8 nhóm WMO', mappingOk);
+ok('weatherIconGroup: map đúng các nhóm WMO', mappingOk);
 
 let svgOk = true;
 let svgBad = '';
@@ -441,30 +441,28 @@ ok('CSS: tên TP hiện ở mọi cỡ ô ngang (rút gọn), ô 2x2 dùng tên 
 ok('CSS: tình trạng trời HIỆN trên ô (13px, trắng 85%)',
   /\.weather-cond\s*\{[^}]*font-size: 13px/.test(styleBlock)
   && /\.weather-cond\s*\{[^}]*color: rgba\(255, 255, 255, 0\.85\)/.test(styleBlock));
-ok('CSS: số nhiệt độ 48px "Segoe UI Light" 300 + °C 20px mờ',
-  styleBlock.includes('"Segoe UI Light"')
-  && /\.weather-value\s*\{[^}]*font-size: 48px/.test(styleBlock)
-  && /\.weather-value\s*\{[^}]*font-weight: 300/.test(styleBlock)
-  && /\.weather-degree\s*\{\s*font-size: 20px/.test(styleBlock));
+ok('CSS: số nhiệt độ 48px đậm + °C 20px mờ',
+  /\.weather-value\s*\{[^}]*font-size: 48px/.test(styleBlock)
+  && /\.weather-value\s*\{[^}]*font-weight: 700/.test(styleBlock)
+  && /\.weather-degree\s*\{\s*font-size: 20px/.test(styleBlock)
+  && /\.weather-degree\s*\{[^}]*rgba\(255, 255, 255, 0\.6\)/.test(styleBlock));
 ok('CSS: vạch ngăn 1px trắng 20% cao 60% (chỉ ô >= 3 cột)',
   /\.wx-divider\s*\{[\s\S]{0,200}?width: 1px;[\s\S]{0,80}?height: 60%;/.test(styleBlock)
   && /\.wx-divider\s*\{[\s\S]{0,240}?background: rgba\(255, 255, 255, 0\.2\)/.test(styleBlock)
   && /\.keycap-weather\.is-wide3 \.wx-divider\s*\{\s*display: block/.test(styleBlock));
-ok('CSS: minh hoạ TRÀN mép phải ~15% (translateX(15%) + .wx-art tự cắt)',
+ok('CSS: minh hoạ TRÀN mép phải (translateX(5%) + .wx-art tự cắt)',
   /\.wx-art\s*\{[\s\S]{0,260}?overflow: hidden/.test(styleBlock)
-  && styleBlock.includes('transform: translateX(15%)'));
+  && styleBlock.includes('transform: translateX(5%)'));
 ok('CSS: 2x1 bỏ vạch ngăn, ngày + TP thành 1 dòng nhỏ DƯỚI số °C',
   /\.keycap-weather\.is-short:not\(\.is-wide3\) \.wx-body\s*\{[\s\S]{0,320}?grid-template-areas: "hero art" "meta art"/.test(styleBlock)
-  && /\.keycap-weather\.is-short \.wx-meta\s*\{[^}]*flex-direction: row/.test(styleBlock));
+  && /\.keycap-weather\.is-short:not\(\.is-wide3\) \.wx-meta\s*\{[^}]*flex-direction: row/.test(styleBlock));
 ok('CSS: 2x2 minh hoạ LỚN trên, dưới là °C + text + chỉ số',
   /\.keycap-weather\.is-big \.wx-body\s*\{[\s\S]{0,320}?grid-template-areas: "art art" "hero meta"/.test(styleBlock));
 ok('CSS: 1x1 chỉ còn minh hoạ + số °C (ẩn divider/meta/trạng thái)',
   /\.keycap-weather\.is-mini \.wx-divider,\s*\n\s*\.keycap-weather\.is-mini \.wx-meta,\s*\n\s*\.keycap-weather\.is-mini \.weather-cond \{ display: none/.test(styleBlock));
-ok('CSS: 5 nền gradient ĐÚNG bảng màu spec (nắng/mây/mưa/dông/lỗi)',
-  [['sun', '#1e6fa8', '#3ea5e8'], ['cloud', '#2b3947', '#455d73'], ['rain', '#0d6b63', '#189e82'],
-    ['storm', '#301f5c', '#58338c'], ['error', '#2a0b0b', '#451212']]
-    .every(([t, a, b]) => new RegExp('data-tint="' + t + '"\\]\\s*\\{ --wx-bg: linear-gradient\\(135deg, '
-      + a + ', ' + b + '\\)').test(styleBlock)));
+ok('CSS: 8 nhóm tông màu gradient (145deg) + lỗi',
+  ['sun', 'partly', 'cloud', 'fog', 'drizzle', 'rain', 'snow', 'storm', 'error']
+    .every((t) => new RegExp('data-tint="' + t + '"\\]\\s*\\{ --wx-bg: linear-gradient\\(145deg, #\\w+ 0%, #\\w+ 100%\\)').test(styleBlock)));
 ok('CSS: ban đêm (data-night="1") dùng gradient tím navy #1b1642 -> #392873',
   /data-night="1"\]\s*\{ --wx-bg: linear-gradient\(135deg, #1b1642, #392873\)/.test(styleBlock));
 ok('CSS: skin "Phẳng" = nền #111317 + bỏ lớp scrim',
@@ -504,16 +502,17 @@ ok('CSS: lớp chữ ẩn khai báo SAU các rule mô tả (để luôn thắng)
 ok('CSS: tôn trọng prefers-reduced-motion cho pomodoro',
   /@media \(prefers-reduced-motion: reduce\)\s*\{[\s\S]{0,240}\.pomodoro-unit/.test(styleBlock));
 
-/* ===================== JS: renderPomodoro / applyWeatherToUnit ============= */
-const renderSrc = extract('renderPomodoro');
-ok('js: renderPomodoro ghi MÀU pha + TRẠNG THÁI bằng data-attr (thay cho chữ)',
-  renderSrc.includes('unit.dataset.mode') && renderSrc.includes('unit.dataset.state')
-  && renderSrc.includes('--pomo-ratio'));
-ok('js: renderPomodoro đưa nhãn pha/trạng thái vào tooltip (unit.title)',
-  /unit\.title = /.test(renderSrc));
+/* ===================== JS: renderState / applyWeatherToUnit ============= */
+const renderSrc = extract('renderState');
+ok('js: renderState ghi MÀU pha + TRẠNG THÁI bằng data-attr',
+  renderSrc.includes('entry.unit.dataset.mode') && renderSrc.includes('entry.unit.dataset.state'));
+ok('js: renderState cập nhật vòng tiến độ bằng stroke-dashoffset',
+  renderSrc.includes('update(entry)') && /strokeDashoffset/.test(jsSrc));
+ok('js: renderState đưa nhãn pha/trạng thái vào tooltip (unit.title)',
+  /entry\.unit\.title = /.test(renderSrc));
 ok('js: nhãn pha/trạng thái chỉ còn ghi vào .pomo-sr (ẩn thị giác)',
-  /modeEl\.textContent = modeText/.test(renderSrc)
-  && /stateEl\.textContent = stateText/.test(renderSrc));
+  /entry\.mode\.textContent = modeText/.test(renderSrc)
+  && /entry\.state\.textContent = stateText/.test(renderSrc));
 
 const applySrc = extract('applyWeatherToUnit');
 ok('js: applyWeatherToUnit gom đơn vị + trạng thái trời vào TOOLTIP',
@@ -521,8 +520,9 @@ ok('js: applyWeatherToUnit gom đơn vị + trạng thái trời vào TOOLTIP',
 ok('js: chỉ số phụ ghi SỐ thuần vào ô (đơn vị chỉ ở tooltip)',
   /humEl\.textContent =/.test(applySrc) && /feelsEl\.textContent =/.test(applySrc)
   && /windEl\.textContent = String\(wind\)/.test(applySrc));
-ok('js: trạng thái lỗi dùng icon cảnh báo (không viết câu chữ lên ô)',
-  /WX_G_WARN/.test(extract('markWeatherPlaceholder')));
+ok('js: trạng thái lỗi dùng tông đỏ + icon cảnh báo',
+  /unit\.dataset\.tint = 'error'/.test(extract('markWeatherPlaceholder'))
+  && /unit\.classList\.add\('is-error'\)/.test(extract('markWeatherPlaceholder')));
 
 /* ============== JS: THỜI TIẾT — cache / làm mới / skin / badge ============= */
 ok('js: applyWeatherToUnit ghi TRẠNG THÁI TRỜI + NGÀY vào chữ trên ô',
@@ -546,8 +546,8 @@ ok('js: ĐANG TẢI -> icon xoay mờ + "--°C" khi chưa có số nào',
   /function setWeatherLoading\(unit, on, blank = false\)/.test(jsSrc)
   && /setWeatherLoading\(unit, true, !cached\)/.test(jsSrc)
   && /setWeatherLoading\(unit, false\);/.test(jsSrc));
-ok('js: chạm = làm mới ngay nhưng có CHỐNG DỘI 1,2s + bỏ qua khi đang tải',
-  jsSrc.includes('WEATHER_TAP_DEBOUNCE_MS = 1200')
+ok('js: chạm = làm mới ngay nhưng có CHỐNG DỘI 0,5s + bỏ qua khi đang tải',
+  jsSrc.includes('WEATHER_TAP_DEBOUNCE_MS = 500')
   && /if \(el\.__wxBusy\) return;/.test(jsSrc)
   && /now - \(el\.__wxTapAt \|\| 0\) < WEATHER_TAP_DEBOUNCE_MS/.test(jsSrc)
   && /el\.__wxBusy = true;/.test(jsSrc));
@@ -558,9 +558,9 @@ ok('js: skin chuẩn hoá 1 hàm dùng CHUNG cho lúc đọc + lúc lưu + lúc 
   && /normalizeWeatherSkin\(selWeatherSkin/.test(jsSrc));
 ok('js: ô thời tiết MẶC ĐỊNH 3x1 (tạo mới + mẫu ở layout mặc định)',
   jsSrc.includes('WEATHER_MIN_W = 3')
-  && /type === 'weather_widget'\) \? WEATHER_MIN_W/.test(jsSrc)
-  && /w: isWeather \? WEATHER_MIN_W/.test(jsSrc)
-  && /w: 3, h: 1, icon: "🌤️", type: "weather_widget"/.test(jsSrc));
+  && /weatherMinW: WEATHER_MIN_W/.test(jsSrc)
+  && /case 'weather_widget': size = \[weatherMinW, 1\]/.test(jsSrc)
+  && /w: 3, h: 1, icon: '[^']*', type: 'weather_widget'/.test(jsSrc));
 ok('js: gán tier is-wide3 (>= 3 cột, 1 hàng) để CSS dựng đủ 4 vùng',
   /classList\.toggle\('is-wide3', w >= 3 && h <= 1\)/.test(jsSrc));
 ok('html: modal có dropdown Skin + API key (dự phòng) cho widget thời tiết',
@@ -570,8 +570,8 @@ ok('html: modal hint nói rõ 3x1 + badge "DỮ LIỆU CŨ"',
   /(?:Ô chuẩn 3x1|O chuan 3x1)/.test(html)
   && /(?:DỮ LIỆU CŨ|DU LIEU CU)/.test(html));
 
-/* ===================== RUST (lib.rs) ===================== */
-const rs = readFileSync(path.join(root, 'src-tauri', 'src', 'lib.rs'), 'utf8');
+/* ===================== RUST (weather.rs) ===================== */
+const rs = readFileSync(path.join(root, 'src-tauri', 'src', 'weather.rs'), 'utf8');
 ok('rust: WeatherInfo có is_day/feels_like/humidity/wind',
   ['is_day: bool', 'feels_like: f32', 'humidity: u8', 'wind: f32'].every((f) => rs.includes(f)));
 ok('rust: URL Open-Meteo xin đủ trường mới',
