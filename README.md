@@ -51,11 +51,19 @@ npm.cmd install
 npm.cmd run tauri dev     # chạy app desktop đầy đủ (IPC native: mic, volume, media...)
 npm.cmd run dev           # chỉ giao diện web tại http://localhost:1420 (không có IPC)
 npm.cmd run build         # build frontend vào dist/
-npm.cmd run tauri build   # đóng gói bản phát hành
+npm.cmd run tauri build   # đóng gói bản phát hành (installer NSIS + file .sig cho tự cập nhật)
 npm.cmd run build:icons   # sinh lại dữ liệu icon từ scripts/build-icons.mjs
 npm.cmd run preview       # dựng .devtmp/preview.html để xem nhanh widget
 npm.cmd run format        # Prettier (format:check để chỉ kiểm tra)
 ```
+
+Khi build bản phát hành, đặt khoá ký updater trước (bắt buộc để app tự cập nhật được):
+
+```powershell
+$env:TAURI_SIGNING_PRIVATE_KEY = Get-Content "$env:USERPROFILE\.tauri\streandeck-vk02.key" -Raw
+```
+
+Quy trình phát hành + cấu hình GitHub Actions: xem [RELEASE.md](RELEASE.md).
 
 ## Kiểm tra
 
@@ -73,6 +81,7 @@ Các suite chưa nằm trong gate vì assertion còn theo thiết kế cũ: `che
 ## Tài liệu liên quan
 
 - [PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md): tổng quan dự án
+- [RELEASE.md](RELEASE.md): build installer, ký updater, phát hành GitHub Releases
 - [AI_HANDOFF.md](AI_HANDOFF.md): bối cảnh chi tiết, quy tắc phát triển, widget và lưu trữ
 - [CARGO_AND_CONFIG.md](CARGO_AND_CONFIG.md): cấu hình Cargo/Tauri
 - [OPTIMIZATION_STAGE1.md](OPTIMIZATION_STAGE1.md): ghi chú tối ưu build

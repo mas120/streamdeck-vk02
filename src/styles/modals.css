@@ -132,6 +132,20 @@
   color: var(--text-muted);
   overflow-wrap: anywhere;
 }
+.settings-update-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.settings-update-row .btn {
+  background: #22283a;
+  color: #fff;
+}
+.settings-update-row .btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
 /* =======================================================================
    SD-LOOK — giao diện phím giống Stream Deck THẬT
    (dán từ deck-keys-streamdeck.css, GIỮ nguyên nội dung, chỉ đổi header)

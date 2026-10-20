@@ -1,4 +1,13 @@
 import { diagnostics } from './diagnostics.js';
+import { getVersion } from '@tauri-apps/api/app';
+import {
+  TODO_STORAGE_KEY,
+  backupFileName,
+  createBackup,
+  downloadBackup,
+  restoreBackup,
+  validateBackup,
+} from './backup.js';
 
 const RESET_CONFIRM_MS = 3000;
 
@@ -28,10 +37,61 @@ function downloadText(text, filename) {
  * Modal "Cài đặt Deck": mở/đóng, xác nhận 2 bước cho "Đặt lại bố cục",
  * xuất chẩn đoán, và đóng khi chạm ra vùng nền tối.
  */
-export function initSettingsPanel({ onResetLayout, invokeCmd, getTauri }) {
+export function initSettingsPanel({ onResetLayout, invokeCmd, getTauri, updater }) {
   const modal = document.getElementById('settingsModal');
   const btnExport = document.getElementById('btnExportDiagnostics');
   const status = document.getElementById('diagnosticsStatus');
+  const btnCheckUpdates = document.getElementById('btnCheckUpdates');
+  const updateStatus = document.getElementById('updateStatus');
+  const appVersionLabel = document.getElementById('appVersionLabel');
+
+  function setUpdateStatus(message) {
+    if (!updateStatus) return;
+    updateStatus.textContent = message;
+    updateStatus.hidden = !message;
+  }
+
+  /* Hiện phiên bản đang chạy cạnh nút cập nhật (chỉ trong app desktop). */
+  if (appVersionLabel && getTauri && getTauri()) {
+    getVersion()
+      .then((v) => {
+        appVersionLabel.textContent = v ? `v${v}` : '';
+      })
+      .catch(() => {});
+  }
+
+  if (btnCheckUpdates) {
+    btnCheckUpdates.addEventListener('click', async () => {
+      if (!getTauri || !getTauri()) {
+        setUpdateStatus('Chỉ kiểm tra được cập nhật trong app desktop.');
+        return;
+      }
+      if (!updater) {
+        setUpdateStatus('Tính năng cập nhật chưa sẵn sàng.');
+        return;
+      }
+      btnCheckUpdates.disabled = true;
+      setUpdateStatus('Đang kiểm tra cập nhật…');
+      try {
+        const result = await updater.checkNow();
+        if (result.outcome === 'available') {
+          setUpdateStatus(`Có bản v${result.version}. Làm theo hộp thoại vừa hiện để cập nhật.`);
+        } else if (result.outcome === 'latest') {
+          setUpdateStatus(
+            `Bạn đang dùng bản mới nhất${result.version ? ` (v${result.version})` : ''}.`
+          );
+        } else if (result.outcome === 'busy') {
+          setUpdateStatus('Đang kiểm tra hoặc đang cập nhật, chờ một chút…');
+        } else if (result.outcome === 'unsupported') {
+          setUpdateStatus('Chỉ kiểm tra được cập nhật trong app desktop.');
+        } else {
+          setUpdateStatus(`Không kiểm tra được cập nhật: ${result.error || 'lỗi không xác định'}`);
+        }
+      } finally {
+        btnCheckUpdates.disabled = false;
+      }
+    });
+  }
 
   function setStatus(message) {
     if (!status) return;
@@ -74,6 +134,123 @@ export function initSettingsPanel({ onResetLayout, invokeCmd, getTauri }) {
       }
       disarmReset();
       onResetLayout();
+    });
+  }
+
+  /* ---------- Sao lưu / khôi phục toàn bộ dữ liệu ---------- */
+  function setBackupStatus(message) {
+    const el = document.getElementById('backupStatus');
+    if (!el) return;
+    el.textContent = message;
+    el.hidden = !message;
+  }
+
+  async function collectBackup() {
+    let layout = null;
+    let config = {};
+    if (getTauri && getTauri()) {
+      const [rawLayout, rawConfig] = await Promise.all([
+        invokeCmd('load_layout'),
+        invokeCmd('load_app_config'),
+      ]);
+      try {
+        layout = rawLayout ? JSON.parse(rawLayout) : null;
+      } catch {
+        layout = null;
+      }
+      try {
+        config = rawConfig ? JSON.parse(rawConfig) : {};
+      } catch {
+        config = {};
+      }
+    } else {
+      try {
+        layout = JSON.parse(localStorage.getItem('STREAMDECK_VK02_LAYOUT') || 'null');
+      } catch {
+        layout = null;
+      }
+      config = {
+        brightness: parseInt(localStorage.getItem('STREAMDECK_VK02_BRIGHTNESS') ?? '100', 10),
+        idleMs: parseInt(localStorage.getItem('STREAMDECK_VK02_IDLE_MS') ?? '45000', 10),
+      };
+    }
+    const todo = localStorage.getItem(TODO_STORAGE_KEY);
+    return createBackup({ layout, config, todo });
+  }
+
+  const modalActions = modal?.querySelector('.modal-actions');
+  if (modalActions) {
+    const backupGroup = document.createElement('div');
+    backupGroup.className = 'form-group';
+    backupGroup.innerHTML = `
+      <label>Sao lưu dữ liệu</label>
+      <div class="settings-update-row">
+        <button class="btn" id="btnBackupExport" type="button">Sao lưu ra file</button>
+        <button class="btn" id="btnBackupImport" type="button">Khôi phục từ file…</button>
+      </div>
+      <input type="file" id="inpBackupFile" accept="application/json,.json" hidden />
+      <div class="settings-note" id="backupStatus" role="status" hidden></div>`;
+    modalActions.before(backupGroup);
+
+    const btnBackupExport = backupGroup.querySelector('#btnBackupExport');
+    const btnBackupImport = backupGroup.querySelector('#btnBackupImport');
+    const inpBackupFile = backupGroup.querySelector('#inpBackupFile');
+
+    btnBackupExport.addEventListener('click', async () => {
+      btnBackupExport.disabled = true;
+      setBackupStatus('Đang gom dữ liệu…');
+      try {
+        const backup = await collectBackup();
+        const name = downloadBackup(backup, backupFileName());
+        setBackupStatus(`Đã tạo ${name} (${backup.layout.widgets.length} phím).`);
+      } catch (err) {
+        console.error('Sao lưu lỗi:', err);
+        setBackupStatus(`Không sao lưu được: ${err}`);
+      } finally {
+        btnBackupExport.disabled = false;
+      }
+    });
+
+    btnBackupImport.addEventListener('click', () => {
+      inpBackupFile.value = '';
+      inpBackupFile.click();
+    });
+
+    inpBackupFile.addEventListener('change', async () => {
+      const file = inpBackupFile.files?.[0];
+      inpBackupFile.value = '';
+      if (!file) return;
+      setBackupStatus('Đang đọc file…');
+      try {
+        const text = await file.text();
+        const result = validateBackup(text);
+        if (!result.ok) {
+          setBackupStatus(`File không hợp lệ: ${result.error}`);
+          return;
+        }
+        const count = result.backup.layout.widgets.length;
+        const when = result.backup.createdAt ? ` lúc ${result.backup.createdAt}` : '';
+        const ok = window.confirm(
+          `Khôi phục ${count} phím từ bản sao lưu${when}?\n` +
+            'Bố cục và cài đặt hiện tại sẽ bị ghi đè (bản cũ vẫn được giữ trong .bak).'
+        );
+        if (!ok) {
+          setBackupStatus('Đã huỷ khôi phục.');
+          return;
+        }
+        btnBackupImport.disabled = true;
+        setBackupStatus('Đang khôi phục…');
+        await restoreBackup(result.backup, {
+          invoke: getTauri && getTauri() ? invokeCmd : null,
+        });
+        setBackupStatus(`Đã khôi phục ${count} phím. Đang tải lại…`);
+        setTimeout(() => location.reload(), 600);
+      } catch (err) {
+        console.error('Khôi phục lỗi:', err);
+        setBackupStatus(`Không khôi phục được: ${err}`);
+      } finally {
+        btnBackupImport.disabled = false;
+      }
     });
   }
 

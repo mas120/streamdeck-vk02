@@ -20,6 +20,9 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 tauri = { version = "2", features = ["protocol-asset"] }
 tauri-plugin-opener = "2"
+# Tự cập nhật qua GitHub Releases: kiểm tra latest.json + tải installer NSIS đã ký.
+# tauri-plugin-process cung cấp relaunch() để khởi động lại app sau khi cài xong.
+tauri-plugin-updater = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 # Icon thật của app / favicon / icon tải lên (app_icons.rs): giải mã ảnh + mã hoá

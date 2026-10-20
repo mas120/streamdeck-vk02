@@ -10,4 +10,5 @@
 @import "./widgets/todo.css";
 @import "./widgets/media.css";
 @import "./widgets/pomodoro.css";
+@import "./updater.css";
 @import "./overrides.css";

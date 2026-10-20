@@ -53,6 +53,7 @@ import { createLayoutPersistence } from './layout-persistence.js';
 import { createTileFactory } from './tile-factory.js';
 import { createDeckAudioSync } from './deck-audio.js';
 import { initSettingsPanel } from './settings-panel.js';
+import { createUpdater } from './updater.js';
 
 export function bootstrapApp() {
   const {
@@ -257,11 +258,17 @@ export function bootstrapApp() {
      ========================================================================= */
   applyMode();
 
+  const updater = createUpdater({ getTauri });
+
   const settingsPanel = initSettingsPanel({
     onResetLayout: () => resetLayout(),
     invokeCmd,
     getTauri,
+    updater,
   });
+
+  /* Kiểm tra bản mới ngầm sau khi app đã ổn định; chỉ hiện hộp thoại khi có bản mới. */
+  updater.start();
 
   // Segmented Chạy / Chỉnh sửa bên trong modal cài đặt
   document.querySelectorAll('#modeSegment .seg-btn').forEach((btn) => {

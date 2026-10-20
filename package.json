@@ -8,7 +8,7 @@
     "build": "vite build",
     "build:icons": "node scripts/build-icons.mjs",
     "preview": "node scripts/preview.mjs",
-    "check": "node --test src/core/layout-store.test.js src/core/widget-renderer.test.js src/core/diagnostics.test.js src/core/registry.test.js src/widgets/volume.test.js && npm run build && node scripts/check-flip.mjs",
+    "check": "node --test src/core/layout-store.test.js src/core/backup.test.js src/core/widget-renderer.test.js src/core/widget-registry.test.js src/core/diagnostics.test.js src/core/registry.test.js src/widgets/volume.test.js && npm run build && node scripts/check-flip.mjs",
     "check:capsule": "node scripts/check-capsule.mjs",
     "check:rust": "cd src-tauri && cargo test",
     "check:smoke": "node scripts/smoke.mjs",
@@ -20,6 +20,8 @@
     "format:check": "prettier --check \"src/**/*.{js,css}\" \"*.{html,js,json}\""
   },
   "dependencies": {
+    "@tauri-apps/api": "^2.12.4",
+    "@tauri-apps/plugin-updater": "^2.14.0",
     "gridstack": "^14.0.0"
   },
   "devDependencies": {
