@@ -1,5 +1,9 @@
 # Stream Deck VK02
 
+[![CI](https://github.com/mas120/streamdeck-vk02/actions/workflows/ci.yml/badge.svg)](https://github.com/mas120/streamdeck-vk02/actions/workflows/ci.yml)
+[![Release](https://github.com/mas120/streamdeck-vk02/actions/workflows/release.yml/badge.svg)](https://github.com/mas120/streamdeck-vk02/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Ứng dụng desktop kiểu Stream Deck cho Windows, dựng bằng **Tauri 2 + Vite + JavaScript thuần**. Deck lưới 8x5 (GridStack) hiển thị các phím widget trên màn hình cảm ứng phụ VK02 (1280x800): Pomodoro, đồng hồ, thời tiết, todo, mic, volume, media, Bongo Cat và các phím mở app/link.
 
 Giao diện theo phong cách **Stream Deck LCD tràn mặt** (`body.sd-look`): vỏ phím tối bo góc, nội dung widget phủ kín mặt LCD, accent cyan.
@@ -85,6 +89,10 @@ Các suite chưa nằm trong gate vì assertion còn theo thiết kế cũ: `che
 - [AI_HANDOFF.md](AI_HANDOFF.md): bối cảnh chi tiết, quy tắc phát triển, widget và lưu trữ
 - [CARGO_AND_CONFIG.md](CARGO_AND_CONFIG.md): cấu hình Cargo/Tauri
 - [OPTIMIZATION_STAGE1.md](OPTIMIZATION_STAGE1.md): ghi chú tối ưu build
+
+## Giấy phép
+
+Phát hành theo giấy phép [MIT](LICENSE).
 
 ## IDE khuyến nghị
 
