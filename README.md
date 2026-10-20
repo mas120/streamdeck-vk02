@@ -64,7 +64,7 @@ npm.cmd run check        # gate nhanh: unit test + build + flip clock
 npm.cmd run check:full   # check + capsule (markup/CSS/capabilities) + cargo test
 ```
 
-`check` chạy lần lượt: Node unit test (`layout-store`, `widget-renderer`, `volume`), `vite build`, rồi `scripts/check-flip.mjs` (hành vi thẻ lật của flip clock).
+`check` chạy lần lượt: Node unit test (`layout-store`, `widget-renderer`, `diagnostics`, `volume`), `vite build`, rồi `scripts/check-flip.mjs` (hành vi thẻ lật của flip clock).
 
 `check:full` thêm `scripts/check-capsule.mjs` (75 assertion: token, class markup có CSS, quyền cửa sổ, dist 2 trang) và `cargo test`. Đây là gate nên chạy trước khi kết thúc session lớn.
 

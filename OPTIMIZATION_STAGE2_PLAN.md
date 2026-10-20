@@ -70,22 +70,22 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **Done**: `npm.cmd run check:format` pass; `git diff` của commit chỉ là whitespace/format.
 - **Token**: ~10k (chủ yếu là đọc diff lớn — nên `git diff --stat` thay vì đọc từng file).
 
-### P0-3 · Bắt lỗi frontend vào ring buffer
-- [ ] **Mục tiêu**: lỗi widget/runtime không biến mất khỏi console.
-- **File**: `src/main.js`, `src/core/utils.js` (hoặc tạo `src/core/diagnostics.js`).
-- **Việc**:
-  - Tạo `diagnostics.js`: bắt `window.onerror`, `unhandledrejection`, `console.error` (wrap), lưu tối đa 200 bản ghi kèm timestamp + stack.
-  - API `getDiagnostics()` trả chuỗi text; chưa cần UI.
-  - Gắn vào `main.js` trước `bootstrapApp()`.
-- **Done**: thêm 1 unit test cho ring buffer (giới hạn 200, giữ bản mới nhất); `npm.cmd run check`.
-- **Token**: ~12k.
+### P0-3 · Bắt lỗi frontend vào ring buffer ✅
+- [x] **Mục tiêu**: lỗi widget/runtime không biến mất khỏi console.
+- **Kết quả**:
+  - `src/core/diagnostics.js`: `createDiagnostics({limit, now})` (thuần, test được), singleton `diagnostics`, `installDiagnostics(scope)` gắn `error`, `unhandledrejection` và wrap `console.error` (vẫn gọi console gốc).
+  - Ring buffer 200 bản ghi; `format({title})` xuất text có mốc ISO + detail thụt dòng; `Error`/object/vòng tham chiếu đều được stringify an toàn.
+  - `main.js` gọi `installDiagnostics()` trước `bootstrapApp()`.
+  - Test: `src/core/diagnostics.test.js` (4 test) đã vào `npm run check`.
+- **Done**: `npm.cmd run check` pass (unit + build + flip 17 PASS).
+- **Token thực tế**: ~14k.
 
 ### P0-4 · Nút "Xuất chẩn đoán"
 - [ ] **Mục tiêu**: có file log để gửi kèm khi báo lỗi.
 - **File**: `src-tauri/src/lib.rs`, `src/core/settings-panel.js`, `index.html`, `src/core/diagnostics.js`.
 - **Việc**:
   - Thêm command `save_diagnostics(text: String) -> Result<String, String>` ghi vào `app_data_dir/logs/diagnostics-<timestamp>.txt`, trả đường dẫn.
-  - Trong modal Cài đặt: nút "Xuất chẩn đoán" → ghép `getDiagnostics()` + version app + user agent, gọi command, hiện toast đường dẫn (browser fallback: tải file `.txt`).
+  - Trong modal Cài đặt: nút "Xuất chẩn đoán" → ghép `diagnostics.format({ title })` + version app + user agent, gọi command, hiện toast đường dẫn (browser fallback: tải file `.txt`).
 - **Done**: `npm.cmd run check`; thử tay trên `npm.cmd run tauri dev` 1 lần.
 - **Token**: ~20k.
 
@@ -260,7 +260,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - [x] P0-2 · Tooling + check:full
 - [ ] P0-2b · Sửa smoke/preview
 - [ ] P0-2c · Format toàn bộ
-- [ ] P0-3 · Ring buffer lỗi
+- [x] P0-3 · Ring buffer lỗi
 - [ ] P0-4 · Xuất chẩn đoán
 - [ ] P1-1 · Scheduler đồng hồ
 - [ ] P1-2 · Vòng quét audio/media
