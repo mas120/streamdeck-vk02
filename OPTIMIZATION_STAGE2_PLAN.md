@@ -229,11 +229,16 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **Done**: `npm.cmd run check` + `cargo test` pass (25 JS, 10 Rust); layout v1 cũ vẫn giữ đủ phím.
 - **Token thực tế**: ~20k.
 
-### P4-2 · Sao lưu / khôi phục
-- [ ] **File**: `src-tauri/src/lib.rs` (hoặc `backup.rs`), `settings-panel.js`, `index.html`.
-- **Việc**: command `export_backup` (layout + config + todo → 1 `.json` qua save dialog) và `import_backup` (validate + ghi đè có `.bak`). UI 2 nút trong Cài đặt, xác nhận 2 bước khi import.
-- **Done**: `npm.cmd run check`; export → reset → import khôi phục đúng.
-- **Token**: ~25k.
+### P4-2 · Sao lưu / khôi phục ✅
+- [x] **Mục tiêu**: xuất/nhập 1 file JSON gồm layout + cấu hình + to-do; khôi phục an toàn.
+- **Kết quả**:
+  - `src/core/backup.js`: `createBackup`, `validateBackup` (kiểm tra app id, layout, migrate id/cfg), `restoreBackup` (IPC `save_layout`/`save_app_config` hoặc localStorage), `downloadBackup` (Blob), `backupFileName`.
+  - `settings-panel.js`: nhóm "Sao lưu dữ liệu" (2 nút + input file ẩn) dựng động, không sửa `index.html`; trạng thái ngay dưới nút.
+  - Khôi phục có `confirm()` mô tả số phím + thời điểm; ghi đè xong tải lại app; Rust vẫn giữ `.bak` khi ghi.
+  - Web fallback: đọc/ghi localStorage (layout/config/todo).
+- **Done**: `npm.cmd run check` pass (33 test); Vite smoke: xuất `streamdeck-backup-…json` (12 phím), nhập lại 1 phím → localStorage ghi đúng layout v2 + brightness, không lỗi console.
+- **Ghi chú**: dùng Blob download (web + WebView2) thay vì hộp thoại lưu native để không thêm plugin `dialog`.
+- **Token thực tế**: ~26k.
 
 ---
 
