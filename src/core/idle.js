@@ -1,6 +1,8 @@
 import { getAppConfig, updateAppConfig } from './config-store.js';
 
 const WAKE_THROTTLE_MS = 500;
+/** Sự kiện báo deck vừa tối / vừa thức để scheduler nền dừng hoặc chạy lại. */
+const IDLE_EVENT = 'deck-idle-change';
 
 /** Độ sáng "màn hình" toàn deck (30%-130%) qua biến CSS --screen-brightness. */
 function initBrightness() {
@@ -40,8 +42,16 @@ function initIdle(onWake) {
     lastWakeAt = now;
     body.classList.remove('idle');
     clearTimeout(timer);
-    if (idleMs > 0) timer = setTimeout(() => body.classList.add('idle'), idleMs);
-    if (wasIdle) onWake();
+    if (idleMs > 0) timer = setTimeout(goIdle, idleMs);
+    if (wasIdle) {
+      window.dispatchEvent(new CustomEvent(IDLE_EVENT, { detail: { idle: false } }));
+      onWake();
+    }
+  }
+
+  function goIdle() {
+    document.body.classList.add('idle');
+    window.dispatchEvent(new CustomEvent(IDLE_EVENT, { detail: { idle: true } }));
   }
 
   // Chạm đánh thức lúc đang tối: nuốt cả chuỗi pointer/click để không kích hoạt ô bên dưới.

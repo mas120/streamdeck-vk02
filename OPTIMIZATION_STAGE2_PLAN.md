@@ -95,15 +95,17 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 
 ## Phase 1 — Hiệu năng (3 session)
 
-### P1-1 · Scheduler đồng hồ theo nhu cầu
-- [ ] **Mục tiêu**: bỏ vòng 100ms chạy mãi khi chỉ có clock digital.
-- **File**: `src/core/registry.js`, `src/core/app.js` (chỉ phần `startLiveWidgetScheduler`).
-- **Việc**:
-  - Đổi `startLiveWidgetScheduler` thành tự hẹn lại (`setTimeout`) theo mốc cần kế tiếp: chỉ 100ms khi tồn tại clock mặt analog, 1s cho digital/flip.
-  - Khi `isDeckPaused()` → clear timer, khi resume → chạy lại; thêm `stopLiveWidgetScheduler()`.
-  - `liveWidgetRegistry` rỗng → dừng timer.
-- **Done**: `npm.cmd run check`; mở dev để xác nhận đồng hồ vẫn đúng giây, analog không giật.
-- **Token**: ~18k.
+### P1-1 · Scheduler đồng hồ theo nhu cầu ✅
+- [x] **Mục tiêu**: bỏ vòng 100ms chạy mãi khi chỉ có clock digital.
+- **Kết quả**:
+  - `registry.js`: scheduler tự hẹn lại bằng `setTimeout`; analog 100ms, digital/flip bám mốc giây kế tiếp (`nextTickDelay`), digital chỉ vẽ khi sang giây mới (`refs.lastSecond`).
+  - Dừng hẳn khi registry không còn đồng hồ; `registerLiveWidget` đánh thức lại khi thêm widget.
+  - Tạm dừng khi ẩn cửa sổ / deck idle; chạy lại nhờ `visibilitychange`, `focus` và sự kiện mới `deck-idle-change` (phát từ `idle.js`).
+  - Bỏ 3 hằng số tick cũ không còn dùng; `tickLiveWidgets` nhận thêm tham số `now` để test.
+  - Test mới `src/core/registry.test.js` (4 test) đã vào `npm run check`.
+- **Done**: `npm.cmd run check` pass + `check:capsule` 75 PASS.
+- **Đã kiểm runtime** (Vite + browser): clock `19:01:24 → :26` sau 2,1s; khi deck idle thì dừng, `pointermove` đánh thức và chạy lại; không có console error.
+- **Token thực tế**: ~26k.
 
 ### P1-2 · Giảm vòng quét audio/media
 - [ ] **Mục tiêu**: không enumerate WASAPI session 2s/lần khi deck không có slider app.
@@ -264,7 +266,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - [ ] P0-2c · Format toàn bộ
 - [x] P0-3 · Ring buffer lỗi
 - [x] P0-4 · Xuất chẩn đoán
-- [ ] P1-1 · Scheduler đồng hồ
+- [x] P1-1 · Scheduler đồng hồ
 - [ ] P1-2 · Vòng quét audio/media
 - [ ] P1-3 · Đo lại
 - [ ] P2-1 · audio.rs
