@@ -155,7 +155,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **Token**: ~25k.
 
 ### P2-2 · `windows_info.rs`
-- [ ] **File**: `src-tauri/src/lib.rs`, tạo `windows_info.rs`.
+- [x] **File**: `src-tauri/src/lib.rs`, tạo `windows_info.rs`.
 - **Việc**: chuyển `cached_process_name`, `collect_visible_windows`, `strip_browser_suffix`, `display_label`, struct `WindowInfo`. Thêm test cho `strip_browser_suffix` và `display_label` (dùng dữ liệu mẫu, không cần WinAPI).
 - **Done**: `cargo test`; `npm.cmd run check`.
 - **Token**: ~20k.
@@ -282,7 +282,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - [x] P1-2 · Vòng quét audio/media
 - [ ] P1-3 · Đo lại
 - [x] P2-1 · audio.rs
-- [ ] P2-2 · windows_info.rs
+- [x] P2-2 · windows_info.rs
 - [ ] P2-3 · actions.rs
 - [ ] P2-4 · windows.rs
 - [ ] P3-1 · Lõi registry

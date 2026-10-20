@@ -13,7 +13,8 @@ use windows::Win32::Media::Audio::{
 };
 use windows::Win32::System::Com::{CoCreateInstance, CLSCTX_ALL};
 
-use crate::{cached_process_name, collect_visible_windows, display_label, with_com};
+use crate::windows_info::{cached_process_name, collect_visible_windows, display_label};
+use crate::with_com;
 
 /// Lấy IAudioSessionManager2 từ default audio render endpoint.
 unsafe fn get_session_manager() -> Result<IAudioSessionManager2, String> {
