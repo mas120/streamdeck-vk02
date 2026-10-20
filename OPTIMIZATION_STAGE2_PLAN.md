@@ -75,11 +75,16 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - **Done**: `npm.cmd run check:full` pass.
 - **Token thực tế**: ~28k.
 
-### P0-2c · Format toàn bộ (tuỳ chọn)
-- [ ] **File**: toàn bộ `src/**/*.{js,css}`, `*.{html,js,json}`.
-- **Việc**: chạy `npm.cmd run format`, commit riêng chỉ gồm thay đổi format (không trộn logic), rồi thêm `check:format` vào `check:full`.
-- **Done**: `npm.cmd run check:format` pass; `git diff` của commit chỉ là whitespace/format.
-- **Token**: ~10k (chủ yếu là đọc diff lớn — nên `git diff --stat` thay vì đọc từng file).
+### P0-2c · Format toàn bộ ✅
+- [x] **Mục tiêu**: một chuẩn format duy nhất, có gate chặn drift.
+- **Kết quả**:
+  - Chạy Prettier cho `src/**/*.{js,css}` + file gốc (55 file); commit riêng chỉ format.
+  - `.prettierrc` thêm override `*.css: singleQuote=false` để giữ nháy kép trong selector `[data-tint="..."]` như trước.
+  - `smoke.mjs`/`check-preview.mjs` thêm bản gộp khoảng trắng (`styleFlat`, `jsFlat`) và nới regex để không phụ thuộc format.
+  - `extract()` trong `smoke.mjs`/`preview.mjs` gộp được câu lệnh `const` bị Prettier xuống dòng.
+  - `check:format` đã vào `check:full`.
+- **Done**: `npm.cmd run check:full` pass (unit 10, flip 17, smoke 128, preview OK, capsule 75, cargo 10).
+- **Token thực tế**: ~35k.
 
 ### P0-3 · Bắt lỗi frontend vào ring buffer ✅
 - [x] **Mục tiêu**: lỗi widget/runtime không biến mất khỏi console.

@@ -31,12 +31,20 @@
   opacity: 0.82;
   transform: scaleY(var(--bar-level, 0.035));
   transform-origin: center;
-  transition: transform 70ms linear, opacity 120ms linear;
+  transition:
+    transform 70ms linear,
+    opacity 120ms linear;
 }
 
-.music-wave-unit[data-state="active"] .music-wave-bar { opacity: 1; }
-.music-wave-unit[data-state="unavailable"] .music-wave-bar { opacity: 0.24; }
+.music-wave-unit[data-state="active"] .music-wave-bar {
+  opacity: 1;
+}
+.music-wave-unit[data-state="unavailable"] .music-wave-bar {
+  opacity: 0.24;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .music-wave-bar { transition: none; }
+  .music-wave-bar {
+    transition: none;
+  }
 }

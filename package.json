@@ -14,7 +14,7 @@
     "check:smoke": "node scripts/smoke.mjs",
     "check:preview": "npm run preview && node scripts/check-preview.mjs",
     "check:format": "prettier --check \"src/**/*.{js,css}\" \"*.{html,js,json}\"",
-    "check:full": "npm run check && npm run check:smoke && npm run check:preview && npm run check:capsule && npm run check:rust",
+    "check:full": "npm run check && npm run check:format && npm run check:smoke && npm run check:preview && npm run check:capsule && npm run check:rust",
     "tauri": "tauri",
     "format": "prettier --write \"src/**/*.{js,css}\" \"*.{html,js,json}\"",
     "format:check": "prettier --check \"src/**/*.{js,css}\" \"*.{html,js,json}\""

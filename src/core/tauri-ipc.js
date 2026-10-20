@@ -8,7 +8,7 @@ export function createTauriIpc() {
   let lastSystemVolumeWriteAt = -Infinity;
 
   function getTauri() {
-    return window.__TAURI__ ? (window.__TAURI__.core || window.__TAURI__.tauri) : null;
+    return window.__TAURI__ ? window.__TAURI__.core || window.__TAURI__.tauri : null;
   }
 
   async function invokeCmd(cmd, args = {}) {
@@ -24,7 +24,7 @@ export function createTauriIpc() {
   async function callTauriAction(actionType, target = '') {
     if (!getTauri()) {
       console.log(`[Mock IPC] trigger_action ${actionType}`, target);
-      return false;   // không có backend thì không thể báo "thành công"
+      return false; // không có backend thì không thể báo "thành công"
     }
     try {
       await invokeCmd('trigger_action', { actionType, target: String(target) });

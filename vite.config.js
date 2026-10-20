@@ -20,18 +20,18 @@ const envPrefix = ['VITE_', 'TAURI_ENV_', 'TAURI_'];
 
 export default defineConfig({
   envPrefix,
-  clearScreen: false,        // giữ nguyên log của cargo/tauri ở trên màn hình
+  clearScreen: false, // giữ nguyên log của cargo/tauri ở trên màn hình
   server: {
     port: DEV_PORT,
-    strictPort: true,        // cổng bận -> báo lỗi ngay, không nhảy cổng khác
-    watch: { ignored: ['**/src-tauri/**'] },   // sửa file Rust không reload webview
+    strictPort: true, // cổng bận -> báo lỗi ngay, không nhảy cổng khác
+    watch: { ignored: ['**/src-tauri/**'] }, // sửa file Rust không reload webview
   },
   build: {
-    target: 'esnext',         // chỉ dùng cho Tauri WebView - code hiện đại nhất
+    target: 'esnext', // chỉ dùng cho Tauri WebView - code hiện đại nhất
     rollupOptions: {
       input: {
-        main: 'index.html',   // cửa sổ chính
-        todo: 'todo.html',    // cửa sổ To-do (nút "Xong" gọi lệnh Rust đóng cửa sổ)
+        main: 'index.html', // cửa sổ chính
+        todo: 'todo.html', // cửa sổ To-do (nút "Xong" gọi lệnh Rust đóng cửa sổ)
       },
       output: {
         manualChunks(id) {

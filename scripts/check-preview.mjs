@@ -66,7 +66,7 @@ check('ô 3x1 (mặc định) có đủ 4 vùng: vạch ngăn + ngày + ghim TP 
 check('2 skin: gradient Màu dịu (mặc định) + Phẳng #111317',
   (h.match(/data-skin="soft"/g) || []).length >= 8
   && h.includes('data-skin="flat"')
-  && h.includes('.keycap-weather[data-skin="flat"]    { --wx-bg: #111317; }'));
+  && /\.keycap-weather\[data-skin="flat"\]\s*\{\s*--wx-bg: #111317/.test(h));
 check('lỗi mạng = ICON cảnh báo + tông đỏ; chữ trên ô nói rõ "CHƯA KẾT NỐI"',
   h.includes('wx-svg-warn') && h.includes('data-tint="error"'));
 check('badge "DỮ LIỆU CŨ" có mặt (ô mất mạng > 30 phút)',
@@ -76,7 +76,8 @@ check('minh hoạ dùng gradient <defs> + lớp động .wx-anim',
 check('chữ "LÀM VIỆC/ĐANG CHẠY/km/h" không hiện trên mặt ô',
   !h.includes('weather-extra') && !h.includes('km/h<'));
 check('không tham chiếu file ngoài', !/<script src|<link /.test(h));
-check('có CSS của app (LCD + weather)', h.includes(':is(.deck-icon-core') && h.includes('[data-night=' + q + '1' + q + ']'));
+check('có CSS của app (LCD + weather)',
+  /body\.sd-look\s*:is\(/.test(h) && h.includes('data-night="1"'));
 /* --- FADER ÂM LƯỢNG capsule thống nhất (B2/B3) --- */
 const volCells = (h.match(/class="grid-stack-item" data-type="volume_slider"/g) || []).length;
 check('có ô âm lượng capsule ở 3 cỡ + ô tắt tiếng (1x1/2x1/1x2/muted)', volCells === 4,

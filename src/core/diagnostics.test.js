@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createDiagnostics, createIpcCounter, installDiagnostics, installIpcCounter } from './diagnostics.js';
+import {
+  createDiagnostics,
+  createIpcCounter,
+  installDiagnostics,
+  installIpcCounter,
+} from './diagnostics.js';
 
 test('ring buffer giữ tối đa `limit` bản ghi mới nhất', () => {
   const diag = createDiagnostics({ limit: 3, now: () => 1700000000000 });
@@ -9,7 +14,10 @@ test('ring buffer giữ tối đa `limit` bản ghi mới nhất', () => {
 
   const entries = diag.list();
   assert.equal(entries.length, 3);
-  assert.deepEqual(entries.map((entry) => entry.message), ['lỗi 3', 'lỗi 4', 'lỗi 5']);
+  assert.deepEqual(
+    entries.map((entry) => entry.message),
+    ['lỗi 3', 'lỗi 4', 'lỗi 5']
+  );
 });
 
 test('format có tiêu đề, số bản ghi, mốc thời gian và detail nhiều dòng', () => {
@@ -37,7 +45,8 @@ test('Error và object được chuyển thành chuỗi an toàn', () => {
   assert.equal(objEntry.message, '[object Object]');
 });
 
-test('install bắt error, unhandledrejection và console.error', () => {  const handlers = new Map();
+test('install bắt error, unhandledrejection và console.error', () => {
+  const handlers = new Map();
   const calls = [];
   const fakeConsole = { error: (...args) => calls.push(args) };
   const fakeWindow = { addEventListener: (type, handler) => handlers.set(type, handler) };
@@ -75,7 +84,7 @@ test('ipc counter đếm theo lệnh và trượt khỏi cửa sổ 60 giây', (
     counts: { get_master_volume: 3, get_audio_sessions: 1 },
   });
 
-  now += 2_000;   // các lệnh cũ đã ra khỏi cửa sổ
+  now += 2_000; // các lệnh cũ đã ra khỏi cửa sổ
   assert.deepEqual(counter.counts(), { get_master_volume: 1 });
 
   counter.reset();

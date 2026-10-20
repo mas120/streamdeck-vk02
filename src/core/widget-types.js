@@ -22,20 +22,37 @@ export function defaultIconForType(type, fallback = '⏹️') {
 export function defaultSize(type, { clockFace, bongoSize, weatherMinW = 3 } = {}) {
   let size;
   switch (type) {
-    case 'weather_widget': size = [weatherMinW, 1]; break;
-    case 'pomodoro':
-    case 'todo_list': size = [2, 2]; break;
-    case 'app_slider':
-    case 'volume_slider': size = [2, 1]; break;
-    case 'bongo_cat': size = [2, bongoSize === '2x2' ? 2 : 1]; break;
-    case 'mic_widget': size = [1, 1]; break;
-    case 'shutdown_widget': size = [1, 1]; break;
-    case 'media_player': size = [3, 1]; break;
-    case 'music_wave': size = [3, 1]; break;
-    case 'mini_clock':
-      size = clockFace === 'analog' ? [2, 2] : (clockFace === 'flip' ? [2, 1] : [1, 1]);
+    case 'weather_widget':
+      size = [weatherMinW, 1];
       break;
-    default: size = [1, 1];
+    case 'pomodoro':
+    case 'todo_list':
+      size = [2, 2];
+      break;
+    case 'app_slider':
+    case 'volume_slider':
+      size = [2, 1];
+      break;
+    case 'bongo_cat':
+      size = [2, bongoSize === '2x2' ? 2 : 1];
+      break;
+    case 'mic_widget':
+      size = [1, 1];
+      break;
+    case 'shutdown_widget':
+      size = [1, 1];
+      break;
+    case 'media_player':
+      size = [3, 1];
+      break;
+    case 'music_wave':
+      size = [3, 1];
+      break;
+    case 'mini_clock':
+      size = clockFace === 'analog' ? [2, 2] : clockFace === 'flip' ? [2, 1] : [1, 1];
+      break;
+    default:
+      size = [1, 1];
   }
   return { w: Math.min(size[0], COLS), h: Math.min(size[1], ROWS) };
 }

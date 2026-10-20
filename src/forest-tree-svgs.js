@@ -66,5 +66,5 @@ export const TREE_SVGS = {
     <path d="M59 55C59 48 65 44 71 46C76 41 83 44 83 50C89 54 86 61 80 63C73 65 66 61 61 60C58 61 57 58 59 55Z" fill="#756B5D"/>
     <path d="M27 36C30 33 34 33 37 36M56 28C60 25 65 26 67 29M68 52C72 49 76 50 79 53" stroke="#B7A27D" stroke-width="2.2" stroke-linecap="round" opacity="0.7"/>
     <path d="M42 64L36 69M57 60L63 65" stroke="#665148" stroke-width="2.2" stroke-linecap="round"/>
-  </svg>`
+  </svg>`,
 };

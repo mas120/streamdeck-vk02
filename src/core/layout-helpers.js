@@ -26,7 +26,10 @@ export function findFreeSlot(grid, w, h) {
       let free = true;
       for (let yy = y; yy < y + H && free; yy++) {
         for (let xx = x; xx < x + W; xx++) {
-          if (map[yy][xx]) { free = false; break; }
+          if (map[yy][xx]) {
+            free = false;
+            break;
+          }
         }
       }
       if (free) return { x, y };
@@ -43,7 +46,11 @@ export function fitToFree(grid, x, y, w, h) {
   let H = 1;
   while (H < h && y + H < ROWS) {
     let rowFree = true;
-    for (let xx = x; xx < x + W; xx++) if (map[y + H][xx]) { rowFree = false; break; }
+    for (let xx = x; xx < x + W; xx++)
+      if (map[y + H][xx]) {
+        rowFree = false;
+        break;
+      }
     if (!rowFree) break;
     H++;
   }

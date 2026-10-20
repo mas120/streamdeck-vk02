@@ -34,14 +34,15 @@ export function volumeMarkup(icon, pct) {
   `;
 }
 
-
 export function applyVolumeOrient(el, unit) {
   const node = el.gridstackNode || {};
   const w = Number(node.w) || 1;
   const h = Number(node.h) || 1;
   const orient = h > w ? 'v' : 'h';
   if (unit.dataset.orient !== orient) unit.dataset.orient = orient;
-  unit.querySelector('.volume-track')?.setAttribute('aria-orientation', orient === 'v' ? 'vertical' : 'horizontal');
+  unit
+    .querySelector('.volume-track')
+    ?.setAttribute('aria-orientation', orient === 'v' ? 'vertical' : 'horizontal');
   return orient;
 }
 
@@ -53,14 +54,13 @@ function updateSliderValue(unit, pct) {
   slider.setAttribute('aria-valuetext', `${value}%`);
 }
 
-
 export function wireCapsuleDrag(widgetEl, unit, onRatio, onEnd) {
   let dragging = false;
-  let engaged = false;       // tay đã di chuyển đủ xa để tính là VUỐT chưa
+  let engaged = false; // tay đã di chuyển đủ xa để tính là VUỐT chưa
   let downX = 0;
   let downY = 0;
   let lastRunAt = -Infinity;
-  let pending = null;        // tỉ lệ 0..1 đang chờ flush
+  let pending = null; // tỉ lệ 0..1 đang chờ flush
   let flushTimer = null;
 
   const isVertical = () => unit.dataset.orient === 'v';
@@ -101,18 +101,22 @@ export function wireCapsuleDrag(widgetEl, unit, onRatio, onEnd) {
   }
 
   unit.addEventListener('pointerdown', (e) => {
-    if (isEditMode) return;                      // Edit Mode: nhường cho kéo/đổi cỡ
-    if (e.button) return;                        // chỉ chuột trái / cảm ứng
-    if (e.target.closest && e.target.closest('.app-icon-btn')) return;  // nút mute
+    if (isEditMode) return; // Edit Mode: nhường cho kéo/đổi cỡ
+    if (e.button) return; // chỉ chuột trái / cảm ứng
+    if (e.target.closest && e.target.closest('.app-icon-btn')) return; // nút mute
     playKeySound();
     dragging = true;
     engaged = false;
     downX = e.clientX;
     downY = e.clientY;
     widgetEl.dataset.dragging = '1';
-    e.stopPropagation();                         // không cho GridStack cướp cử chỉ
+    e.stopPropagation(); // không cho GridStack cướp cử chỉ
     if (unit.setPointerCapture) {
-      try { unit.setPointerCapture(e.pointerId); } catch (_) { /* WebView cũ */ }
+      try {
+        unit.setPointerCapture(e.pointerId);
+      } catch (_) {
+        /* WebView cũ */
+      }
     }
     // KHÔNG ghi giá trị ở đây: chờ vượt DRAG_ENGAGE_PX (xem giải thích phía trên).
   });
@@ -121,7 +125,7 @@ export function wireCapsuleDrag(widgetEl, unit, onRatio, onEnd) {
     if (!dragging) return;
     if (!engaged) {
       if (Math.hypot(e.clientX - downX, e.clientY - downY) < DRAG_ENGAGE_PX) return;
-      engaged = true;                            // đã vuốt thật -> bắt đầu ghi mức
+      engaged = true; // đã vuốt thật -> bắt đầu ghi mức
     }
     const ratio = ratioAt(e.clientX, e.clientY);
     if (ratio !== null) apply(ratio, false);
@@ -131,8 +135,12 @@ export function wireCapsuleDrag(widgetEl, unit, onRatio, onEnd) {
     if (!dragging) return;
     dragging = false;
     widgetEl.dataset.dragging = '0';
-    if (flushTimer !== null) { clearTimeout(flushTimer); flushTimer = null; }
-    if (pending !== null) {                      // flush mức cuối cùng
+    if (flushTimer !== null) {
+      clearTimeout(flushTimer);
+      flushTimer = null;
+    }
+    if (pending !== null) {
+      // flush mức cuối cùng
       const queued = pending;
       pending = null;
       apply(queued, true);
@@ -144,12 +152,15 @@ export function wireCapsuleDrag(widgetEl, unit, onRatio, onEnd) {
 
   // Chặn cử chỉ cổ điển (một số WebView vẫn phát mouse/touch song song)
   ['mousedown', 'touchstart'].forEach((evt) => {
-    unit.addEventListener(evt, (e) => {
-      if (!isEditMode) e.stopPropagation();
-    }, { passive: false });
+    unit.addEventListener(
+      evt,
+      (e) => {
+        if (!isEditMode) e.stopPropagation();
+      },
+      { passive: false }
+    );
   });
 }
-
 
 function setupTouchSlider(container, widgetEl) {
   const unit = container.querySelector('.volume-deck-unit');
@@ -160,21 +171,26 @@ function setupTouchSlider(container, widgetEl) {
   applyVolumeOrient(widgetEl, unit);
   widgetEl.dataset.muted = '0';
 
-  wireCapsuleDrag(widgetEl, unit, (ratio) => {
-    const pct = ratio * 100;
-    unit.style.setProperty('--fill-percent', pct.toFixed(1));  // đổi fill NGAY
-    if (valText) valText.innerText = Math.round(pct) + '%';
-    unit.dataset.level = volLevel(Math.round(pct));
-    widgetEl.dataset.target = Math.round(pct);
-    updateSliderValue(unit, pct);
-    // Tay đang chủ động chọn mức -> tự bỏ trạng thái tắt tiếng (cả mute THẬT của
-    // Windows: đổi âm lượng qua API không tự bỏ mute như khi bấm phím cứng)
-    if (widgetEl.dataset.muted === '1') {
-      setVolumeMuted(unit, widgetEl, false);
-      runtime.setSystemMute(false);
-    }
-    runtime.sendSystemVolume(Math.round(pct));                         // IPC sang Rust (gộp nhịp)
-  }, () => runtime.saveCurrentLayout());
+  wireCapsuleDrag(
+    widgetEl,
+    unit,
+    (ratio) => {
+      const pct = ratio * 100;
+      unit.style.setProperty('--fill-percent', pct.toFixed(1)); // đổi fill NGAY
+      if (valText) valText.innerText = Math.round(pct) + '%';
+      unit.dataset.level = volLevel(Math.round(pct));
+      widgetEl.dataset.target = Math.round(pct);
+      updateSliderValue(unit, pct);
+      // Tay đang chủ động chọn mức -> tự bỏ trạng thái tắt tiếng (cả mute THẬT của
+      // Windows: đổi âm lượng qua API không tự bỏ mute như khi bấm phím cứng)
+      if (widgetEl.dataset.muted === '1') {
+        setVolumeMuted(unit, widgetEl, false);
+        runtime.setSystemMute(false);
+      }
+      runtime.sendSystemVolume(Math.round(pct)); // IPC sang Rust (gộp nhịp)
+    },
+    () => runtime.saveCurrentLayout()
+  );
 
   slider?.addEventListener('keydown', (event) => {
     if (isEditMode) return;
@@ -201,14 +217,17 @@ function setupTouchSlider(container, widgetEl) {
   // --- BẤM icon squircle -> TẮT/BẬT TIẾNG toàn hệ thống ---
   // Dùng mute THẬT của Windows (set_master_mute): mức âm lượng giữ nguyên nên khi bật
   // lại vẫn đúng chỗ đang nghe và các app khác thấy đúng trạng thái tắt tiếng.
-  iconBtn.addEventListener('pointerdown', (e) => { e.stopPropagation(); if (!isEditMode) playKeySound(); });
+  iconBtn.addEventListener('pointerdown', (e) => {
+    e.stopPropagation();
+    if (!isEditMode) playKeySound();
+  });
   iconBtn.addEventListener('click', async (e) => {
     e.stopPropagation();
     if (runtime.didDragJustHappen()) return;
     const wasMuted = widgetEl.dataset.muted === '1';
-    setVolumeMuted(unit, widgetEl, !wasMuted);                 // đổi HÌNH ngay
+    setVolumeMuted(unit, widgetEl, !wasMuted); // đổi HÌNH ngay
     const ok = await runtime.setSystemMute(!wasMuted);
-    if (!ok) setVolumeMuted(unit, widgetEl, wasMuted);         // lỗi -> trả hình về như cũ
+    if (!ok) setVolumeMuted(unit, widgetEl, wasMuted); // lỗi -> trả hình về như cũ
     runtime.flashKeycap(widgetEl, ok);
   });
 }
@@ -221,7 +240,7 @@ export function setVolumeMuted(unit, widgetEl, muted) {
   widgetEl.dataset.muted = muted ? '1' : '0';
   unit.classList.toggle('is-muted', muted);
   unit.dataset.level = volLevel(pct);
-  unit.dataset.state = muted ? 'muted' : (pct > 0 ? 'active' : 'idle');
+  unit.dataset.state = muted ? 'muted' : pct > 0 ? 'active' : 'idle';
   const iconBtn = unit.querySelector('.vol-icon');
   if (iconBtn) iconBtn.classList.toggle('muted', muted);
   unit.style.setProperty('--fill-percent', String(pct));
@@ -242,7 +261,9 @@ export function createVolumeWidget(services) {
     setup: setupTouchSlider,
     register(el) {
       const unit = el.querySelector('.volume-deck-unit');
-      return unit ? { el, type: 'volume_slider', unit, value: unit.querySelector('.vol-number') } : null;
+      return unit
+        ? { el, type: 'volume_slider', unit, value: unit.querySelector('.vol-number') }
+        : null;
     },
     update(entry, state) {
       if (entry && state) setVolumeMuted(entry.unit, entry.el, !!state.muted);

@@ -24,9 +24,14 @@ export function createMicWidget({ invokeCmd, flashKeycap, applyWidgetTier }) {
     unit.setAttribute('aria-checked', muted ? 'false' : 'true');
     const meter = unit.querySelector('.mic-meter-fill');
     if (meter) meter.style.width = `${pct}%`;
-    unit.setAttribute('aria-label', muted
-      ? 'Micrô đã tắt'
-      : (pct > 0 ? `Micrô đang mở, mức tín hiệu ${pct}%` : 'Micrô đang mở, chưa nhận tín hiệu'));
+    unit.setAttribute(
+      'aria-label',
+      muted
+        ? 'Micrô đã tắt'
+        : pct > 0
+          ? `Micrô đang mở, mức tín hiệu ${pct}%`
+          : 'Micrô đang mở, chưa nhận tín hiệu'
+    );
 
     const chip = unit.querySelector('.icon-chip');
     const iconId = `lucide:${muted ? 'mic-off' : 'mic'}`;
@@ -63,7 +68,10 @@ export function createMicWidget({ invokeCmd, flashKeycap, applyWidgetTier }) {
     applyWidgetTier(el, unit);
     loadIconSet('lucide').then(() => hydrateVectorIcons(unit));
 
-    unit.addEventListener('pointerdown', (e) => { e.stopPropagation(); playKeySound(); });
+    unit.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      playKeySound();
+    });
     unit.addEventListener('keydown', (event) => {
       if (event.key !== 'Enter' && event.key !== ' ') return;
       event.preventDefault();

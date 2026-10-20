@@ -53,7 +53,9 @@ export function createDiagnostics({ limit = DEFAULT_LIMIT, now = () => Date.now(
     if (title) lines.push(title);
     lines.push(`Số bản ghi: ${entries.length}/${limit}`);
     for (const entry of entries) {
-      lines.push(`[${new Date(entry.at).toISOString()}] ${entry.kind.toUpperCase()}: ${entry.message}`);
+      lines.push(
+        `[${new Date(entry.at).toISOString()}] ${entry.kind.toUpperCase()}: ${entry.message}`
+      );
       if (entry.detail) {
         lines.push(...entry.detail.split('\n').map((line) => `    ${line}`));
       }

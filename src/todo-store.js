@@ -10,11 +10,17 @@ export function loadTodos() {
     return items
       .filter((i) => i && typeof i.text === 'string')
       .map((i, idx) => ({ id: String(i.id || `legacy-${idx}`), text: i.text, done: !!i.done }));
-  } catch (_) { return []; }
+  } catch (_) {
+    return [];
+  }
 }
 
 export function saveTodos(items) {
-  const clean = items.map(({ id, text, done }) => ({ id, text: String(text).slice(0, 200), done: !!done }));
+  const clean = items.map(({ id, text, done }) => ({
+    id,
+    text: String(text).slice(0, 200),
+    done: !!done,
+  }));
   try {
     localStorage.setItem(TODO_KEY, JSON.stringify({ v: 1, items: clean }));
   } catch (err) {

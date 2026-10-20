@@ -10,8 +10,15 @@ function getLayoutItems(parsed) {
 
 function validLayoutItems(parsed) {
   const items = getLayoutItems(parsed);
-  return items?.filter((widget) => widget && typeof widget === 'object'
-    && Number.isFinite(widget.x) && Number.isFinite(widget.y)) || [];
+  return (
+    items?.filter(
+      (widget) =>
+        widget &&
+        typeof widget === 'object' &&
+        Number.isFinite(widget.x) &&
+        Number.isFinite(widget.y)
+    ) || []
+  );
 }
 
 function versionedLayout(items) {

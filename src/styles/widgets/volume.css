@@ -1,4 +1,4 @@
-  .volume-track {
+.volume-track {
   position: relative;
   width: 100%;
   height: min(26px, 20cqh);
@@ -11,12 +11,12 @@
     inset 0 2px 8px rgba(0, 0, 0, 0.9),
     inset 0 0 0 1px rgba(255, 255, 255, 0.04);
   pointer-events: none;
-  }
-  .volume-track[role="slider"]:focus-visible {
+}
+.volume-track[role="slider"]:focus-visible {
   outline: 2px solid #06b6d4;
   outline-offset: 3px;
-  }
-  .volume-fill {
+}
+.volume-fill {
   position: absolute;
   left: 0;
   top: 0;
@@ -26,11 +26,13 @@
   border-radius: 999px;
   pointer-events: none;
   transition: width 0.06s linear;
-  box-shadow: inset 0 0 12px rgba(130, 215, 255, 0.32), 0 0 14px rgba(102, 217, 255, 0.22);
-  }
-  /* Núm (thumb) kiểu iOS ở MÉP fill: vừa là "vạch mức", vừa là điểm mắt bám
+  box-shadow:
+    inset 0 0 12px rgba(130, 215, 255, 0.32),
+    0 0 14px rgba(102, 217, 255, 0.22);
+}
+/* Núm (thumb) kiểu iOS ở MÉP fill: vừa là "vạch mức", vừa là điểm mắt bám
    theo khi vuốt. Cùng ngôn ngữ với .app-fill::after. */
-  .volume-fill::after {
+.volume-fill::after {
   content: "";
   position: absolute;
   top: 14%;
@@ -39,24 +41,26 @@
   width: 8px;
   border-radius: 999px;
   background: #eaf7ff;
-  box-shadow: 0 0 10px var(--fill-glow), 0 0 22px var(--fill-glow);
-  }
-  /* Ô CAO (h > w): capsule chuyển DỌC — fill dâng từ ĐÁY, núm ở ĐỈNH fill */
-  .volume-deck-unit[data-orient="v"] {
+  box-shadow:
+    0 0 10px var(--fill-glow),
+    0 0 22px var(--fill-glow);
+}
+/* Ô CAO (h > w): capsule chuyển DỌC — fill dâng từ ĐÁY, núm ở ĐỈNH fill */
+.volume-deck-unit[data-orient="v"] {
   flex-direction: row;
   align-items: center;
   gap: min(5cqw, 6cqh);
-  }
-  .volume-deck-unit[data-orient="v"] .volume-core {
+}
+.volume-deck-unit[data-orient="v"] .volume-core {
   flex-direction: column;
   flex: 1 1 auto;
   gap: min(4cqw, 5cqh);
-  }
-  .volume-deck-unit[data-orient="v"] .volume-track {
+}
+.volume-deck-unit[data-orient="v"] .volume-track {
   width: min(26px, 20cqw);
   height: 100%;
-  }
-  .volume-deck-unit[data-orient="v"] .volume-fill {
+}
+.volume-deck-unit[data-orient="v"] .volume-fill {
   left: 0;
   right: 0;
   top: auto;
@@ -65,63 +69,65 @@
   height: calc(var(--fill-percent, 50) * 1%);
   background: linear-gradient(0deg, var(--fill-to), var(--fill-from));
   transition: height 0.06s linear;
-  }
-  .volume-deck-unit[data-orient="v"] .volume-fill::after {
+}
+.volume-deck-unit[data-orient="v"] .volume-fill::after {
   top: 3px;
   left: 14%;
   right: 14%;
   bottom: auto;
   width: auto;
   height: 8px;
-  }
-  /* --- ĐANG VUỐT slider (cờ data-dragging do wireCapsuleDrag bật/tắt) --------
+}
+/* --- ĐANG VUỐT slider (cờ data-dragging do wireCapsuleDrag bật/tắt) --------
    1. Bỏ transition: fill bám đúng ngón tay, hết cảm giác "trễ tay" (mỗi bước
       throttle 20ms trước đây còn bị trượt thêm 60ms).
    2. "Màn hình" sáng lên + viền cyan: có phản hồi rằng thao tác đang sống. */
-  .grid-stack-item[data-dragging="1"] .volume-fill,
-  .grid-stack-item[data-dragging="1"] .app-fill {
+.grid-stack-item[data-dragging="1"] .volume-fill,
+.grid-stack-item[data-dragging="1"] .app-fill {
   transition: none;
-  }
-  .grid-stack-item[data-dragging="1"] .volume-deck-unit,
-  .grid-stack-item[data-dragging="1"] .app-deck-unit {
+}
+.grid-stack-item[data-dragging="1"] .volume-deck-unit,
+.grid-stack-item[data-dragging="1"] .app-deck-unit {
   filter: brightness(1.18);
   box-shadow:
     inset 0 0 0 1px rgba(0, 229, 255, 0.45),
     inset 0 3px 14px rgba(0, 0, 0, 0.9);
-  }
-  /* Hàng đầu: icon squircle (bấm = tắt/bật tiếng) + số % */
-  .volume-core {
+}
+/* Hàng đầu: icon squircle (bấm = tắt/bật tiếng) + số % */
+.volume-core {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   min-width: 0;
-  }
-  /* Icon squircle của ô âm lượng dùng CHUNG hình khối với .app-icon-btn
+}
+/* Icon squircle của ô âm lượng dùng CHUNG hình khối với .app-icon-btn
    (nên không tự đặt width/height để khỏi ghi đè) — chỉ giữ vai trò nút. */
-  .vol-icon {
+.vol-icon {
   flex: 0 0 auto;
   padding: 0;
   cursor: pointer;
   touch-action: none;
-  }
-  /* Trạng thái TẮT TIẾNG: icon viền đỏ + mờ (như .app-icon-btn.muted),
+}
+/* Trạng thái TẮT TIẾNG: icon viền đỏ + mờ (như .app-icon-btn.muted),
    track xám và mất núm -> nhận ra ngay cả khi đứng xa panel. */
-  .volume-deck-unit.is-muted .vol-number {
+.volume-deck-unit.is-muted .vol-number {
   color: #8b949e;
   text-shadow: none;
-  }
-  .volume-deck-unit.is-muted .volume-fill {
+}
+.volume-deck-unit.is-muted .volume-fill {
   background: linear-gradient(90deg, #444b5e, #7a8399);
   box-shadow: none;
-  }
-  .volume-deck-unit.is-muted .volume-fill::after { opacity: 0; }
-  .volume-deck-unit.is-muted .volume-track {
+}
+.volume-deck-unit.is-muted .volume-fill::after {
+  opacity: 0;
+}
+.volume-deck-unit.is-muted .volume-track {
   box-shadow:
     inset 0 0 0 1px rgba(255, 71, 87, 0.45),
     inset 0 3px 10px rgba(0, 0, 0, 0.95);
-  }
-  .vol-number {
+}
+.vol-number {
   font-family: var(--font-num);
   font-variant-numeric: tabular-nums;
   font-size: 20px;
@@ -132,12 +138,12 @@
   color: var(--text-soft);
   text-shadow: 0 0 12px rgba(102, 217, 255, 0.18);
   pointer-events: none;
-  }
-  /* ===== Slider Âm lượng PER-APP (Windows Core Audio) =====
+}
+/* ===== Slider Âm lượng PER-APP (Windows Core Audio) =====
    Ô >= 2x1: icon squircle (bấm = tắt/bật tiếng) + tên app + số % + thanh gạt.
    Ô 1x1  : chỉ icon squircle 56px + số % + CHẤM LED trạng thái ở đáy keycap.
    Toàn bộ bề mặt ô đều vuốt được (xem wireCapsuleDrag trong main.js). */
-  .app-deck-unit {
+.app-deck-unit {
   position: relative;
   width: 100%;
   height: 100%;
@@ -149,16 +155,16 @@
   padding: 10px 14px;
   container-type: size;
   z-index: 2;
-  }
-  .app-head {
+}
+.app-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  }
-  /* Icon app ở ĐẦU thanh trượt, bấm vào để bật/tắt tiếng */
-  .app-icon-btn {
-  width: 40px;    /* vùng chạm >= 40px (trước đây 30px, khó bấm bằng ngón tay) */
+}
+/* Icon app ở ĐẦU thanh trượt, bấm vào để bật/tắt tiếng */
+.app-icon-btn {
+  width: 40px; /* vùng chạm >= 40px (trước đây 30px, khó bấm bằng ngón tay) */
   height: 40px;
   flex: 0 0 auto;
   padding: 0;
@@ -166,40 +172,49 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   background: linear-gradient(180deg, #181d27, #10151d);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 3px 8px rgba(0, 0, 0, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 3px 8px rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   overflow: hidden;
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    transform 0.1s;
   touch-action: none;
   -webkit-user-drag: none;
-  }
-  /* Hiệu ứng hover CHỈ bật khi thiết bị thật sự có chuột (hover: hover).
+}
+/* Hiệu ứng hover CHỈ bật khi thiết bị thật sự có chuột (hover: hover).
    Panel cảm ứng không có hover -> tránh trạng thái "dính" sau khi chạm. */
-  @media (hover: hover) and (pointer: fine) {
+@media (hover: hover) and (pointer: fine) {
   .app-icon-btn:hover {
     border-color: var(--accent);
-    box-shadow: 0 0 12px var(--accent-glow), var(--key-bevel);
+    box-shadow:
+      0 0 12px var(--accent-glow),
+      var(--key-bevel);
   }
-  .edit-done-btn:hover { background: rgba(0, 34, 42, 0.96); }
+  .edit-done-btn:hover {
+    background: rgba(0, 34, 42, 0.96);
   }
-  .app-icon-btn:active {
+}
+.app-icon-btn:active {
   transform: scale(0.94);
-  }
-  .app-icon-btn img {
+}
+.app-icon-btn img {
   max-width: 74%;
   max-height: 74%;
   object-fit: contain;
   pointer-events: none;
-  }
-  .app-icon-btn .icon-emoji {
+}
+.app-icon-btn .icon-emoji {
   font-size: 22px;
   pointer-events: none;
-  }
-  /* Tên app / tên web đang phát (suy ra từ tiêu đề cửa sổ) */
-  .app-name {
+}
+/* Tên app / tên web đang phát (suy ra từ tiêu đề cửa sổ) */
+.app-name {
   flex: 1 1 auto;
   min-width: 0;
   font-size: 11px;
@@ -210,14 +225,16 @@
   overflow: hidden;
   text-overflow: ellipsis;
   pointer-events: none;
-  }
-  /* Trạng thái đang tắt tiếng: viền đỏ + icon tối đi */
-  .app-icon-btn.muted {
+}
+/* Trạng thái đang tắt tiếng: viền đỏ + icon tối đi */
+.app-icon-btn.muted {
   border-color: var(--danger);
-  box-shadow: 0 0 14px rgba(255, 71, 87, 0.55), var(--key-bevel);
+  box-shadow:
+    0 0 14px rgba(255, 71, 87, 0.55),
+    var(--key-bevel);
   filter: grayscale(0.4) brightness(0.8);
-  }
-  .app-percent {
+}
+.app-percent {
   font-family: var(--font-num);
   font-variant-numeric: tabular-nums;
   font-size: 15px;
@@ -225,17 +242,19 @@
   color: var(--text-soft);
   letter-spacing: 0.5px;
   text-shadow: 0 0 10px rgba(102, 217, 255, 0.16);
-  transition: color 0.15s, text-shadow 0.15s;
-  }
-  .app-deck-unit.is-muted .app-percent {
+  transition:
+    color 0.15s,
+    text-shadow 0.15s;
+}
+.app-deck-unit.is-muted .app-percent {
   color: #8b949e;
   text-shadow: none;
-  }
-  /* Thanh CAPSULE per-app: cùng hình khối + cùng chiều cao với .volume-track
+}
+/* Thanh CAPSULE per-app: cùng hình khối + cùng chiều cao với .volume-track
    -> hai loại fader (hệ thống / per-app) trông như MỘT thành phần duy nhất. */
-  .app-track {
+.app-track {
   width: 100%;
-  height: min(26px, 20cqh);   /* phải khớp .volume-track */
+  height: min(26px, 20cqh); /* phải khớp .volume-track */
   background: linear-gradient(180deg, rgba(5, 8, 14, 0.9), rgba(16, 20, 28, 0.96));
   border: 1px solid var(--track-edge);
   border-radius: 999px;
@@ -246,19 +265,21 @@
     inset 0 2px 8px rgba(0, 0, 0, 0.9),
     inset 0 0 0 1px rgba(255, 255, 255, 0.04);
   touch-action: none;
-  }
-  .app-fill {
+}
+.app-fill {
   position: relative;
   height: 100%;
   width: calc(var(--fill-percent, 0) * 1%);
   border-radius: 999px;
   background: linear-gradient(90deg, rgba(95, 219, 255, 0.96), rgba(77, 125, 255, 0.96));
-  box-shadow: inset 0 0 14px rgba(137, 216, 255, 0.2), 0 0 14px rgba(102, 217, 255, 0.18);
+  box-shadow:
+    inset 0 0 14px rgba(137, 216, 255, 0.2),
+    0 0 14px rgba(102, 217, 255, 0.18);
   transition: width 0.05s linear;
   pointer-events: none;
-  }
-  /* Núm ở MÉP fill — cùng ngôn ngữ với .volume-fill::after */
-  .app-fill::after {
+}
+/* Núm ở MÉP fill — cùng ngôn ngữ với .volume-fill::after */
+.app-fill::after {
   content: "";
   position: absolute;
   top: 14%;
@@ -268,18 +289,24 @@
   border-radius: 999px;
   background: #eaf7ff;
   box-shadow: 0 0 10px var(--fill-glow);
-  }
-  .app-deck-unit.is-muted .app-fill {
+}
+.app-deck-unit.is-muted .app-fill {
   background: linear-gradient(90deg, #444b5e, #7a8399);
   box-shadow: none;
-  }
-  .app-deck-unit.is-muted .app-fill::after { opacity: 0; }
-  /* Ô per-app CHƯA gắn được app nào (data-state="off"): làm mờ cả khối để đọc
+}
+.app-deck-unit.is-muted .app-fill::after {
+  opacity: 0;
+}
+/* Ô per-app CHƯA gắn được app nào (data-state="off"): làm mờ cả khối để đọc
    ra "ô này đang trống" thay vì "ô bị lỗi/đang tải". */
-  .app-deck-unit[data-state="off"] .app-track { opacity: 0.2; }
-  /* Ô trống: bỏ "--" vô nghĩa, thay bằng câu gợi ý (.app-hint) */
-  .app-deck-unit[data-state="off"] .app-percent { display: none; }
-  .app-hint {
+.app-deck-unit[data-state="off"] .app-track {
+  opacity: 0.2;
+}
+/* Ô trống: bỏ "--" vô nghĩa, thay bằng câu gợi ý (.app-hint) */
+.app-deck-unit[data-state="off"] .app-percent {
+  display: none;
+}
+.app-hint {
   display: none;
   flex: 0 1 auto;
   min-width: 0;
@@ -292,15 +319,17 @@
   overflow: hidden;
   text-overflow: ellipsis;
   pointer-events: none;
-  }
-  .app-deck-unit[data-state="off"] .app-hint { display: block; }
-  .app-deck-unit[data-state="off"] .app-icon-btn {
+}
+.app-deck-unit[data-state="off"] .app-hint {
+  display: block;
+}
+.app-deck-unit[data-state="off"] .app-icon-btn {
   filter: grayscale(1) brightness(0.7);
   opacity: 0.7;
-  }
-  /* --- CHẤM LED 4px ở ĐÁY keycap: trạng thái ứng dụng -------------------
+}
+/* --- CHẤM LED 4px ở ĐÁY keycap: trạng thái ứng dụng -------------------
    active = app đang phát · muted = đang tắt tiếng · idle/off = đứng yên */
-  .app-led {
+.app-led {
   display: none;
   position: absolute;
   left: 50%;
@@ -313,37 +342,53 @@
   background: currentColor;
   box-shadow: 0 0 8px currentColor;
   pointer-events: none;
-  }
-  .app-deck-unit[data-state="active"] .app-led {
+}
+.app-deck-unit[data-state="active"] .app-led {
   color: var(--accent);
   background: var(--accent);
   box-shadow: 0 0 8px currentColor;
-  }
-  .app-deck-unit[data-state="muted"] .app-led {
+}
+.app-deck-unit[data-state="muted"] .app-led {
   color: var(--danger);
   background: var(--danger);
   box-shadow: 0 0 8px currentColor;
-  }
-  .app-deck-unit[data-state="idle"] .app-led { color: #7a8399; background: currentColor; }
-  /* --- Ô 1x1: icon squircle giữa ô + số % + LED (ẩn tên app & thanh gạt) --- */
-  .app-deck-unit.is-mini { padding: 8px; gap: 4px; }
-  .app-deck-unit.is-mini .app-head { flex-direction: column; gap: 5px; }
-  .app-deck-unit.is-mini .app-name,
-  .app-deck-unit.is-mini .app-track { display: none; }
-  .app-deck-unit.is-mini .app-icon-btn {
+}
+.app-deck-unit[data-state="idle"] .app-led {
+  color: #7a8399;
+  background: currentColor;
+}
+/* --- Ô 1x1: icon squircle giữa ô + số % + LED (ẩn tên app & thanh gạt) --- */
+.app-deck-unit.is-mini {
+  padding: 8px;
+  gap: 4px;
+}
+.app-deck-unit.is-mini .app-head {
+  flex-direction: column;
+  gap: 5px;
+}
+.app-deck-unit.is-mini .app-name,
+.app-deck-unit.is-mini .app-track {
+  display: none;
+}
+.app-deck-unit.is-mini .app-icon-btn {
   width: min(56px, 52cqw);
   height: min(56px, 52cqw);
-  }
-  .app-deck-unit.is-mini .app-percent { font-size: 13px; font-size: 9cqh; }
-  .app-deck-unit.is-mini .app-hint {
+}
+.app-deck-unit.is-mini .app-percent {
+  font-size: 13px;
+  font-size: 9cqh;
+}
+.app-deck-unit.is-mini .app-hint {
   font-size: 9cqh;
   max-width: 100%;
   text-align: center;
   white-space: normal;
   color: #9fb0c8;
-  }
-  .app-deck-unit.is-mini .app-led { display: block; }
-  /* =====================================================================
+}
+.app-deck-unit.is-mini .app-led {
+  display: block;
+}
+/* =====================================================================
    PHÍM POMODORO / TIMER — GLANCEABLE: không câu chữ, chỉ SỐ LỚN + MÀU pha
    + glyph trạng thái + đầu cung tiến độ (đọc hiểu trong < 200ms).
    ---------------------------------------------------------------------

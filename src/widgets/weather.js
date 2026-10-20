@@ -1,4 +1,10 @@
-import { isEditMode, keyContent, pressFeedback, releaseFeedback, flashKeycap } from '../core/mode-manager.js';
+import {
+  isEditMode,
+  keyContent,
+  pressFeedback,
+  releaseFeedback,
+  flashKeycap,
+} from '../core/mode-manager.js';
 import { liveWidgetRegistry } from '../core/registry.js';
 import { clockDateShort } from './clock.js';
 import { clampFloat, escapeHtml } from '../core/utils.js';
@@ -12,23 +18,39 @@ const WEATHER_CACHE_KEY = 'STREAMDECK_VK02_WEATHER_CACHE';
 const weatherCache = new Map();
 let runtime = null;
 
-function getTauri() { return runtime.getTauri(); }
-function invokeCmd(...args) { return runtime.invokeCmd(...args); }
-function applyWidgetTier(...args) { return runtime.applyWidgetTier(...args); }
+function getTauri() {
+  return runtime.getTauri();
+}
+function invokeCmd(...args) {
+  return runtime.invokeCmd(...args);
+}
+function applyWidgetTier(...args) {
+  return runtime.applyWidgetTier(...args);
+}
 
 /** Giờ:phút "HH:MM" của một mốc thời gian (tooltip "cập nhật lúc…"). */
 function wxHm(ts) {
   const d = new Date(Number(ts) || Date.now());
   return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
 }
-export function normalizeWeatherSkin(value) { return value === 'flat' ? 'flat' : 'soft'; }
+export function normalizeWeatherSkin(value) {
+  return value === 'flat' ? 'flat' : 'soft';
+}
 export function parseWeatherCfg(el) {
   let raw = {};
-  try { raw = JSON.parse(el.dataset.cfg || '{}') || {}; } catch (_) {}
+  try {
+    raw = JSON.parse(el.dataset.cfg || '{}') || {};
+  } catch (_) {}
   const parts = String(el.dataset.target || '').split(',');
   const lat = clampFloat(raw.lat !== undefined ? raw.lat : parts[0], -90, 90, WEATHER_DEFAULT.lat);
-  const lon = clampFloat(raw.lon !== undefined ? raw.lon : parts[1], -180, 180, WEATHER_DEFAULT.lon);
-  const city = typeof raw.city === 'string' && raw.city.trim() ? raw.city.trim() : WEATHER_DEFAULT.city;
+  const lon = clampFloat(
+    raw.lon !== undefined ? raw.lon : parts[1],
+    -180,
+    180,
+    WEATHER_DEFAULT.lon
+  );
+  const city =
+    typeof raw.city === 'string' && raw.city.trim() ? raw.city.trim() : WEATHER_DEFAULT.city;
   const skin = normalizeWeatherSkin(raw.skin);
   const apiKey = typeof raw.apiKey === 'string' ? raw.apiKey.trim() : '';
   return { lat, lon, city, skin, apiKey };
@@ -72,7 +94,8 @@ function sentenceCaseVi(value) {
 }
 
 /* Đường bao đám mây dùng chung cho các icon (viewBox 0 0 32 32). */
-const WX_CLOUD_PATH = 'M9.6 20.6h12.1a5 5 0 0 0 .6-9.95 6.6 6.6 0 0 0-12.5-1.2 4.7 4.7 0 0 0-.2 11.15z';
+const WX_CLOUD_PATH =
+  'M9.6 20.6h12.1a5 5 0 0 0 .6-9.95 6.6 6.6 0 0 0-12.5-1.2 4.7 4.7 0 0 0-.2 11.15z';
 
 /* Lưỡi liềm mặt trăng (horns hướng trái) — bbox x 11.85..24.8, y 7.2..24.8. */
 const WX_MOON_PATH = 'M16 7.2a8.8 8.8 0 1 1 0 17.6 11.4 11.4 0 0 0 0-17.6z';
@@ -94,21 +117,26 @@ function weatherIconSvg(code, isDay = true) {
      đụng id của nhau (mỗi icon mang định nghĩa gradient riêng, tự đủ). */
   const gid = (part) => `wxg-${group}-${isDay ? 'd' : 'n'}-${part}`;
   const url = (part) => `url(#${gid(part)})`;
-  const grad = (part, from, to) => `<linearGradient id="${gid(part)}" x1="0.1" y1="0" x2="0.9" y2="1">`
-    + `<stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient>`;
-  const defs = `<defs>${grad('body', palBody[0], palBody[1])}`
-    + `${grad('cloud', palCloud[0], palCloud[1])}`
-    + `${grad('extra', palExtra[0], palExtra[1])}</defs>`;
+  const grad = (part, from, to) =>
+    `<linearGradient id="${gid(part)}" x1="0.1" y1="0" x2="0.9" y2="1">` +
+    `<stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient>`;
+  const defs =
+    `<defs>${grad('body', palBody[0], palBody[1])}` +
+    `${grad('cloud', palCloud[0], palCloud[1])}` +
+    `${grad('extra', palExtra[0], palExtra[1])}</defs>`;
 
   const rays = [];
   for (let i = 0; i < 8; i++) {
-    const a = (i * 45) * Math.PI / 180;
-    rays.push(`<line class="wx-ray" x1="${(16 + Math.cos(a) * 9.6).toFixed(1)}" y1="${(16 + Math.sin(a) * 9.6).toFixed(1)}" x2="${(16 + Math.cos(a) * 12.6).toFixed(1)}" y2="${(16 + Math.sin(a) * 12.6).toFixed(1)}"></line>`);
+    const a = (i * 45 * Math.PI) / 180;
+    rays.push(
+      `<line class="wx-ray" x1="${(16 + Math.cos(a) * 9.6).toFixed(1)}" y1="${(16 + Math.sin(a) * 9.6).toFixed(1)}" x2="${(16 + Math.cos(a) * 12.6).toFixed(1)}" y2="${(16 + Math.sin(a) * 12.6).toFixed(1)}"></line>`
+    );
   }
   /* NẮNG: 2 lớp động — quầng sáng "thở" + 8 tia quay chậm 20s/vòng. */
-  const sunFull = `<circle class="wx-halo wx-anim wx-anim-breathe" cx="16" cy="16" r="10.8" fill="${url('body')}"></circle>`
-    + `<g class="wx-anim wx-anim-spin" stroke="${url('body')}" stroke-width="1.7" stroke-linecap="round">${rays.join('')}</g>`
-    + `<circle class="wx-sun" cx="16" cy="16" r="6.4" fill="${url('body')}"></circle>`;
+  const sunFull =
+    `<circle class="wx-halo wx-anim wx-anim-breathe" cx="16" cy="16" r="10.8" fill="${url('body')}"></circle>` +
+    `<g class="wx-anim wx-anim-spin" stroke="${url('body')}" stroke-width="1.7" stroke-linecap="round">${rays.join('')}</g>` +
+    `<circle class="wx-sun" cx="16" cy="16" r="6.4" fill="${url('body')}"></circle>`;
   const sunCorner = `<circle class="wx-sun" cx="10.6" cy="9.6" r="4.4" fill="${url('body')}"></circle>`;
   // Mặt trăng + sao cho ban đêm (lưỡi liềm dịch -2.3 để cân giữa khung 32x32).
   const moonShape = `<path class="wx-moon" d="${WX_MOON_PATH}" fill="${url('body')}"></path>`;
@@ -121,7 +149,8 @@ function weatherIconSvg(code, isDay = true) {
   const fall = (inner) => `<g class="wx-anim wx-anim-fall">${inner}</g>`;
   const sway = (inner) => `<g class="wx-anim wx-anim-sway">${inner}</g>`;
   /* Giọt mưa là HÌNH GIỌT có gradient (không còn gạch mảnh đơn sắc). */
-  const drop = (x, y, s) => `<path class="wx-drop" transform="translate(${x} ${y}) scale(${s})" d="M0 0c1.15 1.5 1.95 2.5 1.95 3.4a1.95 1.95 0 0 1-3.9 0c0-.9.8-1.9 1.95-3.4z" fill="${url('extra')}"></path>`;
+  const drop = (x, y, s) =>
+    `<path class="wx-drop" transform="translate(${x} ${y}) scale(${s})" d="M0 0c1.15 1.5 1.95 2.5 1.95 3.4a1.95 1.95 0 0 1-3.9 0c0-.9.8-1.9 1.95-3.4z" fill="${url('extra')}"></path>`;
   const dropsLight = drop(9.2, 22.2, 0.86) + drop(14.2, 22.2, 0.86) + drop(19.2, 22.2, 0.86);
   const dropsHeavy = drop(8.8, 21.4, 1.06) + drop(13.8, 21.4, 1.06) + drop(18.8, 21.4, 1.06);
   const flakes = `<circle class="wx-flake" cx="12" cy="24.8" r="1.3" fill="${url('extra')}"></circle>\n        <circle class="wx-flake" cx="17" cy="26.6" r="1.3" fill="${url('extra')}"></circle>\n        <circle class="wx-flake" cx="22" cy="24.8" r="1.3" fill="${url('extra')}"></circle>`;
@@ -131,8 +160,10 @@ function weatherIconSvg(code, isDay = true) {
   let inner = drift(cloudFull);
   if (group === 'sun') inner = isDay ? sunFull : moonFull;
   else if (group === 'partly') inner = (isDay ? sunCorner : moonCorner) + drift(cloudFull);
-  else if (group === 'fog') inner = drift(cloudSmall)
-    + `<g class="wx-anim wx-anim-drift" stroke="${url('extra')}" stroke-width="1.8" stroke-linecap="round">${haze}</g>`;
+  else if (group === 'fog')
+    inner =
+      drift(cloudSmall) +
+      `<g class="wx-anim wx-anim-drift" stroke="${url('extra')}" stroke-width="1.8" stroke-linecap="round">${haze}</g>`;
   else if (group === 'drizzle') inner = cloudSmall + fall(dropsLight);
   else if (group === 'rain') inner = cloudSmall + fall(dropsHeavy);
   else if (group === 'snow') inner = cloudSmall + sway(flakes);
@@ -149,19 +180,27 @@ function wxNum(value, fallback = 0) {
 
 /* --- Glyph vector nhỏ (viewBox 12x12) cho chỉ số + ghim định vị + cảnh báo ---
    Tất cả dùng `currentColor` nên chỉ cần đổi màu khối chứa là glyph đổi theo. */
-const WX_G_DROP = '<path d="M6 1.15c2.45 2.8 4.05 4.95 4.05 6.95a4.05 4.05 0 1 1-8.1 0C1.95 6.1 3.55 3.95 6 1.15z" fill="currentColor"/>';
-const WX_G_THERMO = '<path d="M6 1.2a1.55 1.55 0 0 0-1.55 1.55v4.28a2.75 2.75 0 1 0 3.1 0V2.75A1.55 1.55 0 0 0 6 1.2z" fill="currentColor"/>';
-const WX_G_WIND = '<g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M1.4 4.2h6.2a1.5 1.5 0 1 0 0-3"/><path d="M1.4 6.4h4.2"/><path d="M1.4 8.4h5.4a1.35 1.35 0 1 1 0 2.7"/></g>';
-const WX_G_PLACE = '<path fill-rule="evenodd" d="M6 1.1A3.75 3.75 0 0 0 2.25 4.85c0 2.8 3.35 5.8 3.65 6.05l.1.09.1-.09c.3-.25 3.65-3.25 3.65-6.05A3.75 3.75 0 0 0 6 1.1zm0 5.05a1.35 1.35 0 1 1 0-2.7 1.35 1.35 0 0 1 0 2.7z" fill="currentColor"/>';
-const WX_G_WARN = '<g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 1.6 11.1 10.4H.9z"/><path d="M6 4.5v3.1M6 9.1v.6"/></g>';
+const WX_G_DROP =
+  '<path d="M6 1.15c2.45 2.8 4.05 4.95 4.05 6.95a4.05 4.05 0 1 1-8.1 0C1.95 6.1 3.55 3.95 6 1.15z" fill="currentColor"/>';
+const WX_G_THERMO =
+  '<path d="M6 1.2a1.55 1.55 0 0 0-1.55 1.55v4.28a2.75 2.75 0 1 0 3.1 0V2.75A1.55 1.55 0 0 0 6 1.2z" fill="currentColor"/>';
+const WX_G_WIND =
+  '<g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M1.4 4.2h6.2a1.5 1.5 0 1 0 0-3"/><path d="M1.4 6.4h4.2"/><path d="M1.4 8.4h5.4a1.35 1.35 0 1 1 0 2.7"/></g>';
+const WX_G_PLACE =
+  '<path fill-rule="evenodd" d="M6 1.1A3.75 3.75 0 0 0 2.25 4.85c0 2.8 3.35 5.8 3.65 6.05l.1.09.1-.09c.3-.25 3.65-3.25 3.65-6.05A3.75 3.75 0 0 0 6 1.1zm0 5.05a1.35 1.35 0 1 1 0-2.7 1.35 1.35 0 0 1 0 2.7z" fill="currentColor"/>';
+const WX_G_WARN =
+  '<g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M6 1.6 11.1 10.4H.9z"/><path d="M6 4.5v3.1M6 9.1v.6"/></g>';
 /* Glyph badge "dữ liệu cũ": đồng hồ + mũi tên quay lại. Dùng viewBox 24x24 (khác
    bộ glyph 12x12 của 4 móc chỉ số) để không lẫn với hàng chỉ số phụ. */
-const WX_G_STALE = '<path d="M12 3.1a8.9 8.9 0 1 0 8.9 8.9h-2.3A6.6 6.6 0 1 1 12 5.4z" fill="currentColor"/><path d="M11.1 7.3a.95.95 0 0 1 .95.95v3.6l2.3 1.5a.95.95 0 1 1-1.04 1.6l-2.7-1.75a.95.95 0 0 1-.44-.8V8.25a.95.95 0 0 1 .93-.95z" fill="currentColor"/>';
+const WX_G_STALE =
+  '<path d="M12 3.1a8.9 8.9 0 1 0 8.9 8.9h-2.3A6.6 6.6 0 1 1 12 5.4z" fill="currentColor"/><path d="M11.1 7.3a.95.95 0 0 1 .95.95v3.6l2.3 1.5a.95.95 0 1 1-1.04 1.6l-2.7-1.75a.95.95 0 0 1-.44-.8V8.25a.95.95 0 0 1 .93-.95z" fill="currentColor"/>';
 
 /** Bọc 1 glyph 12x12 thành <svg> dùng chung: pin | drop | thermo | wind | warn. */
 function wxGlyph(name, cls = '') {
-  const body = ({ drop: WX_G_DROP, thermo: WX_G_THERMO, wind: WX_G_WIND,
-    place: WX_G_PLACE, warn: WX_G_WARN })[name] || WX_G_WARN;
+  const body =
+    { drop: WX_G_DROP, thermo: WX_G_THERMO, wind: WX_G_WIND, place: WX_G_PLACE, warn: WX_G_WARN }[
+      name
+    ] || WX_G_WARN;
   return `<svg class="wx-glyph ${cls}" viewBox="0 0 12 12" aria-hidden="true">${body}</svg>`;
 }
 
@@ -282,9 +321,17 @@ function applyWeatherToUnit(unit, data, city, ts, offline = false) {
   if (dateEl) dateEl.textContent = clockDateShort(new Date(at));
 
   // Đơn vị + giờ cập nhật gom vào tooltip (không chiếm diện tích ô).
-  unit.title = [cityText, condText, `${Math.round(temp)}°C`,
-    `ướt ${hum}%`, `cảm nhận ${feels}°C`, `gió ${wind} km/h`, `cập nhật ${wxHm(at)}`]
-    .filter(Boolean).join(' · ');
+  unit.title = [
+    cityText,
+    condText,
+    `${Math.round(temp)}°C`,
+    `ướt ${hum}%`,
+    `cảm nhận ${feels}°C`,
+    `gió ${wind} km/h`,
+    `cập nhật ${wxHm(at)}`,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   // Đổi tông màu "màn hình" theo nhóm thời tiết + ngày/đêm (CSS [data-tint]).
   unit.dataset.tint = weatherIconGroup(code);
@@ -292,7 +339,7 @@ function applyWeatherToUnit(unit, data, city, ts, offline = false) {
   unit.dataset.updated = String(at);
   unit.classList.remove('is-error');
   // Badge "DỮ LIỆU CŨ": CHỈ khi mất mạng mà dữ liệu đã cũ hơn 30 phút.
-  updateWxBadge(unit, !!offline && (Date.now() - at) > WEATHER_STALE_MS, at);
+  updateWxBadge(unit, !!offline && Date.now() - at > WEATHER_STALE_MS, at);
 }
 
 /** Bật/tắt badge "DỮ LIỆU CŨ" + tooltip giờ cập nhật cũ. */
@@ -301,7 +348,10 @@ function updateWxBadge(unit, stale, ts) {
   if (!badge) return;
   badge.hidden = !stale;
   if (unit.dataset.stale !== (stale ? '1' : '0')) unit.dataset.stale = stale ? '1' : '0';
-  if (!stale) { badge.removeAttribute('title'); return; }
+  if (!stale) {
+    badge.removeAttribute('title');
+    return;
+  }
   const textEl = badge.querySelector('.wx-badge-text');
   if (textEl) textEl.textContent = 'DỮ LIỆU CŨ';
   badge.title = `Dữ liệu lúc ${wxHm(ts)} — đã cũ hơn 30 phút (chưa kết nối lại được)`;
@@ -334,15 +384,19 @@ function wxCacheKeyOf(lat, lon) {
 function wxCacheLoad() {
   try {
     const raw = JSON.parse(localStorage.getItem(WEATHER_CACHE_KEY) || '{}');
-    return (raw && typeof raw === 'object') ? raw : {};
-  } catch (_) { return {}; }
+    return raw && typeof raw === 'object' ? raw : {};
+  } catch (_) {
+    return {};
+  }
 }
 function wxCacheSave(key, entry) {
   try {
     const all = wxCacheLoad();
     all[key] = entry;
     localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify(all));
-  } catch (err) { console.warn('Không ghi được cache thời tiết:', err); }
+  } catch (err) {
+    console.warn('Không ghi được cache thời tiết:', err);
+  }
 }
 /** Nạp cache LocalStorage vào RAM lúc khởi động (hiện số cũ TRƯỚC khi gọi mạng). */
 function wxCacheHydrate() {
@@ -357,9 +411,9 @@ function wxCacheGet(key) {
   const hot = weatherCache.get(key);
   if (hot) return hot;
   const cold = wxCacheLoad()[key];
-  return (cold && typeof cold.ts === 'number' && cold.data) ? cold : null;
+  return cold && typeof cold.ts === 'number' && cold.data ? cold : null;
 }
-wxCacheHydrate();   // chạy TRƯỚC lần vẽ widget đầu tiên (xem loadLayout ở cuối file)
+wxCacheHydrate(); // chạy TRƯỚC lần vẽ widget đầu tiên (xem loadLayout ở cuối file)
 
 /** Trạng thái chờ / lỗi (chưa lấy được dữ liệu thời tiết).
  *  Ô đổi sang tông đỏ + icon cảnh báo; dòng mô tả (.weather-cond) nói rõ lý do. */
@@ -383,7 +437,7 @@ function markWeatherPlaceholder(unit, city, message) {
   unit.classList.add('is-error');
   unit.dataset.tint = 'error';
   unit.dataset.night = '0';
-  updateWxBadge(unit, false, 0);   // trạng thái lỗi đã thay cho badge "cũ"
+  updateWxBadge(unit, false, 0); // trạng thái lỗi đã thay cho badge "cũ"
 }
 
 /** Làm mới 1 phím thời tiết (force = bỏ qua cache 15 phút):
@@ -399,10 +453,11 @@ async function updateWeatherWidget(el, force = false) {
 
   const key = wxCacheKeyOf(cfg.lat, cfg.lon);
   const cached = wxCacheGet(key);
-  if (cached) applyWeatherToUnit(unit, cached.data, cfg.city, cached.ts);   // hiện ngay
+  if (cached) applyWeatherToUnit(unit, cached.data, cfg.city, cached.ts); // hiện ngay
 
-  if (!force && cached && (Date.now() - cached.ts) < WEATHER_REFRESH_MS) return;
-  if (!getTauri()) {   // chạy ngoài Tauri (dev web) -> không có dữ liệu thật
+  if (!force && cached && Date.now() - cached.ts < WEATHER_REFRESH_MS) return;
+  if (!getTauri()) {
+    // chạy ngoài Tauri (dev web) -> không có dữ liệu thật
     if (!cached) markWeatherPlaceholder(unit, cfg.city, 'Chưa kết nối');
     return;
   }
@@ -413,7 +468,7 @@ async function updateWeatherWidget(el, force = false) {
     if (data && typeof data.temp === 'number') {
       const ts = Date.now();
       weatherCache.set(key, { ts, data });
-      wxCacheSave(key, { ts, data });     // giữ số qua lần mở app sau
+      wxCacheSave(key, { ts, data }); // giữ số qua lần mở app sau
       applyWeatherToUnit(unit, data, cfg.city, ts);
     } else if (!cached) {
       markWeatherPlaceholder(unit, cfg.city, 'Không có dữ liệu');
@@ -436,21 +491,24 @@ function setupWeatherWidget(el) {
   destroyWeatherWidget(el);
   const handlers = {
     pointerdown: (e) => {
-    if (isEditMode || e.button) return;
-    pressFeedback(el);
+      if (isEditMode || e.button) return;
+      pressFeedback(el);
     },
     release: () => releaseFeedback(el),
     click: async () => {
-    if (isEditMode || runtime.didDragJustHappen()) return;
-    releaseFeedback(el);
-    const now = Date.now();
-    if (el.__wxBusy) return;                                        // đang tải
-    if (now - (el.__wxTapAt || 0) < WEATHER_TAP_DEBOUNCE_MS) return; // chạm dồn dập
-    el.__wxTapAt = now;
-    el.__wxBusy = true;
-    try { await updateWeatherWidget(el, true); }
-    finally { el.__wxBusy = false; }
-    flashKeycap(el, !el.querySelector('.weather-unit.is-error'));
+      if (isEditMode || runtime.didDragJustHappen()) return;
+      releaseFeedback(el);
+      const now = Date.now();
+      if (el.__wxBusy) return; // đang tải
+      if (now - (el.__wxTapAt || 0) < WEATHER_TAP_DEBOUNCE_MS) return; // chạm dồn dập
+      el.__wxTapAt = now;
+      el.__wxBusy = true;
+      try {
+        await updateWeatherWidget(el, true);
+      } finally {
+        el.__wxBusy = false;
+      }
+      flashKeycap(el, !el.querySelector('.weather-unit.is-error'));
     },
   };
   content.addEventListener('pointerdown', handlers.pointerdown);
@@ -476,7 +534,6 @@ function destroyWeatherWidget(el) {
   el.__wxBusy = false;
 }
 
-
 export function createWeatherWidget(services) {
   runtime = services;
   return {
@@ -485,7 +542,9 @@ export function createWeatherWidget(services) {
     setup: setupWeatherWidget,
     register(el) {
       const unit = el.querySelector('.weather-unit');
-      return unit ? { el, type: 'weather_widget', unit, icon: unit.querySelector('.weather-icon') } : null;
+      return unit
+        ? { el, type: 'weather_widget', unit, icon: unit.querySelector('.weather-icon') }
+        : null;
     },
     update(entry, force = false) {
       return entry ? updateWeatherWidget(entry.el, force) : undefined;

@@ -54,5 +54,7 @@ body.idle .mic-deck-unit {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mic-meter-fill { transition: none; }
+  .mic-meter-fill {
+    transition: none;
+  }
 }

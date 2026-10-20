@@ -1,6 +1,12 @@
 import { TODO_KEY, loadTodos, saveTodos } from '../todo-store.js';
 
-export function createTodoWidget({ applyWidgetTier, escapeHtml, isDeckPaused, getTauri, invokeCmd }) {
+export function createTodoWidget({
+  applyWidgetTier,
+  escapeHtml,
+  isDeckPaused,
+  getTauri,
+  invokeCmd,
+}) {
   function toggleItem(id, row) {
     const items = loadTodos();
     const index = items.findIndex((item) => item.id === id);
@@ -64,7 +70,7 @@ export function createTodoWidget({ applyWidgetTier, escapeHtml, isDeckPaused, ge
       }
       const item = event.target.closest('.todo-item');
       if (!item || !unit.contains(item) || item.classList.contains('is-completing')) return;
-      event.stopPropagation();   // không để click nổi lên ô và mở bảng soạn việc
+      event.stopPropagation(); // không để click nổi lên ô và mở bảng soạn việc
       toggleItem(item.dataset.id, item);
     };
     el.__todoClickUnit = unit;
@@ -82,13 +88,16 @@ export function createTodoWidget({ applyWidgetTier, escapeHtml, isDeckPaused, ge
     const done = items.filter((item) => item.done).length;
     const remaining = items.length - done;
     if (progress) progress.style.width = items.length ? `${(done / items.length) * 100}%` : '0%';
-    unit.dataset.state = !items.length ? 'empty' : (remaining === 0 ? 'clear' : 'open');
+    unit.dataset.state = !items.length ? 'empty' : remaining === 0 ? 'clear' : 'open';
     count.textContent = items.length ? `${done}/${items.length}` : '';
     leftValue.textContent = String(remaining);
-    const ordered = items.filter((item) => !item.done)
-      .concat(items.filter((item) => item.done));
-    list.innerHTML = ordered.map((item) =>
-      `<li class="todo-item${item.done ? ' done' : ''}" data-id="${escapeHtml(String(item.id))}"><i class="todo-box"></i><span>${escapeHtml(item.text)}</span></li>`).join('');
+    const ordered = items.filter((item) => !item.done).concat(items.filter((item) => item.done));
+    list.innerHTML = ordered
+      .map(
+        (item) =>
+          `<li class="todo-item${item.done ? ' done' : ''}" data-id="${escapeHtml(String(item.id))}"><i class="todo-box"></i><span>${escapeHtml(item.text)}</span></li>`
+      )
+      .join('');
     unit.title = items.length
       ? `${remaining} việc còn lại · ${done}/${items.length} đã xong`
       : 'Chạm để thêm việc';
@@ -96,7 +105,8 @@ export function createTodoWidget({ applyWidgetTier, escapeHtml, isDeckPaused, ge
 
   function updateAll() {
     if (isDeckPaused()) return;
-    document.querySelectorAll('.grid-stack-item[data-type="todo_list"]')
+    document
+      .querySelectorAll('.grid-stack-item[data-type="todo_list"]')
       .forEach((el) => update(register(el)));
   }
 
@@ -110,7 +120,11 @@ export function createTodoWidget({ applyWidgetTier, escapeHtml, isDeckPaused, ge
       }
     }
     try {
-      const popup = window.open('todo.html', 'todo-editor', 'width=460,height=640,resizable=yes,scrollbars=yes');
+      const popup = window.open(
+        'todo.html',
+        'todo-editor',
+        'width=460,height=640,resizable=yes,scrollbars=yes'
+      );
       if (popup) popup.focus();
       return true;
     } catch (err) {

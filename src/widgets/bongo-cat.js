@@ -1,8 +1,10 @@
 import { keyContent } from '../core/mode-manager.js';
 
 export function normalizeBongoSize(value) {
-  const v = String(value || '2x1').trim().toLowerCase();
-  return (v === '2x2') ? '2x2' : '2x1';
+  const v = String(value || '2x1')
+    .trim()
+    .toLowerCase();
+  return v === '2x2' ? '2x2' : '2x1';
 }
 
 export function parseBongoCfg(el) {
@@ -13,7 +15,7 @@ export function parseBongoCfg(el) {
     cfg = {};
   }
   const size = normalizeBongoSize(cfg.size || el.dataset.target || '2x1');
-  const showKps = cfg.showKps !== undefined ? !!cfg.showKps : (el.dataset.showKps === '1');
+  const showKps = cfg.showKps !== undefined ? !!cfg.showKps : el.dataset.showKps === '1';
   return { size, showKps };
 }
 
@@ -101,17 +103,35 @@ const KEY_ROWS = [
 function bongoGeometry(square) {
   const geo = square
     ? {
-      viewW: 300, viewH: 300,
-      caseX: 8, caseW: 284, caseBottom: 292, radius: 10,
-      pad: 6, keyH: 14, gapY: 1.6,
-      catScale: 0.95, catX: 150, catY: 200, pawScale: 0.68,
-    }
+        viewW: 300,
+        viewH: 300,
+        caseX: 8,
+        caseW: 284,
+        caseBottom: 292,
+        radius: 10,
+        pad: 6,
+        keyH: 14,
+        gapY: 1.6,
+        catScale: 0.95,
+        catX: 150,
+        catY: 200,
+        pawScale: 0.68,
+      }
     : {
-      viewW: 320, viewH: 190,
-      caseX: 8, caseW: 304, caseBottom: 184, radius: 8,
-      pad: 4.5, keyH: 9, gapY: 1.1,
-      catScale: 0.8, catX: 160, catY: 148, pawScale: 0.55,
-    };
+        viewW: 320,
+        viewH: 190,
+        caseX: 8,
+        caseW: 304,
+        caseBottom: 184,
+        radius: 8,
+        pad: 4.5,
+        keyH: 9,
+        gapY: 1.1,
+        catScale: 0.8,
+        catX: 160,
+        catY: 148,
+        pawScale: 0.55,
+      };
   geo.caseH = KEY_ROWS.length * geo.keyH + (KEY_ROWS.length - 1) * geo.gapY + 2 * geo.pad;
   geo.caseY = geo.caseBottom - geo.caseH;
   geo.keyX0 = geo.caseX + geo.pad;
@@ -158,9 +178,10 @@ function keyMarkup(spec, x, y, w, h, side, geo) {
   const subText = sub
     ? `<text class="bongo-legend bongo-legend-sub" x="${(x + 1.3).toFixed(2)}" y="${(y + 1.5).toFixed(2)}" font-size="${subSize.toFixed(2)}" text-anchor="start" dominant-baseline="central">${escText(sub)}</text>`
     : '';
-  const shape = spec.code === 'Space'
-    ? `<rect class="bongo-key-rect bongo-spacebar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${w.toFixed(2)}" height="${h.toFixed(2)}" rx="${radius.toFixed(2)}"/>`
-    : `<rect class="bongo-key-rect" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${w.toFixed(2)}" height="${h.toFixed(2)}" rx="${radius.toFixed(2)}"/>`;
+  const shape =
+    spec.code === 'Space'
+      ? `<rect class="bongo-key-rect bongo-spacebar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${w.toFixed(2)}" height="${h.toFixed(2)}" rx="${radius.toFixed(2)}"/>`
+      : `<rect class="bongo-key-rect" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${w.toFixed(2)}" height="${h.toFixed(2)}" rx="${radius.toFixed(2)}"/>`;
   return `<g class="bongo-key${isHome ? ' is-home' : ''}" data-code="${spec.code}" data-side="${side}">${shape}${subText}${main}</g>`;
 }
 
@@ -174,7 +195,7 @@ function bongoKeyboardMarkup(geo) {
       const units = spec.w || 1;
       const x = geo.keyX0 + offset * geo.pitch + geo.gapX / 2;
       const w = units * geo.pitch - geo.gapX;
-      const side = (offset + units / 2) < 8 ? 'left' : 'right';
+      const side = offset + units / 2 < 8 ? 'left' : 'right';
       keys.push(keyMarkup(spec, x, y, w, geo.keyH, side, geo));
       offset += units;
     });
@@ -372,14 +393,16 @@ function setupBongoCatEventListener() {
   const listenFn = eventApi.listen || eventApi.addListener;
   if (typeof listenFn !== 'function') return;
   listenFn.call(eventApi, 'bongo-cursor', (event) => {
-    const payload = (event && typeof event === 'object' && 'payload' in event) ? event.payload : event;
+    const payload =
+      event && typeof event === 'object' && 'payload' in event ? event.payload : event;
     if (!payload) return;
     applyCursorLook(payload.x, payload.y);
   });
   listenFn.call(eventApi, 'bongo-key-event', (event) => {
-    const payload = (event && typeof event === 'object' && 'payload' in event) ? event.payload : event;
+    const payload =
+      event && typeof event === 'object' && 'payload' in event ? event.payload : event;
     if (!payload || !payload.action) return;
-    const action = payload.action === 'down' ? 'down' : (payload.action === 'up' ? 'up' : null);
+    const action = payload.action === 'down' ? 'down' : payload.action === 'up' ? 'up' : null;
     const fallbackHand = payload.hand === 'left' || payload.hand === 'right' ? payload.hand : null;
     if (!action || !fallbackHand) return;
     if (document.body.classList.contains('idle')) return;
@@ -404,9 +427,11 @@ function setupBongoCatPointer(widget) {
   if (!widget || widget.dataset.pointerReady === '1') return;
   widget.dataset.pointerReady = '1';
   const el = widget.closest('.grid-stack-item');
-  const state = ensureState(el ? (el.__bongoState || (el.__bongoState = createState())) : createState());
-  const isInteractive = () => !document.body.classList.contains('idle')
-    && !document.body.classList.contains('edit-mode');
+  const state = ensureState(
+    el ? el.__bongoState || (el.__bongoState = createState()) : createState()
+  );
+  const isInteractive = () =>
+    !document.body.classList.contains('idle') && !document.body.classList.contains('edit-mode');
 
   const releasePointerKey = () => {
     if (!state.pointerCode) return;
@@ -466,13 +491,15 @@ export const bongoCatWidget = {
   },
   register(el) {
     const widget = keyContent(el).querySelector('.bongo-cat-widget');
-    return widget ? {
-      el,
-      type: 'bongo_cat',
-      widget,
-      keys: Array.from(widget.querySelectorAll('.bongo-key')),
-      kps: widget.querySelector('.bongo-kps'),
-    } : null;
+    return widget
+      ? {
+          el,
+          type: 'bongo_cat',
+          widget,
+          keys: Array.from(widget.querySelectorAll('.bongo-key')),
+          kps: widget.querySelector('.bongo-kps'),
+        }
+      : null;
   },
   update() {},
   destroy(el) {

@@ -33,8 +33,8 @@ export function isSliderWidget(el) {
 const SOUND_RATE = 44100;
 const SOUND_VARIANTS = [
   { pitch: 190, noise: 0.35, len: 0.045 },
-  { pitch: 230, noise: 0.30, len: 0.040 },
-  { pitch: 160, noise: 0.40, len: 0.050 },
+  { pitch: 230, noise: 0.3, len: 0.04 },
+  { pitch: 160, noise: 0.4, len: 0.05 },
 ];
 let keyBuffers = null;
 
@@ -47,7 +47,9 @@ function buildKeyBuffers(ctx) {
       const t = i / ctx.sampleRate;
       const env = Math.exp(-t * 90);
       const click = i < 40 ? (Math.random() * 2 - 1) * (1 - i / 40) : 0;
-      data[i] = (Math.sin(2 * Math.PI * pitch * t) * 0.8 + (Math.random() * 2 - 1) * noise) * env * 0.6 + click * 0.5;
+      data[i] =
+        (Math.sin(2 * Math.PI * pitch * t) * 0.8 + (Math.random() * 2 - 1) * noise) * env * 0.6 +
+        click * 0.5;
     }
     return buf;
   });
@@ -102,8 +104,10 @@ export function flashKeycap(el, ok) {
   const className = ok ? 'status-success' : 'status-error';
   content.classList.remove('status-success', 'status-error');
   clearTimeout(content.__statusTimer);
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    content.classList.add(className);
-    content.__statusTimer = setTimeout(() => content.classList.remove(className), 930);
-  }));
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      content.classList.add(className);
+      content.__statusTimer = setTimeout(() => content.classList.remove(className), 930);
+    })
+  );
 }

@@ -11,7 +11,15 @@ export function clampFloat(value, min, max, fallback) {
 }
 
 export function escapeHtml(value) {
-  return String(value == null ? '' : value).replace(/[&<>"']/g, (ch) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  }[ch]));
+  return String(value == null ? '' : value).replace(
+    /[&<>"']/g,
+    (ch) =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      })[ch]
+  );
 }

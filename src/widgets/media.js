@@ -6,7 +6,8 @@ const ICONS = {
   back: '<svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z" fill="currentColor"/></svg><b>10</b>',
   fwd: '<svg viewBox="0 0 24 24"><path d="M12 5V2l5 4-5 4V7a6 6 0 1 0 6 6h2a8 8 0 1 1-8-8z" fill="currentColor"/></svg><b>10</b>',
   play: '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>',
-  pause: '<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>',
+  pause:
+    '<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>',
 };
 
 const SEEK_STEP_SECS = 10;
@@ -22,8 +23,8 @@ function fmtTime(secs) {
 }
 
 export function createMediaWidget({ invokeCmd, applyWidgetTier, openUrl, flashKeycap }) {
-  let state = null;       // kết quả get_media_state gần nhất
-  let fetchedAt = 0;      // performance.now() lúc nhận state
+  let state = null; // kết quả get_media_state gần nhất
+  let fetchedAt = 0; // performance.now() lúc nhận state
   let busy = false;
   let seekPreview = null; // tỉ lệ 0..1 khi đang kéo thanh tiến trình
 
@@ -67,10 +68,12 @@ export function createMediaWidget({ invokeCmd, applyWidgetTier, openUrl, flashKe
     const fill = unit.querySelector('.media-bar-fill');
     if (!fill) return;
     const duration = state ? state.duration_secs : 0;
-    const ratio = seekPreview !== null ? seekPreview : (duration > 0 ? currentPosition() / duration : 0);
+    const ratio =
+      seekPreview !== null ? seekPreview : duration > 0 ? currentPosition() / duration : 0;
     fill.style.width = `${Math.max(0, Math.min(1, ratio)) * 100}%`;
     const time = unit.querySelector('.media-time');
-    if (time) time.textContent = duration > 0 ? `${fmtTime(ratio * duration)} / ${fmtTime(duration)}` : '';
+    if (time)
+      time.textContent = duration > 0 ? `${fmtTime(ratio * duration)} / ${fmtTime(duration)}` : '';
   }
 
   // Chữ chạy ngang chỉ bật khi tiêu đề thực sự tràn; chỉ đo lại khi đổi chữ hoặc đổi bề rộng.
@@ -130,7 +133,8 @@ export function createMediaWidget({ invokeCmd, applyWidgetTier, openUrl, flashKe
     set('back', state.can_seek);
     set('fwd', state.can_seek);
     set('play', state.can_play_pause);
-    unit.querySelector('.media-play').innerHTML = state.status === 'playing' ? ICONS.pause : ICONS.play;
+    unit.querySelector('.media-play').innerHTML =
+      state.status === 'playing' ? ICONS.pause : ICONS.play;
     paintBar(unit);
   }
 

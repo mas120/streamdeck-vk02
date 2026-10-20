@@ -79,13 +79,16 @@ export function createPomodoroWidget({ TREE_SVGS, applyWidgetTier, clampInt, sav
     if (restore && typeof restore === 'object') {
       const mode = ['work', 'break', 'idle'].includes(restore.mode) ? restore.mode : 'idle';
       const freshTotal = (mode === 'break' ? rest : work) * 60;
-      const remaining = typeof restore.remainingSeconds === 'number' ? restore.remainingSeconds : freshTotal;
+      const remaining =
+        typeof restore.remainingSeconds === 'number' ? restore.remainingSeconds : freshTotal;
       const state = {
         mode,
         workMin: work,
         breakMin: rest,
-        totalSeconds: typeof restore.totalSeconds === 'number' && restore.totalSeconds > 0
-          ? restore.totalSeconds : freshTotal,
+        totalSeconds:
+          typeof restore.totalSeconds === 'number' && restore.totalSeconds > 0
+            ? restore.totalSeconds
+            : freshTotal,
         remainingSeconds: Math.max(0, Math.round(remaining)),
         isRunning: !!restore.isRunning,
         endAt: null,
@@ -100,9 +103,14 @@ export function createPomodoroWidget({ TREE_SVGS, applyWidgetTier, clampInt, sav
       return;
     }
     el.__pomo = {
-      mode: 'idle', workMin: work, breakMin: rest,
-      totalSeconds: work * 60, remainingSeconds: work * 60,
-      isRunning: false, endAt: null, treeTimers: [],
+      mode: 'idle',
+      workMin: work,
+      breakMin: rest,
+      totalSeconds: work * 60,
+      remainingSeconds: work * 60,
+      isRunning: false,
+      endAt: null,
+      treeTimers: [],
     };
   }
 
@@ -126,9 +134,10 @@ export function createPomodoroWidget({ TREE_SVGS, applyWidgetTier, clampInt, sav
     if (!entry) return;
     const state = entry.el.__pomo;
     if (!state || !entry.ring || !entry.time) return;
-    const ratio = state.mode !== 'idle' && state.totalSeconds > 0
-      ? Math.max(0, Math.min(1, 1 - state.remainingSeconds / state.totalSeconds))
-      : 0;
+    const ratio =
+      state.mode !== 'idle' && state.totalSeconds > 0
+        ? Math.max(0, Math.min(1, 1 - state.remainingSeconds / state.totalSeconds))
+        : 0;
     const dashOffset = String(POMO_CIRCUMFERENCE * (1 - ratio));
     entry.ring.style.strokeDashoffset = dashOffset;
     if (entry.perimeter) entry.perimeter.style.strokeDashoffset = dashOffset;
@@ -139,7 +148,13 @@ export function createPomodoroWidget({ TREE_SVGS, applyWidgetTier, clampInt, sav
     if (state.mode === 'idle') return 'seed';
     if (state.mode === 'break') return 'full';
     const progress = state.totalSeconds > 0 ? 1 - state.remainingSeconds / state.totalSeconds : 0;
-    return progress >= 0.8 ? 'full' : (progress >= 0.3 ? 'growing' : (progress >= 0.06 ? 'sprout' : 'seed'));
+    return progress >= 0.8
+      ? 'full'
+      : progress >= 0.3
+        ? 'growing'
+        : progress >= 0.06
+          ? 'sprout'
+          : 'seed';
   }
 
   function scheduleTree(el, unit, state) {
@@ -148,12 +163,19 @@ export function createPomodoroWidget({ TREE_SVGS, applyWidgetTier, clampInt, sav
     unit.dataset.tree = treeState(state);
     if (!state.isRunning || state.mode !== 'work' || state.totalSeconds <= 0) return;
     const elapsed = state.totalSeconds - state.remainingSeconds;
-    [[0.06, 'sprout'], [0.3, 'growing'], [0.8, 'full']].forEach(([threshold, tree]) => {
+    [
+      [0.06, 'sprout'],
+      [0.3, 'growing'],
+      [0.8, 'full'],
+    ].forEach(([threshold, tree]) => {
       const delay = threshold * state.totalSeconds - elapsed;
       if (delay <= 0) return;
-      state.treeTimers.push(setTimeout(() => {
-        if (el.__pomo === state && state.isRunning && state.mode === 'work') unit.dataset.tree = tree;
-      }, delay * 1000));
+      state.treeTimers.push(
+        setTimeout(() => {
+          if (el.__pomo === state && state.isRunning && state.mode === 'work')
+            unit.dataset.tree = tree;
+        }, delay * 1000)
+      );
     });
   }
 
@@ -178,19 +200,30 @@ export function createPomodoroWidget({ TREE_SVGS, applyWidgetTier, clampInt, sav
     entry.unit.classList.toggle('is-idle', isIdle);
     applyWidgetTier(el, entry.unit);
     entry.unit.dataset.mode = isBreak ? 'break' : 'work';
-    entry.unit.dataset.state = state.isRunning ? 'running' : (isIdle ? 'idle' : 'paused');
+    entry.unit.dataset.state = state.isRunning ? 'running' : isIdle ? 'idle' : 'paused';
     scheduleTree(el, entry.unit, state);
-    const modeText = isBreak ? 'NGHỈ NGƠI' : (isIdle ? 'POMODORO' : 'LÀM VIỆC');
-    const stateText = state.isRunning ? 'ĐANG CHẠY' : (isIdle ? 'CHẠM ĐỂ CHẠY' : 'TẠM DỪNG');
+    const modeText = isBreak ? 'NGHỈ NGƠI' : isIdle ? 'POMODORO' : 'LÀM VIỆC';
+    const stateText = state.isRunning ? 'ĐANG CHẠY' : isIdle ? 'CHẠM ĐỂ CHẠY' : 'TẠM DỪNG';
     if (entry.mode) entry.mode.textContent = modeText;
     if (entry.state) entry.state.textContent = stateText;
     if (entry.button) {
       entry.button.textContent = state.isRunning
-        ? (el.__pomoCancelConfirm ? 'Dừng?' : 'Dừng phiên')
-        : (isIdle ? 'Bắt đầu' : 'Tiếp tục');
-      entry.button.setAttribute('aria-label', state.isRunning
-        ? (el.__pomoCancelConfirm ? 'Xác nhận dừng phiên' : 'Dừng phiên, cần xác nhận lần nữa')
-        : (isIdle ? 'Bắt đầu phiên tập trung' : 'Tiếp tục phiên tập trung'));
+        ? el.__pomoCancelConfirm
+          ? 'Dừng?'
+          : 'Dừng phiên'
+        : isIdle
+          ? 'Bắt đầu'
+          : 'Tiếp tục';
+      entry.button.setAttribute(
+        'aria-label',
+        state.isRunning
+          ? el.__pomoCancelConfirm
+            ? 'Xác nhận dừng phiên'
+            : 'Dừng phiên, cần xác nhận lần nữa'
+          : isIdle
+            ? 'Bắt đầu phiên tập trung'
+            : 'Tiếp tục phiên tập trung'
+      );
     }
     entry.unit.title = `${modeText} · ${stateText}`;
   }
@@ -250,10 +283,12 @@ export function createPomodoroWidget({ TREE_SVGS, applyWidgetTier, clampInt, sav
     const content = keyContent(el);
     content.classList.remove('pomo-finish');
     clearTimeout(content.__pomoFinishTimer);
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      content.classList.add('pomo-finish');
-      content.__pomoFinishTimer = setTimeout(() => content.classList.remove('pomo-finish'), 1600);
-    }));
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        content.classList.add('pomo-finish');
+        content.__pomoFinishTimer = setTimeout(() => content.classList.remove('pomo-finish'), 1600);
+      })
+    );
   }
 
   function beep() {
@@ -344,13 +379,19 @@ export function createPomodoroWidget({ TREE_SVGS, applyWidgetTier, clampInt, sav
       if (event.target.closest('.forest-btn')) return;
       clearTimeout(pressTimer);
       releaseFeedback(el);
-      if (longPressed) { longPressed = false; return; }
+      if (longPressed) {
+        longPressed = false;
+        return;
+      }
       if (isEditMode) return;
       if (el.__pomo?.isRunning) pause(el);
       else start(el);
       saveCurrentLayout();
     };
-    const cancelPress = () => { clearTimeout(pressTimer); releaseFeedback(el); };
+    const cancelPress = () => {
+      clearTimeout(pressTimer);
+      releaseFeedback(el);
+    };
     // Ủy quyền trên content: nút .forest-btn được dựng lại mỗi lần render mà setup() chỉ chạy 1 lần.
     const contentClick = (event) => {
       if (event.target.closest('.forest-btn')) buttonClick(event);

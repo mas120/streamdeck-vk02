@@ -17,7 +17,8 @@ export function createAppSliderWidget(services) {
   /* Nhiều phím + vòng poll cùng gọi: dùng chung 1 lần quét Rust (EnumWindows + COM). */
   function refreshAudioSessions() {
     if (!services.getTauri()) return Promise.resolve(audioSessionCache);
-    inflightScan ??= services.invokeCmd('get_audio_sessions')
+    inflightScan ??= services
+      .invokeCmd('get_audio_sessions')
       .then((list) => {
         if (Array.isArray(list)) audioSessionCache = list;
       })
@@ -86,7 +87,7 @@ export function createAppSliderWidget(services) {
     setFillPercent(unit, percent);
     iconButton.classList.toggle('muted', !!session.muted);
     unit.classList.toggle('is-muted', !!session.muted);
-    setAppState(unit, session.muted ? 'muted' : (percent > 0 ? 'active' : 'idle'));
+    setAppState(unit, session.muted ? 'muted' : percent > 0 ? 'active' : 'idle');
   }
 
   async function sync() {
@@ -117,8 +118,9 @@ export function createAppSliderWidget(services) {
       const volume = pendingVolume;
       pendingVolume = null;
       if (!pid) return;
-      services.invokeCmd('set_app_volume', { pid, volume }).catch((error) =>
-        console.error('set_app_volume lỗi:', error));
+      services
+        .invokeCmd('set_app_volume', { pid, volume })
+        .catch((error) => console.error('set_app_volume lỗi:', error));
     }
 
     function queueVolume(fraction) {
@@ -133,7 +135,7 @@ export function createAppSliderWidget(services) {
       const session = audioSessionCache.find((item) => item.pid === parseInt(el.dataset.pid, 10));
       if (session) {
         session.volume = ratio;
-        setAppState(unit, session.muted ? 'muted' : (percent > 0 ? 'active' : 'idle'));
+        setAppState(unit, session.muted ? 'muted' : percent > 0 ? 'active' : 'idle');
       }
       queueVolume(ratio);
     });
@@ -141,7 +143,10 @@ export function createAppSliderWidget(services) {
     unit.addEventListener('pointerup', () => {
       if (pendingVolume !== null && animationFrame === null) flushVolume();
     });
-    iconButton.addEventListener('pointerdown', (event) => { event.stopPropagation(); if (!isEditMode) playKeySound(); });
+    iconButton.addEventListener('pointerdown', (event) => {
+      event.stopPropagation();
+      if (!isEditMode) playKeySound();
+    });
     iconButton.addEventListener('click', async (event) => {
       event.stopPropagation();
       if (services.didDragJustHappen()) return;

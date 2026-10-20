@@ -29,7 +29,10 @@ export function setupLongPressEntry({ viewport, isEditMode, enterEditMode }) {
     clearTimeout(ringTimer);
     clearTimeout(holdTimer);
     activeId = null;
-    if (ring) { ring.remove(); ring = null; }
+    if (ring) {
+      ring.remove();
+      ring = null;
+    }
   };
 
   viewport.addEventListener('pointerdown', (e) => {
@@ -54,18 +57,26 @@ export function setupLongPressEntry({ viewport, isEditMode, enterEditMode }) {
   });
 
   // Nhả tay sau long-press sẽ phát click lên ô trống: không để nó mở bảng tạo phím.
-  viewport.addEventListener('click', (e) => {
-    if (!swallowClick) return;
-    swallowClick = false;
-    e.stopPropagation();
-  }, true);
+  viewport.addEventListener(
+    'click',
+    (e) => {
+      if (!swallowClick) return;
+      swallowClick = false;
+      e.stopPropagation();
+    },
+    true
+  );
 
   viewport.addEventListener('pointermove', (e) => {
     if (e.pointerId !== activeId) return;
     if (Math.hypot(e.clientX - startX, e.clientY - startY) > MOVE_SLOP) cancel();
   });
-  viewport.addEventListener('pointerup', (e) => { if (e.pointerId === activeId) cancel(); });
-  viewport.addEventListener('pointercancel', (e) => { if (e.pointerId === activeId) cancel(); });
+  viewport.addEventListener('pointerup', (e) => {
+    if (e.pointerId === activeId) cancel();
+  });
+  viewport.addEventListener('pointercancel', (e) => {
+    if (e.pointerId === activeId) cancel();
+  });
 
   // WebView2 phát contextmenu khi giữ ngón tay lâu.
   viewport.addEventListener('contextmenu', (e) => {

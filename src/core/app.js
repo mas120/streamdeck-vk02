@@ -9,11 +9,20 @@ import { TREE_SVGS } from '../forest-tree-svgs.js';
 import { createTodoWidget } from '../widgets/todo.js';
 import { createPomodoroWidget, parsePomoTarget } from '../widgets/pomodoro.js';
 import {
-  createWeatherWidget, WEATHER_DEFAULT, WEATHER_MIN_W, WEATHER_REFRESH_MS,
-  normalizeWeatherSkin, parseWeatherCfg,
+  createWeatherWidget,
+  WEATHER_DEFAULT,
+  WEATHER_MIN_W,
+  WEATHER_REFRESH_MS,
+  normalizeWeatherSkin,
+  parseWeatherCfg,
 } from '../widgets/weather.js';
 import { bongoCatWidget, normalizeBongoSize, parseBongoCfg } from '../widgets/bongo-cat.js';
-import { createVolumeWidget, VOL_GLYPH, isDefaultVolIcon, applyVolumeOrient } from '../widgets/volume.js';
+import {
+  createVolumeWidget,
+  VOL_GLYPH,
+  isDefaultVolIcon,
+  applyVolumeOrient,
+} from '../widgets/volume.js';
 import { createMicWidget } from '../widgets/mic.js';
 import { createMediaWidget } from '../widgets/media.js';
 import { createMusicWaveWidget } from '../widgets/music-wave.js';
@@ -23,7 +32,13 @@ import { createModalEditor } from './modal-editor.js';
 import { createIconSource } from './icon-source.js';
 import { setupLongPressEntry } from './long-press-entry.js';
 import { createWidgetRenderer } from './widget-renderer.js';
-import { CLOCK_DEFAULT, clockZoneLabel, clockWidget, normalizeClockFace, parseClockCfg } from '../widgets/clock.js';
+import {
+  CLOCK_DEFAULT,
+  clockZoneLabel,
+  clockWidget,
+  normalizeClockFace,
+  parseClockCfg,
+} from '../widgets/clock.js';
 import {
   liveWidgetRegistry,
   registerLiveWidget,
@@ -99,25 +114,39 @@ export function bootstrapApp() {
     unit.classList.toggle('is-mini', w <= 1 && h <= 1);
     unit.classList.toggle('is-short', h <= 1 && w >= 2);
     unit.classList.toggle('is-big', w >= 2 && h >= 2);
-    unit.classList.toggle('is-tall', w <= 1 && h >= 2);   // ô cao hẹp (1x2, 1x3...)
-    unit.classList.toggle('is-wide3', w >= 3 && h <= 1);  // 3x1: bố cục 3 cột đầy đủ
+    unit.classList.toggle('is-tall', w <= 1 && h >= 2); // ô cao hẹp (1x2, 1x3...)
+    unit.classList.toggle('is-wide3', w >= 3 && h <= 1); // 3x1: bố cục 3 cột đầy đủ
   }
 
-  const pomodoroWidget = createPomodoroWidget({ TREE_SVGS, applyWidgetTier, clampInt, saveCurrentLayout });
+  const pomodoroWidget = createPomodoroWidget({
+    TREE_SVGS,
+    applyWidgetTier,
+    clampInt,
+    saveCurrentLayout,
+  });
 
   const volumeWidget = createVolumeWidget({
-    sendSystemVolume, setSystemMute, flashKeycap, saveCurrentLayout,
+    sendSystemVolume,
+    setSystemMute,
+    flashKeycap,
+    saveCurrentLayout,
     didDragJustHappen: () => gridDragJustHappened,
   });
 
   const appSliderWidget = createAppSliderWidget({
-    getTauri, invokeCmd, applyWidgetTier, prettyProcName, flashKeycap,
+    getTauri,
+    invokeCmd,
+    applyWidgetTier,
+    prettyProcName,
+    flashKeycap,
     openEditModal: (el) => modalEditor.openEditModal(el),
     didDragJustHappen: () => gridDragJustHappened,
   });
 
   const weatherWidget = createWeatherWidget({
-    getTauri, invokeCmd, applyWidgetTier,
+    getTauri,
+    invokeCmd,
+    applyWidgetTier,
     didDragJustHappen: () => gridDragJustHappened,
   });
 
@@ -132,7 +161,9 @@ export function bootstrapApp() {
   });
 
   const mediaWidget = createMediaWidget({
-    invokeCmd, applyWidgetTier, flashKeycap,
+    invokeCmd,
+    applyWidgetTier,
+    flashKeycap,
     openUrl: (url) => callTauriAction('open_url', url),
   });
 
@@ -247,7 +278,9 @@ export function bootstrapApp() {
 
   /* Ghi layout khi rời trang / ẩn cửa sổ. */
   window.addEventListener('pagehide', flushLayout);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) flushLayout(); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) flushLayout();
+  });
 
   /* =========================================================================
      ĐỒNG HỒ / THỜI TIẾT / POMODORO
@@ -256,14 +289,16 @@ export function bootstrapApp() {
     isDeckPaused,
     getClockFace: (el) => {
       const refs = liveWidgetRegistry.get(el);
-      return refs.face ??= parseClockCfg(el).face;
+      return (refs.face ??= parseClockCfg(el).face);
     },
     updateClockWidget: (el) => clockWidget.update(liveWidgetRegistry.get(el), { applyWidgetTier }),
   });
 
   setInterval(() => pomodoroWidget.tick(liveWidgetRegistry), 1000);
   setInterval(() => pomodoroWidget.saveRunning(liveWidgetRegistry), 15000);
-  setInterval(() => { if (!isDeckPaused()) weatherWidget.refreshAll(liveWidgetRegistry); }, WEATHER_REFRESH_MS);
+  setInterval(() => {
+    if (!isDeckPaused()) weatherWidget.refreshAll(liveWidgetRegistry);
+  }, WEATHER_REFRESH_MS);
 
   /* =========================================================================
      SỰ KIỆN GRID
@@ -274,15 +309,25 @@ export function bootstrapApp() {
     (items || []).forEach(({ el }) => destroyWidgetContent(el));
   });
 
-  grid.on('dragstart', () => { gridDragJustHappened = true; });
-  grid.on('resizestart', () => { gridDragJustHappened = true; });
-  grid.on('dragstop', () => { setTimeout(() => { gridDragJustHappened = false; }, 0); });
+  grid.on('dragstart', () => {
+    gridDragJustHappened = true;
+  });
+  grid.on('resizestart', () => {
+    gridDragJustHappened = true;
+  });
+  grid.on('dragstop', () => {
+    setTimeout(() => {
+      gridDragJustHappened = false;
+    }, 0);
+  });
   grid.on('resizestop', () => {
     document.querySelectorAll('.grid-stack-item[data-type="music_wave"]').forEach((el) => {
       if (el.gridstackNode?.h !== 1) grid.update(el, { h: 1 });
     });
-    setTimeout(() => { gridDragJustHappened = false; }, 0);
-    scheduleSliderRefresh();   // fader ngang/dọc + cỡ ô phải khớp hình dạng MỚI
+    setTimeout(() => {
+      gridDragJustHappened = false;
+    }, 0);
+    scheduleSliderRefresh(); // fader ngang/dọc + cỡ ô phải khớp hình dạng MỚI
   });
 
   /* =========================================================================
@@ -329,12 +374,32 @@ export function bootstrapApp() {
      MODAL SỬA PHÍM + VÀO EDIT MODE
      ========================================================================= */
   const modalEditor = createModalEditor({
-    grid, initIconUI, invokeCmd, formatIconSource, saveCurrentLayout,
-    applyDisplayToEl, renderWidgetContent, unregisterLiveWidget, hydrateVectorIcons,
-    parsePomoTarget, clampInt, clampFloat, normalizeClockFace, CLOCK_DEFAULT,
-    parseClockCfg, clockZoneLabel, WEATHER_DEFAULT, WEATHER_MIN_W, parseWeatherCfg,
-    normalizeWeatherSkin, parseBongoCfg, normalizeBongoSize, defaultIconForType,
-    appSliderWidget, createWidgetEl, removeTile,
+    grid,
+    initIconUI,
+    invokeCmd,
+    formatIconSource,
+    saveCurrentLayout,
+    applyDisplayToEl,
+    renderWidgetContent,
+    unregisterLiveWidget,
+    hydrateVectorIcons,
+    parsePomoTarget,
+    clampInt,
+    clampFloat,
+    normalizeClockFace,
+    CLOCK_DEFAULT,
+    parseClockCfg,
+    clockZoneLabel,
+    WEATHER_DEFAULT,
+    WEATHER_MIN_W,
+    parseWeatherCfg,
+    normalizeWeatherSkin,
+    parseBongoCfg,
+    normalizeBongoSize,
+    defaultIconForType,
+    appSliderWidget,
+    createWidgetEl,
+    removeTile,
   });
 
   setupLongPressEntry({
@@ -399,22 +464,23 @@ export function bootstrapApp() {
   /* Nạp layout đã lưu, nếu không thì dùng mặc định. */
   (async function loadLayout() {
     const ipc = getTauri() ? invokeCmd : null;
-    const [stored] = await Promise.all([
-      loadSavedLayout(STORAGE_KEY, ipc),
-      loadAppConfig(ipc),
-    ]);
+    const [stored] = await Promise.all([loadSavedLayout(STORAGE_KEY, ipc), loadAppConfig(ipc)]);
     initDisplaySettings({ onWake: deckAudio.refreshOnResume });
     // Layout cũ còn phím "settings" 1x1 đã bị gỡ bỏ.
-    const savedLayout = (stored || DEFAULT_WIDGETS)
-      .filter((item) => item && item.type !== 'settings');
+    const savedLayout = (stored || DEFAULT_WIDGETS).filter(
+      (item) => item && item.type !== 'settings'
+    );
     const layout = savedLayout.some((item) => item && item.type === 'weather_widget')
       ? savedLayout
-      : [...savedLayout, ...(DEFAULT_WIDGETS.filter((item) => item && item.type === 'weather_widget'))];
+      : [
+          ...savedLayout,
+          ...DEFAULT_WIDGETS.filter((item) => item && item.type === 'weather_widget'),
+        ];
     layout.forEach(createWidgetSafe);
     setLayoutLoading(false);
     saveCurrentLayout();
     scheduleSliderRefresh();
-    deckAudio.syncDeckAudio();   // đồng bộ ngay lúc khởi động (không chờ nhịp 2s đầu tiên)
+    deckAudio.syncDeckAudio(); // đồng bộ ngay lúc khởi động (không chờ nhịp 2s đầu tiên)
   })();
 
   /* Render backdrop grid on initial load */

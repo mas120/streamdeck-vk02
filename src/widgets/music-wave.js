@@ -32,15 +32,18 @@ export function createMusicWaveWidget({ getTauri, invokeCmd }) {
     });
 
     record.unit.dataset.state = active ? 'active' : 'silent';
-    record.unit.setAttribute('aria-label', active
-      ? `Âm thanh đầu ra ${Math.round(peak * 100)}%`
-      : 'Đang chờ âm thanh đầu ra');
+    record.unit.setAttribute(
+      'aria-label',
+      active ? `Âm thanh đầu ra ${Math.round(peak * 100)}%` : 'Đang chờ âm thanh đầu ra'
+    );
   }
 
   async function tick() {
     if (busy || !units.size || document.hidden || document.body.classList.contains('idle')) return;
     if (!getTauri()) {
-      units.forEach(({ unit }) => { unit.dataset.state = 'unavailable'; });
+      units.forEach(({ unit }) => {
+        unit.dataset.state = 'unavailable';
+      });
       return;
     }
 
@@ -50,7 +53,9 @@ export function createMusicWaveWidget({ getTauri, invokeCmd }) {
       units.forEach((record) => paint(record, peak));
       warned = false;
     } catch (error) {
-      units.forEach(({ unit }) => { unit.dataset.state = 'unavailable'; });
+      units.forEach(({ unit }) => {
+        unit.dataset.state = 'unavailable';
+      });
       if (!warned) console.warn('get_output_peak lỗi:', error);
       warned = true;
     } finally {

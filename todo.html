@@ -1,87 +1,293 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Việc cần làm — Stream Deck VK02</title>
-  <style>
-    :root { --bg:#0d0f15; --card:#151821; --line:rgba(255,255,255,.08); --txt:#f2f6fc; --txt2:#aab4c5; --txt3:#7d879b;
-            --accent:#00e5ff; --danger:#ff4757; --ok:#46d977;
-            --font:"Segoe UI Variable Text","Segoe UI","Inter","Noto Sans",Arial,sans-serif; }
-    * { box-sizing:border-box; margin:0; padding:0; }
-    html,body { height:100%; background:var(--bg); color:var(--txt); font-family:var(--font); }
-    body { display:flex; flex-direction:column; padding:18px 18px 14px; gap:12px; }
-    header { display:flex; align-items:baseline; justify-content:space-between; }
-    h1 { font-size:18px; font-weight:700; }
-    #count { font-size:13px; color:var(--txt3); font-variant-numeric:tabular-nums; }
-    .add { display:flex; gap:8px; }
-    input[type=text] { flex:1; min-width:0; height:40px; padding:0 12px; border-radius:10px; border:1px solid var(--line);
-      background:var(--card); color:var(--txt); font:inherit; font-size:15px; outline:none; }
-    input[type=text]:focus { border-color:var(--accent); }
-    button { font:inherit; cursor:pointer; border:0; color:var(--txt); }
-    .btn { height:40px; padding:0 16px; border-radius:10px; background:var(--accent); color:#00181c; font-weight:700; }
-    .btn.ghost { background:var(--card); color:var(--txt2); border:1px solid var(--line); font-weight:600; }
-    ul { flex:1; overflow:auto; list-style:none; display:flex; flex-direction:column; gap:6px; }
-    li { display:flex; align-items:center; gap:10px; padding:4px 6px 4px 10px; border-radius:10px; background:var(--card); border:1px solid var(--line); }
-    li .box { width:22px; height:22px; flex:none; border-radius:7px; border:2px solid var(--txt3); background:transparent; position:relative; }
-    li.done .box { background:var(--accent); border-color:var(--accent); }
-    li.done .box::after { content:""; position:absolute; left:6px; top:2px; width:5px; height:10px; border:solid #00181c; border-width:0 2.5px 2.5px 0; transform:rotate(45deg); }
-    li input { flex:1; min-width:0; height:34px; background:transparent; border:0; color:var(--txt); font:inherit; font-size:15px; outline:none; }
-    li.done input { color:var(--txt3); text-decoration:line-through; }
-    li .del { width:30px; height:30px; flex:none; border-radius:8px; background:transparent; color:var(--txt3); font-size:18px; }
-    li .del:hover { color:var(--danger); background:rgba(255,71,87,.12); }
-    .empty { margin:auto; color:var(--txt3); font-size:14px; }
-    footer { display:flex; justify-content:space-between; gap:8px; }
-  </style>
-</head>
-<body>
-  <header><h1>Việc cần làm</h1><span id="count"></span></header>
-  <div class="add"><input id="newText" type="text" placeholder="Thêm việc mới rồi nhấn Enter…" autofocus /><button class="btn" id="btnAdd">Thêm</button></div>
-  <ul id="list"></ul>
-  <footer><button class="btn ghost" id="btnClear">Xoá việc đã xong</button><button class="btn" id="btnClose">Xong</button></footer>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Việc cần làm — Stream Deck VK02</title>
+    <style>
+      :root {
+        --bg: #0d0f15;
+        --card: #151821;
+        --line: rgba(255, 255, 255, 0.08);
+        --txt: #f2f6fc;
+        --txt2: #aab4c5;
+        --txt3: #7d879b;
+        --accent: #00e5ff;
+        --danger: #ff4757;
+        --ok: #46d977;
+        --font: 'Segoe UI Variable Text', 'Segoe UI', 'Inter', 'Noto Sans', Arial, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        background: var(--bg);
+        color: var(--txt);
+        font-family: var(--font);
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        padding: 18px 18px 14px;
+        gap: 12px;
+      }
+      header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+      }
+      h1 {
+        font-size: 18px;
+        font-weight: 700;
+      }
+      #count {
+        font-size: 13px;
+        color: var(--txt3);
+        font-variant-numeric: tabular-nums;
+      }
+      .add {
+        display: flex;
+        gap: 8px;
+      }
+      input[type='text'] {
+        flex: 1;
+        min-width: 0;
+        height: 40px;
+        padding: 0 12px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--txt);
+        font: inherit;
+        font-size: 15px;
+        outline: none;
+      }
+      input[type='text']:focus {
+        border-color: var(--accent);
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+        border: 0;
+        color: var(--txt);
+      }
+      .btn {
+        height: 40px;
+        padding: 0 16px;
+        border-radius: 10px;
+        background: var(--accent);
+        color: #00181c;
+        font-weight: 700;
+      }
+      .btn.ghost {
+        background: var(--card);
+        color: var(--txt2);
+        border: 1px solid var(--line);
+        font-weight: 600;
+      }
+      ul {
+        flex: 1;
+        overflow: auto;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 4px 6px 4px 10px;
+        border-radius: 10px;
+        background: var(--card);
+        border: 1px solid var(--line);
+      }
+      li .box {
+        width: 22px;
+        height: 22px;
+        flex: none;
+        border-radius: 7px;
+        border: 2px solid var(--txt3);
+        background: transparent;
+        position: relative;
+      }
+      li.done .box {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      li.done .box::after {
+        content: '';
+        position: absolute;
+        left: 6px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid #00181c;
+        border-width: 0 2.5px 2.5px 0;
+        transform: rotate(45deg);
+      }
+      li input {
+        flex: 1;
+        min-width: 0;
+        height: 34px;
+        background: transparent;
+        border: 0;
+        color: var(--txt);
+        font: inherit;
+        font-size: 15px;
+        outline: none;
+      }
+      li.done input {
+        color: var(--txt3);
+        text-decoration: line-through;
+      }
+      li .del {
+        width: 30px;
+        height: 30px;
+        flex: none;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--txt3);
+        font-size: 18px;
+      }
+      li .del:hover {
+        color: var(--danger);
+        background: rgba(255, 71, 87, 0.12);
+      }
+      .empty {
+        margin: auto;
+        color: var(--txt3);
+        font-size: 14px;
+      }
+      footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Việc cần làm</h1>
+      <span id="count"></span>
+    </header>
+    <div class="add">
+      <input
+        id="newText"
+        type="text"
+        placeholder="Thêm việc mới rồi nhấn Enter…"
+        autofocus
+      /><button class="btn" id="btnAdd">Thêm</button>
+    </div>
+    <ul id="list"></ul>
+    <footer>
+      <button class="btn ghost" id="btnClear">Xoá việc đã xong</button
+      ><button class="btn" id="btnClose">Xong</button>
+    </footer>
 
-  <script type="module">
-    import { TODO_KEY, loadTodos, saveTodos } from '/src/todo-store.js';
-    const $ = (id) => document.getElementById(id);
-    let items = loadTodos();
-    const uid = () => Math.random().toString(36).slice(2, 10);
-    const commit = () => { saveTodos(items); updateCount(); };   // lưu NGAY: tắt cửa sổ lúc nào deck cũng đã có dữ liệu mới
-    const updateCount = () => { const d = items.filter((i) => i.done).length; $('count').textContent = items.length ? `${d}/${items.length} xong` : ''; };
+    <script type="module">
+      import { TODO_KEY, loadTodos, saveTodos } from '/src/todo-store.js';
+      const $ = (id) => document.getElementById(id);
+      let items = loadTodos();
+      const uid = () => Math.random().toString(36).slice(2, 10);
+      const commit = () => {
+        saveTodos(items);
+        updateCount();
+      }; // lưu NGAY: tắt cửa sổ lúc nào deck cũng đã có dữ liệu mới
+      const updateCount = () => {
+        const d = items.filter((i) => i.done).length;
+        $('count').textContent = items.length ? `${d}/${items.length} xong` : '';
+      };
 
-    function render(keepFocus) {
-      const list = $('list'); list.innerHTML = '';
-      if (!items.length) { list.innerHTML = '<div class="empty">Chưa có việc nào — gõ ở ô trên rồi nhấn Enter.</div>'; updateCount(); return; }
-      items.forEach((it) => {
-        const li = document.createElement('li'); li.className = it.done ? 'done' : '';
-        const box = document.createElement('button'); box.className = 'box'; box.setAttribute('aria-label', 'Đánh dấu xong');
-        box.onclick = () => { it.done = !it.done; commit(); render(); };
-        const inp = document.createElement('input'); inp.type = 'text'; inp.value = it.text;
-        inp.oninput = () => { it.text = inp.value; commit(); };
-        inp.onkeydown = (e) => { if (e.key === 'Enter') $('newText').focus(); };
-        const del = document.createElement('button'); del.className = 'del'; del.textContent = '×'; del.setAttribute('aria-label', 'Xoá');
-        del.onclick = () => { items = items.filter((x) => x !== it); commit(); render(); };
-        li.append(box, inp, del); list.appendChild(li);
+      function render(keepFocus) {
+        const list = $('list');
+        list.innerHTML = '';
+        if (!items.length) {
+          list.innerHTML =
+            '<div class="empty">Chưa có việc nào — gõ ở ô trên rồi nhấn Enter.</div>';
+          updateCount();
+          return;
+        }
+        items.forEach((it) => {
+          const li = document.createElement('li');
+          li.className = it.done ? 'done' : '';
+          const box = document.createElement('button');
+          box.className = 'box';
+          box.setAttribute('aria-label', 'Đánh dấu xong');
+          box.onclick = () => {
+            it.done = !it.done;
+            commit();
+            render();
+          };
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.value = it.text;
+          inp.oninput = () => {
+            it.text = inp.value;
+            commit();
+          };
+          inp.onkeydown = (e) => {
+            if (e.key === 'Enter') $('newText').focus();
+          };
+          const del = document.createElement('button');
+          del.className = 'del';
+          del.textContent = '×';
+          del.setAttribute('aria-label', 'Xoá');
+          del.onclick = () => {
+            items = items.filter((x) => x !== it);
+            commit();
+            render();
+          };
+          li.append(box, inp, del);
+          list.appendChild(li);
+        });
+        updateCount();
+      }
+      function add() {
+        const t = $('newText').value.trim();
+        if (!t) return;
+        items.push({ id: uid(), text: t, done: false });
+        $('newText').value = '';
+        commit();
+        render();
+        $('list').scrollTop = $('list').scrollHeight;
+        $('newText').focus();
+      }
+      async function closeMe() {
+        const t = window.__TAURI__ && (window.__TAURI__.core || window.__TAURI__.tauri);
+        try {
+          if (t) {
+            await t.invoke('close_todo_window');
+            return;
+          }
+        } catch (_) {}
+        window.close();
+      }
+      $('btnAdd').onclick = add;
+      $('newText').onkeydown = (e) => {
+        if (e.key === 'Enter') add();
+      };
+      $('btnClear').onclick = () => {
+        items = items.filter((i) => !i.done);
+        commit();
+        render();
+      };
+      $('btnClose').onclick = closeMe;
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMe();
       });
-      updateCount();
-    }
-    function add() {
-      const t = $('newText').value.trim(); if (!t) return;
-      items.push({ id: uid(), text: t, done: false }); $('newText').value = ''; commit(); render();
-      $('list').scrollTop = $('list').scrollHeight; $('newText').focus();
-    }
-    async function closeMe() {
-      const t = window.__TAURI__ && (window.__TAURI__.core || window.__TAURI__.tauri);
-      try { if (t) { await t.invoke('close_todo_window'); return; } } catch (_) {}
-      window.close();
-    }
-    $('btnAdd').onclick = add;
-    $('newText').onkeydown = (e) => { if (e.key === 'Enter') add(); };
-    $('btnClear').onclick = () => { items = items.filter((i) => !i.done); commit(); render(); };
-    $('btnClose').onclick = closeMe;
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMe(); });
-    // Nếu deck (hoặc cửa sổ khác) đổi dữ liệu trong lúc đang mở -> nạp lại, trừ khi đang gõ dở
-    window.addEventListener('storage', (e) => { if (e.key === TODO_KEY && !document.activeElement?.closest('li')) { items = loadTodos(); render(); } });
-    render();
-  </script>
-</body>
+      // Nếu deck (hoặc cửa sổ khác) đổi dữ liệu trong lúc đang mở -> nạp lại, trừ khi đang gõ dở
+      window.addEventListener('storage', (e) => {
+        if (e.key === TODO_KEY && !document.activeElement?.closest('li')) {
+          items = loadTodos();
+          render();
+        }
+      });
+      render();
+    </script>
+  </body>
 </html>

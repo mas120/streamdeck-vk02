@@ -13,7 +13,14 @@ function extract(name) {
   const fn = new RegExp('function\\s+' + name + '\\s*\\(').exec(jsSrc);
   if (fn) return jsSrc.slice(fn.index, jsSrc.indexOf('\n}', fn.index) + 2);
   const cn = new RegExp('const\\s+' + name + '\\s*=').exec(jsSrc);
-  return jsSrc.slice(cn.index, jsSrc.indexOf('\n', cn.index));
+  let end = jsSrc.indexOf('\n', cn.index);
+  if (end < 0) end = jsSrc.length;
+  /* Prettier có thể xuống dòng câu lệnh const dài -> gộp tới dấu ; cuối. */
+  while (!/[;}]$/.test(jsSrc.slice(cn.index, end).trim()) && end < jsSrc.length) {
+    const next = jsSrc.indexOf('\n', end + 1);
+    end = next < 0 ? jsSrc.length : next;
+  }
+  return jsSrc.slice(cn.index, end);
 }
 const names = ['escapeHtml', 'weatherIconGroup', 'weatherIconSvg', 'wxGlyph', 'weatherMarkup',
   'cityShort', 'cityLabelHtml', 'clampInt', 'volLevel', 'volumeMarkup',

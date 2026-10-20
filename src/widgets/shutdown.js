@@ -108,7 +108,7 @@ export function createShutdownWidget({ invokeCmd, flashKeycap }) {
         if (status) status.textContent = 'Chỉ dùng trong ứng dụng desktop';
         return;
       }
-      if (!await confirmShutdown(el, button)) return;
+      if (!(await confirmShutdown(el, button))) return;
 
       button.disabled = true;
       button.setAttribute('aria-busy', 'true');

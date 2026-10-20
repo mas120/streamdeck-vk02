@@ -16,7 +16,9 @@ export function createDeckAudioSync({
 
   async function syncSystemVolume() {
     if (!getTauri() || systemVolumeBusy) return;
-    const items = Array.from(document.querySelectorAll('.grid-stack-item[data-type="volume_slider"]'));
+    const items = Array.from(
+      document.querySelectorAll('.grid-stack-item[data-type="volume_slider"]')
+    );
     if (!items.length) return;
     if (isSystemVolumeEchoGuardActive()) return;
     systemVolumeBusy = true;
@@ -49,7 +51,7 @@ export function createDeckAudioSync({
   function refreshOnResume() {
     startTimer();
     syncDeckAudio();
-    todoWidget.updateAll();   // storage event bị bỏ lỡ khi deck đang tạm dừng
+    todoWidget.updateAll(); // storage event bị bỏ lỡ khi deck đang tạm dừng
   }
 
   /* Nhịp quét: 1 vòng/giây, mỗi việc có chu kỳ riêng.

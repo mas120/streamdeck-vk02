@@ -28,8 +28,14 @@ function extract(name) {
   }
   const cn = new RegExp('const\\s+' + name + '\\s*=').exec(jsSrc);
   if (cn) {
-    const end = jsSrc.indexOf('\n', cn.index);
-    return jsSrc.slice(cn.index, end < 0 ? undefined : end);
+    let end = jsSrc.indexOf('\n', cn.index);
+    if (end < 0) end = jsSrc.length;
+    /* Prettier có thể xuống dòng câu lệnh const dài -> gộp tới dấu ; cuối. */
+    while (!/[;}]$/.test(jsSrc.slice(cn.index, end).trim()) && end < jsSrc.length) {
+      const next = jsSrc.indexOf('\n', end + 1);
+      end = next < 0 ? jsSrc.length : next;
+    }
+    return jsSrc.slice(cn.index, end);
   }
   throw new Error('Không tìm thấy khai báo: ' + name);
 }
@@ -387,6 +393,10 @@ const wxBox = (W, H, tier) => ({
 
 /* ===================== CSS (index.html) ===================== */
 const styleBlock = css;
+/* Bản gộp khoảng trắng: Prettier có thể xuống dòng trong khối rule, nên các
+   assertion so khớp cấu trúc dùng bản này để không phụ thuộc format. */
+const styleFlat = styleBlock.replace(/\s+/g, ' ');
+const jsFlat = jsSrc.replace(/\s+/g, ' ');
 ok('CSS: ngoặc {} cân đối',
   count(styleBlock, '{') === count(styleBlock, '}'),
   '{=' + count(styleBlock, '{') + ' }=' + count(styleBlock, '}'));
@@ -458,26 +468,30 @@ ok('CSS: 2x1 bỏ vạch ngăn, ngày + TP thành 1 dòng nhỏ DƯỚI số °C
   && /\.keycap-weather\.is-short:not\(\.is-wide3\) \.wx-meta\s*\{[^}]*flex-direction: row/.test(styleBlock));
 ok('CSS: 2x2 minh hoạ LỚN trên, dưới là °C + text + chỉ số',
   /\.keycap-weather\.is-big \.wx-body\s*\{[\s\S]{0,320}?grid-template-areas: "art art" "hero meta"/.test(styleBlock));
-ok('CSS: 1x1 chỉ còn minh hoạ + số °C (ẩn divider/meta/trạng thái)',
-  /\.keycap-weather\.is-mini \.wx-divider,\s*\n\s*\.keycap-weather\.is-mini \.wx-meta,\s*\n\s*\.keycap-weather\.is-mini \.weather-cond \{ display: none/.test(styleBlock));
+ok(
+  'CSS: 1x1 chỉ còn minh hoạ + số °C (ẩn divider/meta/trạng thái)',
+  /\.keycap-weather\.is-mini \.wx-divider, \.keycap-weather\.is-mini \.wx-meta, \.keycap-weather\.is-mini \.weather-cond \{ display: none/.test(
+    styleFlat,
+  ),
+);
 ok('CSS: 8 nhóm tông màu gradient (145deg) + lỗi',
   ['sun', 'partly', 'cloud', 'fog', 'drizzle', 'rain', 'snow', 'storm', 'error']
-    .every((t) => new RegExp('data-tint="' + t + '"\\]\\s*\\{ --wx-bg: linear-gradient\\(145deg, #\\w+ 0%, #\\w+ 100%\\)').test(styleBlock)));
+    .every((t) => new RegExp('data-tint="' + t + '"\\]\\s*\\{ --wx-bg: linear-gradient\\(145deg, #\\w+ 0%, #\\w+ 100%\\)').test(styleFlat)));
 ok('CSS: ban đêm (data-night="1") dùng gradient tím navy #1b1642 -> #392873',
-  /data-night="1"\]\s*\{ --wx-bg: linear-gradient\(135deg, #1b1642, #392873\)/.test(styleBlock));
+  /data-night="1"\]\s*\{ --wx-bg: linear-gradient\(135deg, #1b1642, #392873\)/.test(styleFlat));
 ok('CSS: skin "Phẳng" = nền #111317 + bỏ lớp scrim',
-  /data-skin="flat"\]\s*\{ --wx-bg: #111317/.test(styleBlock)
-  && /data-skin="flat"\]::after \{ display: none/.test(styleBlock));
+  /data-skin="flat"\]\s*\{ --wx-bg: #111317/.test(styleFlat)
+  && /data-skin="flat"\]::after \{ display: none/.test(styleFlat));
 ok('CSS: lớp LÀM DỊU 30% độ chói (--wx-scrim: 0.3 + scrim ::after)',
   styleBlock.includes('--wx-scrim: 0.3')
   && /calc\(0\.62 \* var\(--wx-scrim\)\)/.test(styleBlock));
 ok('CSS: badge "DỮ LIỆU CŨ" tự ẩn theo [hidden] + có icon riêng',
-  styleBlock.includes('.wx-badge[hidden] { display: none; }')
+  styleFlat.includes('.wx-badge[hidden] { display: none; }')
   && styleBlock.includes('.wx-badge-icon'));
 ok('CSS: đang tải -> minh hoạ XOAY MỜ',
-  /\.keycap-weather\.is-loading \.weather-icon \{ opacity: 0\.45; animation: wxSpin/.test(styleBlock));
+  /\.keycap-weather\.is-loading \.weather-icon \{ opacity: 0\.45; animation: wxSpin/.test(styleFlat));
 ok('CSS: deck RẢNH -> hạ sáng 40% + đứng mọi animation thời tiết',
-  /body\.idle \.weather-unit\.keycap-weather \{ filter: brightness\(0\.4\)/.test(styleBlock)
+  /body\.idle \.weather-unit\.keycap-weather \{ filter: brightness\(0\.4\)/.test(styleFlat)
   && /body\.idle \.weather-unit \.wx-anim/.test(styleBlock));
 ok('CSS: tắt animation vi mô khi prefers-reduced-motion',
   /@media \(prefers-reduced-motion: reduce\) \{\s*\n\s*\.weather-unit \.wx-anim,/.test(styleBlock));
@@ -538,7 +552,7 @@ ok('js: cache LocalStorage kèm timestamp + nạp lúc khởi động (không ch
   && /const cached = wxCacheGet\(key\)/.test(jsSrc));
 ok('js: dữ liệu quá 30 phút + MẤT MẠNG -> badge "DỮ LIỆU CŨ" kèm tooltip giờ cũ',
   jsSrc.includes('WEATHER_STALE_MS = 30 * 60 * 1000')
-  && /updateWxBadge\(unit, !!offline && \(Date\.now\(\) - at\) > WEATHER_STALE_MS, at\)/.test(applySrc)
+  && /updateWxBadge\(unit, !!offline && Date\.now\(\) - at > WEATHER_STALE_MS, at\)/.test(jsFlat)
   && /badge\.title = `Dữ liệu lúc \$\{wxHm\(ts\)\}/.test(extract('updateWxBadge')));
 ok('js: mất mạng vẫn hiện số CŨ (offline = true) thay vì xoá trắng ô',
   /if \(cached\) applyWeatherToUnit\(unit, cached\.data, cfg\.city, cached\.ts, true\)/.test(jsSrc));
@@ -554,13 +568,13 @@ ok('js: chạm = làm mới ngay nhưng có CHỐNG DỘI 0,5s + bỏ qua khi đ
 ok('js: skin chuẩn hoá 1 hàm dùng CHUNG cho lúc đọc + lúc lưu + lúc áp',
   /function normalizeWeatherSkin\(value\)/.test(jsSrc)
   && /const skin = normalizeWeatherSkin\(raw\.skin\)/.test(jsSrc)
-  && /applyWeatherSkin\(unit, cfg\.skin\)/.test(jsSrc)
-  && /normalizeWeatherSkin\(selWeatherSkin/.test(jsSrc));
+  && /applyWeatherSkin\(unit, cfg\.skin\)/.test(jsFlat)
+  && /selWeatherSkin\.value = normalizeWeatherSkin\(/.test(jsFlat));
 ok('js: ô thời tiết MẶC ĐỊNH 3x1 (tạo mới + mẫu ở layout mặc định)',
   jsSrc.includes('WEATHER_MIN_W = 3')
-  && /weatherMinW: WEATHER_MIN_W/.test(jsSrc)
-  && /case 'weather_widget': size = \[weatherMinW, 1\]/.test(jsSrc)
-  && /w: 3, h: 1, icon: '[^']*', type: 'weather_widget'/.test(jsSrc));
+  && /weatherMinW: WEATHER_MIN_W/.test(jsFlat)
+  && /case 'weather_widget': size = \[weatherMinW, 1\]/.test(jsFlat)
+  && /w: 3, h: 1, icon: '[^']*', type: 'weather_widget'/.test(jsFlat));
 ok('js: gán tier is-wide3 (>= 3 cột, 1 hàng) để CSS dựng đủ 4 vùng',
   /classList\.toggle\('is-wide3', w >= 3 && h <= 1\)/.test(jsSrc));
 ok('html: modal có dropdown Skin + API key (dự phòng) cho widget thời tiết',

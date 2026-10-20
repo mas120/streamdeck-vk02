@@ -1,15 +1,17 @@
-  .pomodoro-unit {
+.pomodoro-unit {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  container-type: size;   /* bật cqw/cqh cho số giờ + glyph */
-  color: var(--pomo-work);   /* pha LÀM VIỆC (đỏ cam) */
+  container-type: size; /* bật cqw/cqh cho số giờ + glyph */
+  color: var(--pomo-work); /* pha LÀM VIỆC (đỏ cam) */
   z-index: 2;
-  }
-  .pomodoro-unit[data-mode="break"] { color: var(--pomo-break); }   /* pha NGHỈ */
-  .pomodoro-ring {
+}
+.pomodoro-unit[data-mode="break"] {
+  color: var(--pomo-break);
+} /* pha NGHỈ */
+.pomodoro-ring {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -17,31 +19,38 @@
   height: 88%;
   transform: translate(-50%, -50%) rotate(-90deg);
   overflow: visible;
-  }
-  .timer-bg {
+}
+.timer-bg {
   fill: none;
   stroke: rgba(255, 255, 255, 0.08);
   stroke-width: 6;
-  }
-  .timer-progress {
+}
+.timer-progress {
   fill: none;
   stroke: currentColor;
   stroke-width: 6;
   stroke-linecap: round;
-  transition: stroke-dashoffset 0.3s linear, opacity 0.4s ease, filter 0.4s ease;
-  }
-  .timer-progress.work  { filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 15px rgba(255, 90, 77, 0.5)); }
-  .timer-progress.break { filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 15px rgba(70, 217, 119, 0.5)); }
-  /* Chấm sáng ở đầu cung: còn bao nhiêu thời gian = nhìn 1 cái là biết */
-  .timer-head {
+  transition:
+    stroke-dashoffset 0.3s linear,
+    opacity 0.4s ease,
+    filter 0.4s ease;
+}
+.timer-progress.work {
+  filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 15px rgba(255, 90, 77, 0.5));
+}
+.timer-progress.break {
+  filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 15px rgba(70, 217, 119, 0.5));
+}
+/* Chấm sáng ở đầu cung: còn bao nhiêu thời gian = nhìn 1 cái là biết */
+.timer-head {
   fill: #ffffff;
   transform-box: view-box;
   transform-origin: 50% 50%;
   transform: rotate(calc(var(--pomo-ratio, 1) * 360deg));
   transition: transform 0.3s linear;
   filter: drop-shadow(0 0 3px currentColor) drop-shadow(0 0 7px currentColor);
-  }
-  .pomodoro-center {
+}
+.pomodoro-center {
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -54,29 +63,31 @@
   text-align: center;
   padding: 6px;
   pointer-events: none;
-  }
-  .timer-time {
+}
+.timer-time {
   font-family: var(--font-num);
   font-variant-numeric: tabular-nums;
   font-weight: 800;
-  font-size: 32px;                /* số mm:ss hero ở ô 2x2 */
-  font-size: min(17cqw, 22cqh);   /* 1x1 / 2x1 / 2x2 đều lọt lòng vòng LED */
+  font-size: 32px; /* số mm:ss hero ở ô 2x2 */
+  font-size: min(17cqw, 22cqh); /* 1x1 / 2x1 / 2x2 đều lọt lòng vòng LED */
   letter-spacing: 0.02em;
   line-height: 1;
   color: #fff;
-  transition: color 0.3s ease, text-shadow 0.3s ease;
-  }
-  /* Số giờ ăn màu pha -> nhận ra LÀM VIỆC / NGHỈ NGAY, không cần đọc chữ */
-  .pomodoro-unit[data-mode="work"] .timer-time {
+  transition:
+    color 0.3s ease,
+    text-shadow 0.3s ease;
+}
+/* Số giờ ăn màu pha -> nhận ra LÀM VIỆC / NGHỈ NGAY, không cần đọc chữ */
+.pomodoro-unit[data-mode="work"] .timer-time {
   color: #ffe2de;
   text-shadow: 0 0 14px rgba(255, 90, 77, 0.8);
-  }
-  .pomodoro-unit[data-mode="break"] .timer-time {
+}
+.pomodoro-unit[data-mode="break"] .timer-time {
   color: #d8ffe4;
   text-shadow: 0 0 14px rgba(70, 217, 119, 0.8);
-  }
-  /* Glyph trạng thái: ▶ đang chạy · ❚❚ tạm dừng · ▶ mờ nháy khi chờ chạm */
-  .pomodoro-mark {
+}
+/* Glyph trạng thái: ▶ đang chạy · ❚❚ tạm dừng · ▶ mờ nháy khi chờ chạm */
+.pomodoro-mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -84,58 +95,120 @@
   width: min(7.4cqw, 9cqh);
   height: min(7.4cqw, 9cqh);
   color: #ffffff;
-  transition: color 0.3s ease, opacity 0.3s ease;
-  }
-  .pomo-glyph { width: 100%; height: 100%; fill: currentColor; }
-  .pomodoro-mark .glyph-pause { display: none; }
-  .pomodoro-unit[data-state="paused"] .glyph-play { display: none; }
-  .pomodoro-unit[data-state="paused"] .glyph-pause { display: block; }
-  /* Ô 1x1: bỏ glyph trạng thái -> nhường trọn diện tích cho số mm:ss + vòng LED
+  transition:
+    color 0.3s ease,
+    opacity 0.3s ease;
+}
+.pomo-glyph {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+.pomodoro-mark .glyph-pause {
+  display: none;
+}
+.pomodoro-unit[data-state="paused"] .glyph-play {
+  display: none;
+}
+.pomodoro-unit[data-state="paused"] .glyph-pause {
+  display: block;
+}
+/* Ô 1x1: bỏ glyph trạng thái -> nhường trọn diện tích cho số mm:ss + vòng LED
    (trạng thái vẫn đọc được qua màu vòng + animation thở). */
-  .pomodoro-unit.is-mini .pomodoro-mark { display: none; }
-  .pomodoro-unit[data-state="idle"] .pomodoro-mark { opacity: 0.42; animation: pomoReady 2.2s ease-in-out infinite; }
-  .pomodoro-unit[data-state="idle"] .timer-progress { opacity: 0.55; }
-  .pomodoro-unit[data-state="running"] .pomodoro-mark { opacity: 0.95; }
-  .pomodoro-unit[data-state="running"] .timer-progress { animation: pomoBreathe 2.6s ease-in-out infinite; }
-  .pomodoro-unit[data-state="running"] .timer-head { animation: pomoBreathe 2.6s ease-in-out infinite; }
-  .pomodoro-unit[data-state="paused"] .pomodoro-mark { color: var(--warn); }
-  .pomodoro-unit[data-state="paused"] .timer-progress,
-  .pomodoro-unit[data-state="paused"] .timer-head { opacity: 0.4; }
-  /* Nhịp "thở" rất nhẹ: mắt nhận ra đồng hồ ĐANG chạy mà không gây nhiễu */
-  @keyframes pomoBreathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.68; } }
-  @keyframes pomoReady { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.85; } }
-  /* Tôn trọng cài đặt giảm chuyển động của hệ điều hành */
-  @media (prefers-reduced-motion: reduce) {
+.pomodoro-unit.is-mini .pomodoro-mark {
+  display: none;
+}
+.pomodoro-unit[data-state="idle"] .pomodoro-mark {
+  opacity: 0.42;
+  animation: pomoReady 2.2s ease-in-out infinite;
+}
+.pomodoro-unit[data-state="idle"] .timer-progress {
+  opacity: 0.55;
+}
+.pomodoro-unit[data-state="running"] .pomodoro-mark {
+  opacity: 0.95;
+}
+.pomodoro-unit[data-state="running"] .timer-progress {
+  animation: pomoBreathe 2.6s ease-in-out infinite;
+}
+.pomodoro-unit[data-state="running"] .timer-head {
+  animation: pomoBreathe 2.6s ease-in-out infinite;
+}
+.pomodoro-unit[data-state="paused"] .pomodoro-mark {
+  color: var(--warn);
+}
+.pomodoro-unit[data-state="paused"] .timer-progress,
+.pomodoro-unit[data-state="paused"] .timer-head {
+  opacity: 0.4;
+}
+/* Nhịp "thở" rất nhẹ: mắt nhận ra đồng hồ ĐANG chạy mà không gây nhiễu */
+@keyframes pomoBreathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.68;
+  }
+}
+@keyframes pomoReady {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+/* Tôn trọng cài đặt giảm chuyển động của hệ điều hành */
+@media (prefers-reduced-motion: reduce) {
   .pomodoro-unit .timer-progress,
   .pomodoro-unit .timer-head,
-  .pomodoro-unit .pomodoro-mark { animation: none !important; }
+  .pomodoro-unit .pomodoro-mark {
+    animation: none !important;
   }
-  /* Chớp nháy viền LED ~1.5s khi hết giờ */
-  .grid-stack-item-content.pomo-finish .pomodoro-unit {
+}
+/* Chớp nháy viền LED ~1.5s khi hết giờ */
+.grid-stack-item-content.pomo-finish .pomodoro-unit {
   animation: pomoFinishBlink 1.5s ease-in-out;
+}
+@keyframes pomoFinishBlink {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+      inset 0 3px 14px rgba(0, 0, 0, 0.9);
   }
-  @keyframes pomoFinishBlink {
-  0%, 100% {
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06),
-                inset 0 3px 14px rgba(0, 0, 0, 0.9);
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    box-shadow:
+      inset 0 0 0 3px #ff3b30,
+      0 0 26px rgba(255, 59, 48, 0.85);
   }
-  10%, 30%, 50%, 70%, 90% {
-    box-shadow: inset 0 0 0 3px #FF3B30, 0 0 26px rgba(255, 59, 48, 0.85);
+  20%,
+  40%,
+  60%,
+  80% {
+    box-shadow:
+      inset 0 0 0 3px #34c759,
+      0 0 26px rgba(52, 199, 89, 0.85);
   }
-  20%, 40%, 60%, 80% {
-    box-shadow: inset 0 0 0 3px #34C759, 0 0 26px rgba(52, 199, 89, 0.85);
-  }
-  }
-  /* Dòng gợi ý nhỏ trong modal */
-  .modal-hint {
+}
+/* Dòng gợi ý nhỏ trong modal */
+.modal-hint {
   font-size: 11px;
   line-height: 1.5;
   color: #8b949e;
   font-weight: 600;
-  }
-  .modal-hint strong { color: var(--accent); }
-  /* Nút nổi "✓ Xong": chỉ hiện khi ở Chế độ Chỉnh sửa (thoát nhanh) */
-  .edit-toolbar {
+}
+.modal-hint strong {
+  color: var(--accent);
+}
+/* Nút nổi "✓ Xong": chỉ hiện khi ở Chế độ Chỉnh sửa (thoát nhanh) */
+.edit-toolbar {
   position: absolute;
   top: 10px;
   left: 50%;
@@ -150,9 +223,11 @@
   background: rgba(0, 22, 28, 0.72);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  box-shadow: 0 0 18px var(--accent-glow), 0 6px 16px rgba(0, 0, 0, 0.6);
-  }
-  .edit-toolbar-btn {
+  box-shadow:
+    0 0 18px var(--accent-glow),
+    0 6px 16px rgba(0, 0, 0, 0.6);
+}
+.edit-toolbar-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -167,44 +242,72 @@
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
-  }
-  .edit-toolbar-btn:active { transform: scale(0.94); }
-  body.edit-mode .edit-toolbar { display: flex; }
-  /* Vòng tiến trình long-press ô trống (vào Edit Mode) */
-  body:not(.edit-mode) .grid-stack { touch-action: none; }
-  .longpress-ring {
+}
+.edit-toolbar-btn:active {
+  transform: scale(0.94);
+}
+body.edit-mode .edit-toolbar {
+  display: flex;
+}
+/* Vòng tiến trình long-press ô trống (vào Edit Mode) */
+body:not(.edit-mode) .grid-stack {
+  touch-action: none;
+}
+.longpress-ring {
   position: fixed;
   width: 72px;
   height: 72px;
   margin: -36px 0 0 -36px;
   pointer-events: none;
   z-index: 1500;
-  }
-  .longpress-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-  .longpress-ring circle { fill: none; stroke-width: 4; }
-  .longpress-ring-track { stroke: rgba(255, 255, 255, 0.15); }
-  .longpress-ring-fill {
+}
+.longpress-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.longpress-ring circle {
+  fill: none;
+  stroke-width: 4;
+}
+.longpress-ring-track {
+  stroke: rgba(255, 255, 255, 0.15);
+}
+.longpress-ring-fill {
   stroke: var(--accent);
   stroke-linecap: round;
   stroke-dasharray: var(--lp-circ);
   stroke-dashoffset: var(--lp-circ);
   animation: longpress-fill var(--lp-dur) linear forwards;
+}
+@keyframes longpress-fill {
+  to {
+    stroke-dashoffset: 0;
   }
-  @keyframes longpress-fill { to { stroke-dashoffset: 0; } }
-  /* Lưới nền rõ hơn khi ở Edit Mode (dễ canh vị trí) */
-  body.edit-mode .slot-cell {
+}
+/* Lưới nền rõ hơn khi ở Edit Mode (dễ canh vị trí) */
+body.edit-mode .slot-cell {
   border-color: rgba(0, 229, 255, 0.2);
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.85),
-              inset 0 0 0 1px rgba(0, 229, 255, 0.08);
-  }
-  /* Chế độ CHẠY: ẩn hẳn viền/lòng ô trống để deck trông như thiết bị thật;
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.85),
+    inset 0 0 0 1px rgba(0, 229, 255, 0.08);
+}
+/* Chế độ CHẠY: ẩn hẳn viền/lòng ô trống để deck trông như thiết bị thật;
    chỉ hiện lưới ở Chế độ Chỉnh sửa (dễ canh vị trí). */
-  .slot-cell { transition: opacity 0.2s ease; }
-  body:not(.edit-mode) .slot-cell { opacity: 0; }
-  /* Run Mode: con trỏ "bấm được"; Edit Mode: con trỏ "kéo được" */
-  body:not(.edit-mode) .grid-stack-item-content { cursor: pointer; }
-  body.edit-mode .grid-stack-item-content { cursor: pointer; }
-  .undo-toast {
+.slot-cell {
+  transition: opacity 0.2s ease;
+}
+body:not(.edit-mode) .slot-cell {
+  opacity: 0;
+}
+/* Run Mode: con trỏ "bấm được"; Edit Mode: con trỏ "kéo được" */
+body:not(.edit-mode) .grid-stack-item-content {
+  cursor: pointer;
+}
+body.edit-mode .grid-stack-item-content {
+  cursor: pointer;
+}
+.undo-toast {
   position: fixed;
   bottom: 18px;
   left: 50%;
@@ -222,9 +325,11 @@
   color: #e6edf3;
   font-size: 13px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
-  }
-  body.edit-mode .undo-toast { display: flex; }
-  .undo-toast button {
+}
+body.edit-mode .undo-toast {
+  display: flex;
+}
+.undo-toast button {
   border: 0;
   background: transparent;
   color: var(--accent);
@@ -232,10 +337,13 @@
   font-weight: 800;
   cursor: pointer;
   padding: 4px 8px;
-  }
-  /* Edit Mode: widget thanh mot khoi tinh, chi tile cha nhan tap */
-  body.edit-mode .grid-stack-item-content > * { pointer-events: none; }
-  .drag-handle, .btn-remove-tile {
+}
+/* Edit Mode: widget thanh mot khoi tinh, chi tile cha nhan tap */
+body.edit-mode .grid-stack-item-content > * {
+  pointer-events: none;
+}
+.drag-handle,
+.btn-remove-tile {
   display: none;
   position: absolute;
   top: 12px;
@@ -254,47 +362,80 @@
   touch-action: none;
   -webkit-user-select: none;
   user-select: none;
+}
+/* Hitbox 36x36 quanh nut 28px */
+.drag-handle::after,
+.btn-remove-tile::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+.drag-handle {
+  right: 12px;
+  cursor: grab;
+}
+.drag-handle svg {
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+.btn-remove-tile {
+  left: 12px;
+  cursor: pointer;
+}
+body.edit-mode .drag-handle,
+body.edit-mode .btn-remove-tile {
+  display: flex;
+}
+@keyframes edit-jiggle {
+  0%,
+  100% {
+    transform: rotate(-0.6deg);
   }
-  /* Hitbox 36x36 quanh nut 28px */
-  .drag-handle::after, .btn-remove-tile::after { content: ""; position: absolute; inset: -4px; }
-  .drag-handle { right: 12px; cursor: grab; }
-  .drag-handle svg { width: 16px; height: 16px; pointer-events: none; }
-  .btn-remove-tile { left: 12px; cursor: pointer; }
-  body.edit-mode .drag-handle, body.edit-mode .btn-remove-tile { display: flex; }
-  @keyframes edit-jiggle {
-  0%, 100% { transform: rotate(-0.6deg); }
-  50% { transform: rotate(0.6deg); }
+  50% {
+    transform: rotate(0.6deg);
   }
-  body.edit-mode .grid-stack-item:not(.ui-draggable-dragging):not(.ui-resizable-resizing) .grid-stack-item-content {
+}
+body.edit-mode
+  .grid-stack-item:not(.ui-draggable-dragging):not(.ui-resizable-resizing)
+  .grid-stack-item-content {
   animation: edit-jiggle 0.26s ease-in-out infinite;
-  }
-  body.edit-mode .grid-stack-item:nth-child(even):not(.ui-draggable-dragging) .grid-stack-item-content {
+}
+body.edit-mode
+  .grid-stack-item:nth-child(even):not(.ui-draggable-dragging)
+  .grid-stack-item-content {
   animation-direction: reverse;
   animation-delay: -0.1s;
+}
+@media (prefers-reduced-motion: reduce) {
+  body.edit-mode .grid-stack-item .grid-stack-item-content {
+    animation: none;
   }
-  @media (prefers-reduced-motion: reduce) {
-  body.edit-mode .grid-stack-item .grid-stack-item-content { animation: none; }
-  }
-  /* Ẩn tay cầm resize khi ở Run Mode */
-  body:not(.edit-mode) .ui-resizable-handle { display: none !important; }
-  /* =====================================================================
+}
+/* Ẩn tay cầm resize khi ở Run Mode */
+body:not(.edit-mode) .ui-resizable-handle {
+  display: none !important;
+}
+/* =====================================================================
    HIỆU ỨNG PHÍM 3D: NHẤN / RIPPLE / STATUS RING
    ===================================================================== */
-  /* 1. Nhấn phím: lún xuống + nén bóng + sáng viền LED (phản hồi tức thì)
+/* 1. Nhấn phím: lún xuống + nén bóng + sáng viền LED (phản hồi tức thì)
    Hiệu ứng cơ học chuẩn: --press-transform + bóng lõm --press-shadow. */
-  .grid-stack-item-content.keycap-pressed,
-  body:not(.edit-mode) .grid-stack-item-content:active {
+.grid-stack-item-content.keycap-pressed,
+body:not(.edit-mode) .grid-stack-item-content:active {
   transform: var(--press-transform);
   border-color: var(--accent) !important;
   box-shadow:
     0 2px 5px rgba(0, 0, 0, 0.7),
     0 0 18px var(--accent-glow),
     inset 0 3px 8px rgba(0, 0, 0, 0.8) !important;
-  transition: transform 0.05s ease, box-shadow 0.05s ease,
-              border-color 0.05s ease;
-  }
-  /* 2. Ripple: sóng neon quét từ tâm icon ra viền trong 120ms */
-  .key-ripple {
+  transition:
+    transform 0.05s ease,
+    box-shadow 0.05s ease,
+    border-color 0.05s ease;
+}
+/* 2. Ripple: sóng neon quét từ tâm icon ra viền trong 120ms */
+.key-ripple {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -304,19 +445,27 @@
   pointer-events: none;
   z-index: 3;
   transform: translate(-50%, -50%) scale(0.05);
-  background: radial-gradient(circle,
+  background: radial-gradient(
+    circle,
     rgba(0, 229, 255, 0.65) 0%,
     rgba(0, 229, 255, 0.28) 40%,
-    rgba(0, 229, 255, 0) 72%);
+    rgba(0, 229, 255, 0) 72%
+  );
   opacity: 0.95;
   animation: keyRipple 120ms ease-out forwards;
+}
+@keyframes keyRipple {
+  from {
+    transform: translate(-50%, -50%) scale(0.05);
+    opacity: 0.95;
   }
-  @keyframes keyRipple {
-  from { transform: translate(-50%, -50%) scale(0.05); opacity: 0.95; }
-  to   { transform: translate(-50%, -50%) scale(1);    opacity: 0; }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
   }
-  /* 3. Status Ring: lớp viền chớp trạng thái nằm trên cùng */
-  .grid-stack-item-content::after {
+}
+/* 3. Status Ring: lớp viền chớp trạng thái nằm trên cùng */
+.grid-stack-item-content::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -324,46 +473,50 @@
   pointer-events: none;
   opacity: 0;
   z-index: 4;
-  }
-  .grid-stack-item-content.status-success::after {
+}
+.grid-stack-item-content.status-success::after {
   animation: ringSuccess 300ms ease-out;
-  }
-  .grid-stack-item-content.status-error::after {
+}
+.grid-stack-item-content.status-error::after {
   animation: ringError 400ms ease-out;
-  }
-  @keyframes ringSuccess {
+}
+@keyframes ringSuccess {
   0% {
     opacity: 1;
-    box-shadow: inset 0 0 0 3px rgba(46, 204, 113, 0.95),
-                inset 0 0 16px rgba(46, 204, 113, 0.75);
+    box-shadow:
+      inset 0 0 0 3px rgba(46, 204, 113, 0.95),
+      inset 0 0 16px rgba(46, 204, 113, 0.75);
   }
   100% {
     opacity: 0;
-    box-shadow: inset 0 0 0 3px rgba(46, 204, 113, 0),
-                inset 0 0 0 rgba(46, 204, 113, 0);
+    box-shadow:
+      inset 0 0 0 3px rgba(46, 204, 113, 0),
+      inset 0 0 0 rgba(46, 204, 113, 0);
   }
-  }
-  @keyframes ringError {
+}
+@keyframes ringError {
   0% {
     opacity: 1;
-    box-shadow: inset 0 0 0 3px rgba(255, 71, 87, 0.95),
-                inset 0 0 16px rgba(255, 71, 87, 0.75);
+    box-shadow:
+      inset 0 0 0 3px rgba(255, 71, 87, 0.95),
+      inset 0 0 16px rgba(255, 71, 87, 0.75);
   }
   100% {
     opacity: 0;
-    box-shadow: inset 0 0 0 3px rgba(255, 71, 87, 0),
-                inset 0 0 0 rgba(255, 71, 87, 0);
+    box-shadow:
+      inset 0 0 0 3px rgba(255, 71, 87, 0),
+      inset 0 0 0 rgba(255, 71, 87, 0);
   }
-  }
-  /* =====================================================================
+}
+/* =====================================================================
    P1 — DIỆN MẠO "STREAM DECK THẬT"
    (1) Màn hình LCD cho mỗi phím   (2) bệ liền khối + vignette
    (3) màn "sáng lên" khi bấm      (4) nhả lò xo (spring) khi thả
    (5) tự tối khi rảnh             (6) ô "Cài đặt Deck" (Chế độ Chạy/Edit + Độ sáng)
    "Màn hình" = lớp nội dung của phím (icon, hoặc đơn vị slider).
    ===================================================================== */
-  /* (2) Bệ liền khối: viền nhôm mảnh + tối dần về 4 góc */
-  .deck-viewport::before {
+/* (2) Bệ liền khối: viền nhôm mảnh + tối dần về 4 góc */
+.deck-viewport::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -372,17 +525,16 @@
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.055),
     inset 0 0 32px rgba(0, 0, 0, 0.6);
-  }
-  .deck-viewport::after {
+}
+.deck-viewport::after {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  background: radial-gradient(135% 115% at 50% 45%,
-    rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.5) 100%);
-  }
-  /* =====================================================================
+  background: radial-gradient(135% 115% at 50% 45%, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.5) 100%);
+}
+/* =====================================================================
    PHÍM ĐỒNG HỒ (mini_clock) — thiết kế "LCD + watch face"
    ---------------------------------------------------------------------
    Màn hình thật theo lưới 8x5 (panel 1280x800): 1x1 -> ~128x128 px,

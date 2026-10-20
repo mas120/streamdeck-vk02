@@ -31,15 +31,23 @@ export function createWidgetRenderer(services) {
       widget: volumeWidget,
       render(el, content) {
         const currentVolume = clampInt(parseInt(el.dataset.target, 10), 0, 100, 50);
-        content.innerHTML = volumeWidget.markup(isVectorIcon(el.dataset.icon) ? vectorMarkup(el.dataset.icon)
-          : (isDefaultVolIcon(el.dataset.icon) ? VOL_GLYPH : el.dataset.icon), currentVolume);
+        content.innerHTML = volumeWidget.markup(
+          isVectorIcon(el.dataset.icon)
+            ? vectorMarkup(el.dataset.icon)
+            : isDefaultVolIcon(el.dataset.icon)
+              ? VOL_GLYPH
+              : el.dataset.icon,
+          currentVolume
+        );
         volumeWidget.setup(content, el);
       },
     },
     app_slider: {
       widget: appSliderWidget,
       render(el, content) {
-        content.innerHTML = appSliderWidget.markup(formatIconSource(el.dataset.icon, el.dataset.icon2x));
+        content.innerHTML = appSliderWidget.markup(
+          formatIconSource(el.dataset.icon, el.dataset.icon2x)
+        );
         appSliderWidget.setup(content, el);
         appSliderWidget.update(el);
         appSliderWidget.refresh().then(() => appSliderWidget.update(el));

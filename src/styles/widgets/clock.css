@@ -1,4 +1,4 @@
-  .clock-unit {
+.clock-unit {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -7,23 +7,30 @@
   gap: 3px;
   padding: 6px 8px;
   overflow: hidden;
-  container-type: size;   /* bật đơn vị cqw/cqh cho các phần tử con */
+  container-type: size; /* bật đơn vị cqw/cqh cho các phần tử con */
   z-index: 2;
-  }
-  /* Quầng sáng phía sau số/kim: màn hình "phát sáng" thay vì phẳng */
-  .clock-unit::before {
+}
+/* Quầng sáng phía sau số/kim: màn hình "phát sáng" thay vì phẳng */
+.clock-unit::before {
   content: "";
   position: absolute;
   left: -14%;
   right: -14%;
   top: -28%;
   height: 120%;
-  background: radial-gradient(58% 55% at 50% 45%,
-    rgba(0, 229, 255, 0.14) 0%, rgba(0, 229, 255, 0.06) 38%, rgba(0, 229, 255, 0) 74%);
+  background: radial-gradient(
+    58% 55% at 50% 45%,
+    rgba(0, 229, 255, 0.14) 0%,
+    rgba(0, 229, 255, 0.06) 38%,
+    rgba(0, 229, 255, 0) 74%
+  );
   pointer-events: none;
-  }
-  .clock-unit > * { position: relative; z-index: 1; }
-  .clock-label {
+}
+.clock-unit > * {
+  position: relative;
+  z-index: 1;
+}
+.clock-label {
   font-size: 9px;
   font-size: min(5.4cqw, 9.4cqh);
   font-weight: 800;
@@ -36,12 +43,16 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  }
-  /* Mặt số analog ở ô 1x1: nhường chỗ cho mặt số -> ẩn nhãn */
-  .keycap-clock-analog.is-mini .clock-label { display: none; }
-  /* --- (a) DIGITAL: giờ hero (TRẮNG TUYẾT, mono) + ngày ở góc + chip giây --- */
-  .keycap-clock-digital { color: #f4f8ff; }
-  .clock-top {
+}
+/* Mặt số analog ở ô 1x1: nhường chỗ cho mặt số -> ẩn nhãn */
+.keycap-clock-analog.is-mini .clock-label {
+  display: none;
+}
+/* --- (a) DIGITAL: giờ hero (TRẮNG TUYẾT, mono) + ngày ở góc + chip giây --- */
+.keycap-clock-digital {
+  color: #f4f8ff;
+}
+.clock-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -52,25 +63,35 @@
   color: #7d879b;
   font-size: 9px;
   font-size: min(6cqw, 10cqh);
-  }
-  .keycap-clock-digital.is-mini .clock-top { font-size: 10px; font-size: 8cqw; }
-    .keycap-clock-digital.is-mini { padding-top: 4px; }
-  .keycap-clock-digital.is-big .clock-top { font-size: 15px; font-size: 6.4cqw; }
-  .clock-date {
+}
+.keycap-clock-digital.is-mini .clock-top {
+  font-size: 10px;
+  font-size: 8cqw;
+}
+.keycap-clock-digital.is-mini {
+  padding-top: 4px;
+}
+.keycap-clock-digital.is-big .clock-top {
+  font-size: 15px;
+  font-size: 6.4cqw;
+}
+.clock-date {
   font-weight: 800;
   letter-spacing: 1.1px;
   text-transform: uppercase;
   white-space: nowrap;
   color: rgba(195, 210, 230, 0.9);
-  }
-  .clock-secs-chip {
+}
+.clock-secs-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.42em;
   padding: 0.24em 0.62em;
   border-radius: 999px;
   background: rgba(0, 229, 255, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(0, 229, 255, 0.16), 0 0 12px rgba(0, 229, 255, 0.08);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 229, 255, 0.16),
+    0 0 12px rgba(0, 229, 255, 0.08);
   color: #8ef2ff;
   font-family: var(--font-num);
   font-variant-numeric: tabular-nums;
@@ -78,29 +99,36 @@
   letter-spacing: 0.7px;
   /* Làm dịu chip giây: giờ hero vẫn là điểm nhấn số 1 trên ô */
   opacity: 0.75;
-  }
-  /* Chấm nhấp nháy trong chip giây (nhịp 1 giây) */
-  .clock-pulse {
+}
+/* Chấm nhấp nháy trong chip giây (nhịp 1 giây) */
+.clock-pulse {
   width: 0.42em;
   height: 0.42em;
   border-radius: 50%;
   background: var(--accent);
   box-shadow: 0 0 6px var(--accent);
   animation: clockPulse 1s ease-in-out infinite;
+}
+@keyframes clockPulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.78);
   }
-  @keyframes clockPulse {
-  0%, 100% { opacity: 0.25; transform: scale(0.78); }
-  50% { opacity: 1; transform: scale(1); }
+  50% {
+    opacity: 1;
+    transform: scale(1);
   }
-  .clock-hero {
+}
+.clock-hero {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   min-height: 0;
   line-height: 1;
-  }
-  .clock-time {
+}
+.clock-time {
   font-family: var(--font-num);
   font-variant-numeric: tabular-nums;
   font-weight: 800;
@@ -108,44 +136,56 @@
   line-height: 1;
   color: #f3f8ff;
   filter: drop-shadow(0 0 10px rgba(129, 208, 255, 0.18))
-          drop-shadow(0 0 22px rgba(190, 214, 240, 0.18));
+    drop-shadow(0 0 22px rgba(190, 214, 240, 0.18));
   font-size: 60px;
   font-size: 21cqw;
-  }
-  /* Chữ hero: gradient trắng -> trắng xanh rất nhạt (giữ tông "trắng tuyết").
+}
+/* Chữ hero: gradient trắng -> trắng xanh rất nhạt (giữ tông "trắng tuyết").
    Chỉ bật khi trình duyệt hỗ trợ background-clip:text. */
-  @supports (background-clip: text) or (-webkit-background-clip: text) {
+@supports (background-clip: text) or (-webkit-background-clip: text) {
   .clock-time {
     background: linear-gradient(180deg, #ffffff 0%, #f2f8ff 52%, #cfe4f7 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-  }
-  .keycap-clock-digital.is-mini .clock-time { font-size: 34px; font-size: 27cqw; }
-  .keycap-clock-digital.is-big .clock-time { font-size: 84px; font-size: 29cqw; }
-  .clock-bar {
+}
+.keycap-clock-digital.is-mini .clock-time {
+  font-size: 34px;
+  font-size: 27cqw;
+}
+.keycap-clock-digital.is-big .clock-time {
+  font-size: 84px;
+  font-size: 29cqw;
+}
+.clock-bar {
   width: 100%;
   height: 3px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.07);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
   overflow: hidden;
-  }
-  .keycap-clock-digital.is-big .clock-bar { height: 5px; }
-  .clock-bar-fill {
+}
+.keycap-clock-digital.is-big .clock-bar {
+  height: 5px;
+}
+.clock-bar-fill {
   display: block;
   height: 100%;
   width: 0%;
   border-radius: inherit;
   background: linear-gradient(90deg, rgba(0, 229, 255, 0.35), var(--accent));
   box-shadow: 0 0 8px rgba(0, 229, 255, 0.75);
-  }
-  /* Chỉ bật transition SAU khung hình đầu (thanh quét không "chạy khởi động") */
-  .keycap-clock-digital.is-animating .clock-bar-fill { transition: width 1s linear; }
-  /* --- (b) ANALOG: mặt số watch-face (vành, vạch, số, cung giây, 3 kim) --- */
-  .keycap-clock-analog { padding: 7px 7px 5px; }
-  .clock-bezel {
+}
+/* Chỉ bật transition SAU khung hình đầu (thanh quét không "chạy khởi động") */
+.keycap-clock-digital.is-animating .clock-bar-fill {
+  transition: width 1s linear;
+}
+/* --- (b) ANALOG: mặt số watch-face (vành, vạch, số, cung giây, 3 kim) --- */
+.keycap-clock-analog {
+  padding: 7px 7px 5px;
+}
+.clock-bezel {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -154,18 +194,20 @@
   width: 100%;
   height: 100%;
   min-height: 0;
-  }
-  .clock-wide-meta { display: none; }
-  .keycap-clock-analog.is-short .clock-bezel {
+}
+.clock-wide-meta {
+  display: none;
+}
+.keycap-clock-analog.is-short .clock-bezel {
   flex-direction: row;
   gap: min(4cqw, 4cqh);
-  }
-  .keycap-clock-analog.is-short .clock-face {
+}
+.keycap-clock-analog.is-short .clock-face {
   flex: 0 0 min(88cqh, 44cqw);
   width: min(88cqh, 44cqw);
   height: 100%;
-  }
-  .keycap-clock-analog.is-short .clock-wide-meta {
+}
+.keycap-clock-analog.is-short .clock-wide-meta {
   display: flex;
   flex: 1 1 auto;
   min-width: 0;
@@ -177,49 +219,70 @@
   font-family: var(--font-num);
   font-size: max(10px, min(7cqw, 13cqh));
   font-variant-numeric: tabular-nums;
-  }
-  .clock-wide-date { color: rgba(232, 241, 252, 0.92); font-weight: 700; white-space: nowrap; }
-  .clock-wide-zone { color: var(--accent); font-weight: 700; white-space: nowrap; }
-  .clock-face {
+}
+.clock-wide-date {
+  color: rgba(232, 241, 252, 0.92);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.clock-wide-zone {
+  color: var(--accent);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.clock-face {
   flex: 1 1 auto;
   min-height: 0;
   min-width: 0;
   width: 100%;
   overflow: visible;
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
-  }
-  .clock-rim { fill: none; stroke: url(#clockRimGrad); stroke-width: 2.2; }
-  .clock-dial { fill: url(#clockDialGrad); stroke: rgba(255, 255, 255, 0.07); stroke-width: 0.6; }
-  .clock-glare { fill: url(#clockGlareGrad); }
-  /* 60 vạch phút + 12 vạch giờ; 12/3/6/9 đậm neon */
-  .clock-tick {
+}
+.clock-rim {
+  fill: none;
+  stroke: url(#clockRimGrad);
+  stroke-width: 2.2;
+}
+.clock-dial {
+  fill: url(#clockDialGrad);
+  stroke: rgba(255, 255, 255, 0.07);
+  stroke-width: 0.6;
+}
+.clock-glare {
+  fill: url(#clockGlareGrad);
+}
+/* 60 vạch phút + 12 vạch giờ; 12/3/6/9 đậm neon */
+.clock-tick {
   stroke: rgba(255, 255, 255, 0.16);
   stroke-width: 0.7;
   stroke-linecap: round;
-  }
-  .clock-tick.is-major { stroke: rgba(255, 255, 255, 0.42); stroke-width: 1.5; }
-  .clock-tick.is-quarter {
+}
+.clock-tick.is-major {
+  stroke: rgba(255, 255, 255, 0.42);
+  stroke-width: 1.5;
+}
+.clock-tick.is-quarter {
   stroke: var(--accent);
   stroke-width: 1.9;
   filter: drop-shadow(0 0 2.4px rgba(0, 229, 255, 0.85));
-  }
-  /* Số 12 / 3 / 6 / 9 trên mặt số */
-  .clock-num {
+}
+/* Số 12 / 3 / 6 / 9 trên mặt số */
+.clock-num {
   fill: rgba(233, 246, 255, 0.8);
   font-family: var(--font-num);
   font-size: 10.5px;
   font-weight: 800;
   text-anchor: middle;
   dominant-baseline: middle;
-  }
-  /* Cung giây chạy quanh vành: 1 vòng đầy = 1 phút (JS ghi --sec-offset) */
-  .clock-arc-track {
+}
+/* Cung giây chạy quanh vành: 1 vòng đầy = 1 phút (JS ghi --sec-offset) */
+.clock-arc-track {
   fill: none;
   stroke: rgba(0, 229, 255, 0.13);
   stroke-width: 1.1;
-  stroke-dasharray: 286.51;    /* 2 * pi * 45.6 */
-  }
-  .clock-arc {
+  stroke-dasharray: 286.51; /* 2 * pi * 45.6 */
+}
+.clock-arc {
   fill: none;
   stroke: var(--accent);
   stroke-width: 1.7;
@@ -228,27 +291,38 @@
   /* JS ghi --sec-offset (0..286.51) để cung chạy đúng tiến độ trong phút */
   stroke-dashoffset: var(--sec-offset, 286.51);
   filter: drop-shadow(0 0 3px rgba(0, 229, 255, 0.9));
-  }
-  /* Kim: xoay quanh tâm (50,50) theo biến --angle do JS ghi vào */
-  .clock-hand {
+}
+/* Kim: xoay quanh tâm (50,50) theo biến --angle do JS ghi vào */
+.clock-hand {
   transform-box: view-box;
   transform-origin: 50% 50%;
   transform: rotate(var(--angle, 0deg));
-  }
-  /* Chỉ bật transition SAU khung hình đầu để kim không "quay khởi động" */
-  .keycap-clock-analog.is-animating .clock-hand { transition: transform 0.1s linear; }
-  .hand-hour { fill: #eaf6ff; filter: drop-shadow(0 0 3px rgba(234, 246, 255, 0.45)); }
-  .hand-minute { fill: #bfeaff; filter: drop-shadow(0 0 3.5px rgba(0, 229, 255, 0.5)); }
-  /* Kim giây đỏ neon + đối trọng — điểm nhấn của mặt số */
-  .hand-second {
+}
+/* Chỉ bật transition SAU khung hình đầu để kim không "quay khởi động" */
+.keycap-clock-analog.is-animating .clock-hand {
+  transition: transform 0.1s linear;
+}
+.hand-hour {
+  fill: #eaf6ff;
+  filter: drop-shadow(0 0 3px rgba(234, 246, 255, 0.45));
+}
+.hand-minute {
+  fill: #bfeaff;
+  filter: drop-shadow(0 0 3.5px rgba(0, 229, 255, 0.5));
+}
+/* Kim giây đỏ neon + đối trọng — điểm nhấn của mặt số */
+.hand-second {
   stroke: #ff4d6d;
   stroke-width: 1.1;
   stroke-linecap: round;
   filter: drop-shadow(0 0 5px rgba(255, 77, 109, 0.85));
-  }
-  .hand-second circle { fill: #ff4d6d; stroke: none; }
-  /* Cửa sổ ngày trên mặt số */
-  .clock-date-mini {
+}
+.hand-second circle {
+  fill: #ff4d6d;
+  stroke: none;
+}
+/* Cửa sổ ngày trên mặt số */
+.clock-date-mini {
   fill: var(--accent);
   font-family: var(--font-num);
   font-size: 6.4px;
@@ -256,10 +330,17 @@
   letter-spacing: 0.6px;
   text-anchor: middle;
   dominant-baseline: middle;
-  }
-  .clock-center-cap { fill: #0a1120; stroke: rgba(0, 229, 255, 0.45); stroke-width: 0.8; }
-  .clock-center-dot { fill: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
-  /* ---------------------------------------------------------------------
+}
+.clock-center-cap {
+  fill: #0a1120;
+  stroke: rgba(0, 229, 255, 0.45);
+  stroke-width: 0.8;
+}
+.clock-center-dot {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 4px var(--accent));
+}
+/* ---------------------------------------------------------------------
    (c) THẺ LẬT (flip) 24 GIỜ: 4 tấm HH MM, mỗi tấm 2 nửa TĨNH + 2 LÁ LẬT
    - Mặt 24 GIỜ (0h..23h) nên KHÔNG có nhãn AM/PM: 4 tấm số là toàn bộ
      nội dung nhìn thấy, không chữ nào chen vào.
@@ -267,13 +348,13 @@
      size) nên số đo theo CHÍNH bề ngang tấm -> 4 tấm luôn đều nhau ở
      mọi cỡ ô (1x1 / 2x1 / 3x1 / 2x2), không phụ thuộc bề ngang cả ô.
    --------------------------------------------------------------------- */
-  .keycap-clock-flip {
-  --flip-ink: #f4f8ff;         /* màu số (nửa tĩnh + lá lật) */
-  --flip-gap: 4px;             /* khe giữa 4 tấm (dấu hai chấm có khe riêng) */
+.keycap-clock-flip {
+  --flip-ink: #f4f8ff; /* màu số (nửa tĩnh + lá lật) */
+  --flip-gap: 4px; /* khe giữa 4 tấm (dấu hai chấm có khe riêng) */
   gap: 2px;
   padding: 6px 6px 4px;
-  }
-  .flip-row {
+}
+.flip-row {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -281,22 +362,23 @@
   width: 100%;
   height: 100%;
   min-height: 0;
-  perspective: 260px;          /* chiều sâu cho lá lật rotateX */
-  }
-  .flip-card {
+  perspective: 260px; /* chiều sâu cho lá lật rotateX */
+}
+.flip-card {
   position: relative;
   flex: 1 1 0;
   min-width: 0;
   height: 100%;
   border-radius: 7px;
   background: #0b0e15;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07),
-              0 2px 6px rgba(0, 0, 0, 0.55);
-  container-type: size;        /* số bên trong đo theo bề ngang TẤM */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    0 2px 6px rgba(0, 0, 0, 0.55);
+  container-type: size; /* số bên trong đo theo bề ngang TẤM */
   transform-style: preserve-3d;
   overflow: hidden;
-  }
-  .flip-card::after {
+}
+.flip-card::after {
   content: "";
   position: absolute;
   z-index: 5;
@@ -306,10 +388,12 @@
   height: 1px;
   pointer-events: none;
   background: rgba(255, 255, 255, 0.04);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.85), 0 -1px 0 rgba(255, 255, 255, 0.04);
-  }
-  /* Dấu hai chấm giữa giờ và phút: 2 chấm tròn, KHÔNG phải chữ */
-  .flip-colon {
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.85),
+    0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+/* Dấu hai chấm giữa giờ và phút: 2 chấm tròn, KHÔNG phải chữ */
+.flip-colon {
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
@@ -318,54 +402,54 @@
   gap: min(18cqw, 12cqh);
   height: 100%;
   padding: 0 min(4cqw, 5cqh);
-  }
-  .flip-colon i {
+}
+.flip-colon i {
   width: 4px;
   height: 4px;
   border-radius: 50%;
   background: var(--flip-ink);
   opacity: 0.55;
-  }
-  /* 2 nửa TĨNH (.flip-half) + 2 LÁ LẬT (.flip-fold) đều chiếm nửa tấm; mỗi
+}
+/* 2 nửa TĨNH (.flip-half) + 2 LÁ LẬT (.flip-fold) đều chiếm nửa tấm; mỗi
    khối cắt 1 nửa con số (số cao gấp đôi nửa tấm -> xem .flip-digit). */
-  .flip-half,
-  .flip-fold {
+.flip-half,
+.flip-fold {
   position: absolute;
   left: 0;
   right: 0;
   height: 50%;
   overflow: hidden;
   backface-visibility: hidden;
-  }
-  .flip-top,
-  .flip-fold-top {
+}
+.flip-top,
+.flip-fold-top {
   top: 0;
   border-radius: 7px 7px 0 0;
   background: linear-gradient(180deg, #202634 0%, #141a26 100%);
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.7);
-  }
-  .flip-bottom,
-  .flip-fold-bottom {
+}
+.flip-bottom,
+.flip-fold-bottom {
   bottom: 0;
   border-radius: 0 0 7px 7px;
   background: linear-gradient(180deg, #0f141d 0%, #05070b 100%);
-  }
-  /* Lá lật lúc NGHỈ nằm vuông góc (khuất) -> chỉ thấy 2 nửa tĩnh. */
-  .flip-fold-top {
+}
+/* Lá lật lúc NGHỈ nằm vuông góc (khuất) -> chỉ thấy 2 nửa tĩnh. */
+.flip-fold-top {
   transform: rotateX(-90deg);
   transform-origin: 50% 100%;
   z-index: 3;
-  }
-  .flip-fold-bottom {
+}
+.flip-fold-bottom {
   transform: rotateX(90deg);
   transform-origin: 50% 0%;
   z-index: 4;
-  }
-  .flip-digit {
+}
+.flip-digit {
   position: absolute;
   left: 0;
   right: 0;
-  height: 200%;                /* gấp đôi nửa tấm -> số nằm đúng tâm tấm */
+  height: 200%; /* gấp đôi nửa tấm -> số nằm đúng tâm tấm */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -376,36 +460,60 @@
   color: var(--flip-ink);
   text-shadow: 0 0 10px rgba(190, 214, 240, 0.22);
   font-size: min(150cqw, 92cqh);
-  }
-  /* Nửa TRÊN lấy phần trên của số, nửa DƯỚI lấy phần dưới (khớp ở khe giữa) */
-  .flip-top > .flip-digit,
-  .flip-fold-top > .flip-digit { top: 0; }
-  .flip-bottom > .flip-digit,
-  .flip-fold-bottom > .flip-digit { bottom: 0; }
-  /* 2 NHỊP LẬT: lá TRÊN lật xuống (0-300ms) RỒI lá DƯỚI đáp xuống (300-600ms).
+}
+/* Nửa TRÊN lấy phần trên của số, nửa DƯỚI lấy phần dưới (khớp ở khe giữa) */
+.flip-top > .flip-digit,
+.flip-fold-top > .flip-digit {
+  top: 0;
+}
+.flip-bottom > .flip-digit,
+.flip-fold-bottom > .flip-digit {
+  bottom: 0;
+}
+/* 2 NHỊP LẬT: lá TRÊN lật xuống (0-300ms) RỒI lá DƯỚI đáp xuống (300-600ms).
    JS gỡ .is-flipping khi animationend của lá dưới -> animation chạy lại. */
-  .flip-card.is-flipping > .flip-fold-top {
+.flip-card.is-flipping > .flip-fold-top {
   animation: flipFoldTop 300ms ease-in;
-  }
-  .flip-card.is-flipping > .flip-fold-bottom {
+}
+.flip-card.is-flipping > .flip-fold-bottom {
   animation: flipFoldBottom 300ms ease-out 300ms;
+}
+@keyframes flipFoldTop {
+  0% {
+    transform: rotateX(0deg);
   }
-  @keyframes flipFoldTop {
-  0% { transform: rotateX(0deg); }
-  100% { transform: rotateX(-90deg); }
+  100% {
+    transform: rotateX(-90deg);
   }
-  @keyframes flipFoldBottom {
-  0% { transform: rotateX(90deg); }
-  100% { transform: rotateX(0deg); }
+}
+@keyframes flipFoldBottom {
+  0% {
+    transform: rotateX(90deg);
   }
-  /* Cỡ ô: 1x1 (is-mini) bỏ dấu hai chấm cho 4 tấm rộng ra; ô rộng (is-short/
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+/* Cỡ ô: 1x1 (is-mini) bỏ dấu hai chấm cho 4 tấm rộng ra; ô rộng (is-short/
    is-big) nới khe giữa các tấm cho thoáng. */
-  .keycap-clock-flip.is-mini { --flip-gap: 2px; padding: 4px; }
-  .keycap-clock-flip.is-mini .flip-colon { display: none; }
-  .keycap-clock-flip.is-mini .flip-card { border-radius: 4px; }
-  .keycap-clock-flip.is-short { --flip-gap: 6px; }
-  .keycap-clock-flip.is-big { --flip-gap: 8px; padding: 8px; }
-  /* =====================================================================
+.keycap-clock-flip.is-mini {
+  --flip-gap: 2px;
+  padding: 4px;
+}
+.keycap-clock-flip.is-mini .flip-colon {
+  display: none;
+}
+.keycap-clock-flip.is-mini .flip-card {
+  border-radius: 4px;
+}
+.keycap-clock-flip.is-short {
+  --flip-gap: 6px;
+}
+.keycap-clock-flip.is-big {
+  --flip-gap: 8px;
+  padding: 8px;
+}
+/* =====================================================================
    PHÍM THỜI TIẾT (weather_widget) — 3x1 MẶC ĐỊNH, CO THEO CỠ Ô
    ---------------------------------------------------------------------
    2 SKIN (data-skin, chọn trong modal "Cài Đặt Phím Bấm"):

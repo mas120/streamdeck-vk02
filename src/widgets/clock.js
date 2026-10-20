@@ -1,9 +1,4 @@
-import {
-  isEditMode,
-  keyContent,
-  pressFeedback,
-  releaseFeedback,
-} from '../core/mode-manager.js';
+import { isEditMode, keyContent, pressFeedback, releaseFeedback } from '../core/mode-manager.js';
 
 export const CLOCK_DEFAULT = { face: 'digital', tz: 7, label: 'HÀ NỘI' };
 const CLOCK_WEEKDAY = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
@@ -21,20 +16,29 @@ export function normalizeClockFace(value) {
 
 export function parseClockCfg(el) {
   let raw = {};
-  try { raw = JSON.parse(el.dataset.cfg || '{}') || {}; } catch (_) {}
+  try {
+    raw = JSON.parse(el.dataset.cfg || '{}') || {};
+  } catch (_) {}
   const parts = String(el.dataset.target || '').split(',');
   const face = normalizeClockFace(raw.face || parts[0] || CLOCK_DEFAULT.face);
   const tz = clampFloat(raw.tz !== undefined ? raw.tz : parts[1], -12, 14, CLOCK_DEFAULT.tz);
-  const label = typeof raw.label === 'string' && raw.label.trim()
-    ? raw.label.trim()
-    : (parts[2] || '').trim();
+  const label =
+    typeof raw.label === 'string' && raw.label.trim() ? raw.label.trim() : (parts[2] || '').trim();
   return { face, tz, label: label.toUpperCase() };
 }
 
 function escapeHtml(value) {
-  return String(value == null ? '' : value).replace(/[&<>"']/g, (character) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  }[character]));
+  return String(value == null ? '' : value).replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      })[character]
+  );
 }
 
 export function clockZoneLabel(tz) {
@@ -63,9 +67,11 @@ function clockTickMarkup() {
   for (let index = 0; index < 60; index++) {
     const major = index % 5 === 0;
     const quarter = index % 15 === 0;
-    const radius = quarter ? 38.6 : (major ? 40.4 : 42.2);
-    const className = 'clock-tick' + (quarter ? ' is-quarter' : (major ? ' is-major' : ''));
-    ticks.push(`<line class="${className}" x1="50" y1="6.40" x2="50" y2="${(50 - radius).toFixed(2)}" transform="rotate(${index * 6} 50 50)"></line>`);
+    const radius = quarter ? 38.6 : major ? 40.4 : 42.2;
+    const className = 'clock-tick' + (quarter ? ' is-quarter' : major ? ' is-major' : '');
+    ticks.push(
+      `<line class="${className}" x1="50" y1="6.40" x2="50" y2="${(50 - radius).toFixed(2)}" transform="rotate(${index * 6} 50 50)"></line>`
+    );
   }
   return ticks.join('');
 }
@@ -221,8 +227,9 @@ function update(entry, { applyWidgetTier }) {
   const titleText = cfg.label ? `${cfg.label} · ${clockZoneLabel(cfg.tz)}` : labelText;
   if (unit.title !== titleText) unit.title = titleText;
 
-  const milliseconds = ((now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds()) * 1000
-    + now.getMilliseconds();
+  const milliseconds =
+    (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) * 1000 +
+    now.getMilliseconds();
   const minuteFraction = (now.getSeconds() * 1000 + now.getMilliseconds()) / 60000;
   const dateText = clockDateShort(now);
 
@@ -230,17 +237,24 @@ function update(entry, { applyWidgetTier }) {
     setClockHand(entry.handSecond, (milliseconds / 1000) * 6);
     setClockHand(entry.handMinute, (milliseconds / 60000) * 6);
     setClockHand(entry.handHour, (milliseconds / 3600000) * 30);
-    if (entry.arc) entry.arc.style.setProperty('--sec-offset', (CLOCK_ARC_LEN * (1 - minuteFraction)).toFixed(2));
-    if (entry.dateMini && entry.dateMini.textContent !== dateText) entry.dateMini.textContent = dateText;
-    if (entry.wideDate && entry.wideDate.textContent !== dateText) entry.wideDate.textContent = dateText;
+    if (entry.arc)
+      entry.arc.style.setProperty(
+        '--sec-offset',
+        (CLOCK_ARC_LEN * (1 - minuteFraction)).toFixed(2)
+      );
+    if (entry.dateMini && entry.dateMini.textContent !== dateText)
+      entry.dateMini.textContent = dateText;
+    if (entry.wideDate && entry.wideDate.textContent !== dateText)
+      entry.wideDate.textContent = dateText;
     const zoneText = clockZoneLabel(cfg.tz);
-    if (entry.wideZone && entry.wideZone.textContent !== zoneText) entry.wideZone.textContent = zoneText;
+    if (entry.wideZone && entry.wideZone.textContent !== zoneText)
+      entry.wideZone.textContent = zoneText;
     return;
   }
 
   if (cfg.face === 'flip') {
-    const digits = String(now.getHours()).padStart(2, '0')
-      + String(now.getMinutes()).padStart(2, '0');
+    const digits =
+      String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
     entry.flipCards.forEach((card, index) => setFlipCard(card, digits[index]));
     return;
   }
@@ -248,7 +262,8 @@ function update(entry, { applyWidgetTier }) {
   const timeText = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   if (entry.time && entry.time.textContent !== timeText) entry.time.textContent = timeText;
   const secondsText = String(now.getSeconds()).padStart(2, '0');
-  if (entry.seconds && entry.seconds.textContent !== secondsText) entry.seconds.textContent = secondsText;
+  if (entry.seconds && entry.seconds.textContent !== secondsText)
+    entry.seconds.textContent = secondsText;
   if (entry.date && entry.date.textContent !== dateText) entry.date.textContent = dateText;
   if (entry.bar) entry.bar.style.width = (minuteFraction * 100).toFixed(2) + '%';
 }
@@ -303,7 +318,9 @@ export const clockWidget = {
     const label = cfg.label || clockZoneLabel(cfg.tz);
     return cfg.face === 'analog'
       ? clockAnalogMarkup(label)
-      : (cfg.face === 'flip' ? clockFlipMarkup(label) : clockDigitalMarkup(label));
+      : cfg.face === 'flip'
+        ? clockFlipMarkup(label)
+        : clockDigitalMarkup(label);
   },
   setup,
   register,

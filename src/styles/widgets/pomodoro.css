@@ -18,11 +18,11 @@
 .pomodoro-unit.forest-theme {
   background: linear-gradient(180deg, rgba(27, 46, 39, 0.96), rgba(17, 25, 23, 0.98)) !important;
   color: #ffffff !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
 }
 
 .pomodoro-unit.forest-theme .timer-bg {
-  stroke: rgba(255, 255, 255, 0.10) !important;
+  stroke: rgba(255, 255, 255, 0.1) !important;
   stroke-width: 5 !important;
 }
 
@@ -48,12 +48,11 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  background: radial-gradient(circle at center,
-    #f3e8b9 0%,
-    #d7c98f 58%,
-    #8d653b 100%);
+  background: radial-gradient(circle at center, #f3e8b9 0%, #d7c98f 58%, #8d653b 100%);
   border-radius: 50%;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 6px 16px rgba(0, 0, 0, 0.28);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.15),
+    0 6px 16px rgba(0, 0, 0, 0.28);
   padding-bottom: 10%;
   z-index: 1;
   pointer-events: none;
@@ -82,22 +81,42 @@
   height: 100%;
   transform: scale(1.9);
   transform-origin: center bottom;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.28));
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.28));
 }
 
-.forest-tree.tree-seed svg { transform: scale(1.25); }
-.forest-tree.tree-sprout svg { transform: scale(1.4); }
-.forest-tree.tree-growing svg { transform: scale(1.65); }
+.forest-tree.tree-seed svg {
+  transform: scale(1.25);
+}
+.forest-tree.tree-sprout svg {
+  transform: scale(1.4);
+}
+.forest-tree.tree-growing svg {
+  transform: scale(1.65);
+}
 
-.tree-seed, .tree-sprout, .tree-growing, .tree-full, .tree-dead {
+.tree-seed,
+.tree-sprout,
+.tree-growing,
+.tree-full,
+.tree-dead {
   display: none;
 }
 
-.pomodoro-unit[data-tree="seed"] .tree-seed { display: block; }
-.pomodoro-unit[data-tree="sprout"] .tree-sprout { display: block; }
-.pomodoro-unit[data-tree="growing"] .tree-growing { display: block; }
-.pomodoro-unit[data-tree="full"] .tree-full { display: block; }
-.pomodoro-unit[data-tree="dead"] .tree-dead { display: block; }
+.pomodoro-unit[data-tree="seed"] .tree-seed {
+  display: block;
+}
+.pomodoro-unit[data-tree="sprout"] .tree-sprout {
+  display: block;
+}
+.pomodoro-unit[data-tree="growing"] .tree-growing {
+  display: block;
+}
+.pomodoro-unit[data-tree="full"] .tree-full {
+  display: block;
+}
+.pomodoro-unit[data-tree="dead"] .tree-dead {
+  display: block;
+}
 
 .tree-dead {
   filter: grayscale(1) brightness(0.92) contrast(1.18) drop-shadow(0 0 6px rgba(255, 80, 80, 0.35)) !important;
@@ -157,10 +176,19 @@
 }
 
 @keyframes forestComplete {
-  0%, 100% { transform: translateX(-50%) scale(1) translateY(0); }
-  25% { transform: translateX(-50%) scale(1.06) translateY(-4px); }
-  50% { transform: translateX(-50%) scale(1.03) translateY(-2px); }
-  75% { transform: translateX(-50%) scale(1.06) translateY(-4px); }
+  0%,
+  100% {
+    transform: translateX(-50%) scale(1) translateY(0);
+  }
+  25% {
+    transform: translateX(-50%) scale(1.06) translateY(-4px);
+  }
+  50% {
+    transform: translateX(-50%) scale(1.03) translateY(-2px);
+  }
+  75% {
+    transform: translateX(-50%) scale(1.06) translateY(-4px);
+  }
 }
 
 .pomodoro-unit.forest-theme[data-state="complete"] .forest-tree {
@@ -168,7 +196,10 @@
 }
 
 .pomodoro-unit.forest-theme:not(.is-tall)[data-state="complete"] .forest-plate {
-  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.24), 0 6px 16px rgba(0, 0, 0, 0.28), 0 0 22px var(--forest-progress-glow);
+  box-shadow:
+    inset 0 3px 10px rgba(0, 0, 0, 0.24),
+    0 6px 16px rgba(0, 0, 0, 0.28),
+    0 0 22px var(--forest-progress-glow);
 }
 
 .pomodoro-perimeter {
@@ -231,9 +262,15 @@
   transform: scale(1.05, 1.15);
 }
 
-.pomodoro-unit.forest-theme.is-tall .tree-seed svg { transform: scale(0.85, 0.95); }
-.pomodoro-unit.forest-theme.is-tall .tree-sprout svg { transform: scale(0.9, 1); }
-.pomodoro-unit.forest-theme.is-tall .tree-growing svg { transform: scale(1, 1.08); }
+.pomodoro-unit.forest-theme.is-tall .tree-seed svg {
+  transform: scale(0.85, 0.95);
+}
+.pomodoro-unit.forest-theme.is-tall .tree-sprout svg {
+  transform: scale(0.9, 1);
+}
+.pomodoro-unit.forest-theme.is-tall .tree-growing svg {
+  transform: scale(1, 1.08);
+}
 
 .pomodoro-unit.forest-theme.is-tall .pomodoro-perimeter {
   position: absolute;
@@ -336,7 +373,9 @@
   color: #d9fbe9;
   font: 700 12px/1 var(--font-ui);
   cursor: pointer;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 12px rgba(102, 230, 205, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 12px rgba(102, 230, 205, 0.12);
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
@@ -346,7 +385,7 @@
   border: 1px solid rgba(255, 255, 255, 0.18);
   color: var(--txt-2, #aab4c5);
   border-radius: 999px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .pomodoro-unit.forest-theme.is-tall .forest-btn:active {

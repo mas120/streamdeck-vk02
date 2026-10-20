@@ -1,6 +1,10 @@
 import { COLS, ROWS } from './grid.js';
 import {
-  isEditMode, isSliderWidget, pressFeedback, releaseFeedback, flashKeycap,
+  isEditMode,
+  isSliderWidget,
+  pressFeedback,
+  releaseFeedback,
+  flashKeycap,
 } from './mode-manager.js';
 import { defaultSize } from './widget-types.js';
 import { buildOccupancyMap, serializeNode, findFreeSlot, fitToFree } from './layout-helpers.js';
@@ -9,9 +13,12 @@ import { WEATHER_DEFAULT, WEATHER_MIN_W } from '../widgets/weather.js';
 import { normalizeBongoSize } from '../widgets/bongo-cat.js';
 import { parsePomoTarget } from '../widgets/pomodoro.js';
 
-const GRIP_SVG = '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">'
-  + [4, 8, 12].flatMap((cy) => [5, 11].map((cx) => `<circle cx="${cx}" cy="${cy}" r="1.3"/>`)).join('')
-  + '</svg>';
+const GRIP_SVG =
+  '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">' +
+  [4, 8, 12]
+    .flatMap((cy) => [5, 11].map((cx) => `<circle cx="${cx}" cy="${cy}" r="1.3"/>`))
+    .join('') +
+  '</svg>';
 
 const UNDO_MS = 5000;
 
@@ -57,7 +64,10 @@ export function createTileFactory(services) {
     let free = true;
     for (let yy = snapshot.y; yy < snapshot.y + snapshot.h && free; yy++) {
       for (let xx = snapshot.x; xx < snapshot.x + snapshot.w; xx++) {
-        if (map[yy]?.[xx]) { free = false; break; }
+        if (map[yy]?.[xx]) {
+          free = false;
+          break;
+        }
       }
     }
     const data = free ? snapshot : { ...snapshot, x: undefined, y: undefined };
@@ -118,13 +128,13 @@ export function createTileFactory(services) {
   function createWidgetEl(data) {
     const type = data.type || 'open_url';
     // Widget "sống" cần biết cấu hình (kiểu mặt / toạ độ) TRƯỚC khi tính kích thước mặc định.
-    const cfg = (data.cfg && typeof data.cfg === 'object') ? data.cfg : null;
-    const clockFace = (type === 'mini_clock')
-      ? normalizeClockFace((cfg && cfg.face) || String(data.target || '').split(',')[0])
-      : null;
-    const bongoSize = (type === 'bongo_cat')
-      ? normalizeBongoSize((cfg && cfg.size) || data.target || '2x1')
-      : null;
+    const cfg = data.cfg && typeof data.cfg === 'object' ? data.cfg : null;
+    const clockFace =
+      type === 'mini_clock'
+        ? normalizeClockFace((cfg && cfg.face) || String(data.target || '').split(',')[0])
+        : null;
+    const bongoSize =
+      type === 'bongo_cat' ? normalizeBongoSize((cfg && cfg.size) || data.target || '2x1') : null;
     const def = defaultSize(type, { clockFace, bongoSize, weatherMinW: WEATHER_MIN_W });
     // Chuẩn hoá kích thước trong biên lưới
     let w = Math.min(Math.max(1, data.w || def.w), COLS);
@@ -132,8 +142,8 @@ export function createTileFactory(services) {
     if (type === 'music_wave') h = 1;
 
     // Đảm bảo LUÔN có toạ độ đầy đủ {x,y,w,h}
-    let x = (typeof data.x === 'number') ? data.x : null;
-    let y = (typeof data.y === 'number') ? data.y : null;
+    let x = typeof data.x === 'number' ? data.x : null;
+    let y = typeof data.y === 'number' ? data.y : null;
     if (x === null || y === null) {
       const slot = findFreeSlot(grid, w, h);
       x = slot.x;
@@ -141,9 +151,9 @@ export function createTileFactory(services) {
     } else if (data.clampToFree) {
       const fit = fitToFree(grid, x, y, w, h);
       if (data.w) {
-        ({ w, h } = fit);   // cỡ do người dùng chọn: thu cho vừa vùng trống
+        ({ w, h } = fit); // cỡ do người dùng chọn: thu cho vừa vùng trống
       } else if (fit.w < w || fit.h < h) {
-        ({ x, y } = findFreeSlot(grid, w, h));   // cỡ mặc định không vừa ô này
+        ({ x, y } = findFreeSlot(grid, w, h)); // cỡ mặc định không vừa ô này
       }
     }
 
@@ -151,21 +161,28 @@ export function createTileFactory(services) {
 
     try {
       el.dataset.icon = data.icon || '⏹️';
-      if (data.icon2x) el.dataset.icon2x = data.icon2x; else delete el.dataset.icon2x;
+      if (data.icon2x) el.dataset.icon2x = data.icon2x;
+      else delete el.dataset.icon2x;
       el.dataset.type = type;
       applyDisplayToEl(el, data);
-      el.dataset.target = (data.target !== undefined && data.target !== null)
-        ? String(data.target)
-        : (type === 'volume_slider' ? '50'
-          : (type === 'pomodoro' ? '25,5'
-            : (type === 'mini_clock' ? `${CLOCK_DEFAULT.face},${CLOCK_DEFAULT.tz}`
-              : (type === 'weather_widget' ? `${WEATHER_DEFAULT.lat},${WEATHER_DEFAULT.lon}` : ''))));
+      el.dataset.target =
+        data.target !== undefined && data.target !== null
+          ? String(data.target)
+          : type === 'volume_slider'
+            ? '50'
+            : type === 'pomodoro'
+              ? '25,5'
+              : type === 'mini_clock'
+                ? `${CLOCK_DEFAULT.face},${CLOCK_DEFAULT.tz}`
+                : type === 'weather_widget'
+                  ? `${WEATHER_DEFAULT.lat},${WEATHER_DEFAULT.lon}`
+                  : '';
 
       // Widget "sống": ghi cấu hình vào dataset để render/đọc lại và lưu vào layout.
       if (type === 'mini_clock' || type === 'weather_widget') {
-        el.dataset.cfg = JSON.stringify(cfg || (type === 'weather_widget'
-          ? WEATHER_DEFAULT
-          : CLOCK_DEFAULT));
+        el.dataset.cfg = JSON.stringify(
+          cfg || (type === 'weather_widget' ? WEATHER_DEFAULT : CLOCK_DEFAULT)
+        );
       }
       if (type === 'bongo_cat') {
         const bongoCfg = {
@@ -186,19 +203,19 @@ export function createTileFactory(services) {
       renderWidgetContent(el);
       addEditControls(el);
     } catch (err) {
-      grid.removeWidget(el);   // không để lại ô rỗng bị lưu thành phím rác
+      grid.removeWidget(el); // không để lại ô rỗng bị lưu thành phím rác
       throw err;
     }
 
     // --- Phản hồi chạm TỨC THÌ (< 5ms) khi pointerdown: lún phím + ripple + âm ---
     el.addEventListener('pointerdown', (e) => {
-      if (isEditMode) return;          // Edit Mode: ưu tiên kéo/sửa, không kích hoạt
-      if (isSliderWidget(el)) return;  // Thanh trượt có tương tác riêng
+      if (isEditMode) return; // Edit Mode: ưu tiên kéo/sửa, không kích hoạt
+      if (isSliderWidget(el)) return; // Thanh trượt có tương tác riêng
       if (el.dataset.type === 'pomodoro') return; // Pomodoro tự xử lý tap/long-press
       if (el.dataset.type === 'bongo_cat') return; // Bongo Cat phản hồi qua bàn phím hệ thống
       if (el.dataset.type === 'mic_widget') return; // Mic widget xử lý click riêng
-      if (isLiveWidget(el)) return;    // Đồng hồ / Thời tiết có tương tác riêng
-      if (e.button) return;            // Chỉ chuột trái / cảm ứng
+      if (isLiveWidget(el)) return; // Đồng hồ / Thời tiết có tương tác riêng
+      if (e.button) return; // Chỉ chuột trái / cảm ứng
       pressFeedback(el);
     });
     el.addEventListener('pointerup', () => releaseFeedback(el));
@@ -217,12 +234,13 @@ export function createTileFactory(services) {
       if (el.dataset.type === 'pomodoro') return; // xử lý trong setupPomodoro
       if (el.dataset.type === 'bongo_cat') return; // Bongo Cat phản hồi qua bàn phím hệ thống
       if (el.dataset.type === 'mic_widget') return; // Mic widget xử lý click riêng
-      if (el.dataset.type === 'todo_list') {      // mở cửa sổ soạn việc trên màn hình PC
+      if (el.dataset.type === 'todo_list') {
+        // mở cửa sổ soạn việc trên màn hình PC
         releaseFeedback(el);
         flashKeycap(el, await todoWidget.openEditor());
         return;
       }
-      if (isLiveWidget(el)) return;   // Đồng hồ tự chạy; Thời tiết tự làm mới khi chạm
+      if (isLiveWidget(el)) return; // Đồng hồ tự chạy; Thời tiết tự làm mới khi chạm
       releaseFeedback(el);
       const ok = await callTauriAction(el.dataset.type, el.dataset.target);
       flashKeycap(el, ok);

@@ -56,25 +56,40 @@ function initIdle(onWake) {
 
   // Chạm đánh thức lúc đang tối: nuốt cả chuỗi pointer/click để không kích hoạt ô bên dưới.
   let swallowUntil = 0;
-  const swallow = (e) => { e.stopPropagation(); e.preventDefault(); };
-  window.addEventListener('pointerdown', (e) => {
-    if (!document.body.classList.contains('idle')) return;
-    swallowUntil = performance.now() + 700;
-    swallow(e);
-    wake(true);
-  }, { capture: true });
+  const swallow = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+  window.addEventListener(
+    'pointerdown',
+    (e) => {
+      if (!document.body.classList.contains('idle')) return;
+      swallowUntil = performance.now() + 700;
+      swallow(e);
+      wake(true);
+    },
+    { capture: true }
+  );
   ['pointerup', 'click', 'touchstart', 'touchend', 'mousedown', 'mouseup'].forEach((ev) =>
-    window.addEventListener(ev, (e) => {
-      if (performance.now() < swallowUntil) swallow(e);
-    }, { capture: true })
+    window.addEventListener(
+      ev,
+      (e) => {
+        if (performance.now() < swallowUntil) swallow(e);
+      },
+      { capture: true }
+    )
   );
 
   // Dịch nhẹ nội dung mỗi phút khi tối để giảm lưu ảnh trên panel.
   const root = document.documentElement;
   setInterval(() => {
-    if (!document.body.classList.contains('idle')) { root.style.removeProperty('--shift-x'); root.style.removeProperty('--shift-y'); return; }
-    root.style.setProperty('--shift-x', (Math.floor(Math.random() * 5) - 2) + 'px');
-    root.style.setProperty('--shift-y', (Math.floor(Math.random() * 5) - 2) + 'px');
+    if (!document.body.classList.contains('idle')) {
+      root.style.removeProperty('--shift-x');
+      root.style.removeProperty('--shift-y');
+      return;
+    }
+    root.style.setProperty('--shift-x', Math.floor(Math.random() * 5) - 2 + 'px');
+    root.style.setProperty('--shift-y', Math.floor(Math.random() * 5) - 2 + 'px');
   }, 60000);
 
   ['pointerdown', 'pointermove', 'keydown', 'wheel', 'touchstart'].forEach((ev) =>

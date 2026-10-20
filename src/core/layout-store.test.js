@@ -44,12 +44,16 @@ test('writes versioned layouts to localStorage and the Tauri file', async () => 
   });
 
   let saved;
-  await writeLayoutFile(async (_command, args) => { saved = JSON.parse(args.json); }, sample);
+  await writeLayoutFile(async (_command, args) => {
+    saved = JSON.parse(args.json);
+  }, sample);
   assert.deepEqual(saved, { schemaVersion: LAYOUT_SCHEMA_VERSION, widgets: sample });
 });
 
 test('loads a versioned Tauri layout', async () => {
-  const result = await loadLayout('deck', async () => JSON.stringify({ schemaVersion: 1, widgets: sample }));
+  const result = await loadLayout('deck', async () =>
+    JSON.stringify({ schemaVersion: 1, widgets: sample })
+  );
   assert.deepEqual(result, sample);
 });
 
