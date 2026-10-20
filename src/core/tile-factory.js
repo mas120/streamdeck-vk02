@@ -161,6 +161,8 @@ export function createTileFactory(services) {
 
     try {
       el.dataset.icon = data.icon || '⏹️';
+      if (data.id) el.dataset.layoutId = String(data.id);
+      else delete el.dataset.layoutId;
       if (data.icon2x) el.dataset.icon2x = data.icon2x;
       else delete el.dataset.icon2x;
       el.dataset.type = type;

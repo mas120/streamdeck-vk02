@@ -220,14 +220,14 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 
 ## Phase 4 — Dữ liệu & layout (2 session)
 
-### P4-1 · Layout schema v2 + migration
-- [ ] **File**: `src/core/layout-store.js`, `src-tauri/src/layout.rs`, test tương ứng.
-- **Việc**:
-  - Thêm `migrateLayout(items, fromVersion)`; `LAYOUT_SCHEMA_VERSION = 2` (thêm `id`, `cfg` chuẩn hoá).
-  - Rust: chấp nhận `schemaVersion >= 1` (validate mềm) thay vì `== 1`.
-  - Test: layout v1 → v2 giữ nguyên phím; layout rác không làm mất toàn bộ.
-- **Done**: `npm.cmd run check` + `cargo test`; khởi động với `layout.json` v1 cũ vẫn giữ đủ phím.
-- **Token**: ~20k.
+### P4-1 · Layout schema v2 + migration ✅
+- [x] **Kết quả**:
+  - `layout-store.js`: `LAYOUT_SCHEMA_VERSION = 2`; `migrateLayout(items, fromVersion)` thêm `id` ổn định (giữ id cũ, chống trùng), chuẩn hoá `cfg` thành object, bỏ phím thiếu `x/y`.
+  - Đọc được layout mảng cũ + v1 + v2; `writeLayout`/`writeLayoutFile` luôn ghi v2 đã migrate.
+  - `serializeNode` lưu `id`; `tile-factory` gán `dataset.layoutId` để id không đổi qua mỗi lần lưu.
+  - Rust `layout.rs`: chấp nhận `schemaVersion` 1..=2 (validate mềm), test cập nhật.
+- **Done**: `npm.cmd run check` + `cargo test` pass (25 JS, 10 Rust); layout v1 cũ vẫn giữ đủ phím.
+- **Token thực tế**: ~20k.
 
 ### P4-2 · Sao lưu / khôi phục
 - [ ] **File**: `src-tauri/src/lib.rs` (hoặc `backup.rs`), `settings-panel.js`, `index.html`.

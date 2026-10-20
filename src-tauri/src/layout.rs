@@ -20,9 +20,12 @@ fn layout_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
 }
 
 fn is_valid_layout(raw: &str) -> bool {
-    serde_json::from_str::<serde_json::Value>(raw).map_or(false, |value| {
+    serde_json::from_str::<serde_json::Value>(raw).is_ok_and(|value| {
         value.is_array()
-            || (value.get("schemaVersion").and_then(serde_json::Value::as_u64) == Some(1)
+            || (value
+                .get("schemaVersion")
+                .and_then(serde_json::Value::as_u64)
+                .is_some_and(|v| (1..=2).contains(&v))
                 && value.get("widgets").is_some_and(serde_json::Value::is_array))
     })
 }
@@ -75,11 +78,13 @@ mod tests {
     fn accepts_legacy_and_current_layout_formats() {
         assert!(is_valid_layout("[]"));
         assert!(is_valid_layout(r#"{"schemaVersion":1,"widgets":[]}"#));
+        assert!(is_valid_layout(r#"{"schemaVersion":2,"widgets":[]}"#));
     }
 
     #[test]
     fn rejects_unknown_or_malformed_layout_formats() {
-        assert!(!is_valid_layout(r#"{"schemaVersion":2,"widgets":[]}"#));
+        assert!(!is_valid_layout(r#"{"schemaVersion":0,"widgets":[]}"#));
+        assert!(!is_valid_layout(r#"{"schemaVersion":3,"widgets":[]}"#));
         assert!(!is_valid_layout(r#"{"schemaVersion":1,"widgets":{}}"#));
         assert!(!is_valid_layout("null"));
     }

@@ -69,6 +69,7 @@ export function serializeNode(node) {
     type: el.dataset.type || 'open_url',
     target: el.dataset.target || '',
   };
+  if (el.dataset.layoutId) item.id = el.dataset.layoutId;
   if (el.dataset.icon2x) item.icon2x = el.dataset.icon2x;
   // Hiển thị phím: kiểu khớp ảnh + nhãn chồng lên icon (chỉ lưu khi có).
   if (el.dataset.fit) item.fit = el.dataset.fit;
