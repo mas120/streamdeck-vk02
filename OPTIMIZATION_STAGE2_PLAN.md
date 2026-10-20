@@ -149,7 +149,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 > nếu không `check:capsule` sẽ fail.
 
 ### P2-1 · `audio.rs`
-- [ ] **File**: `src-tauri/src/lib.rs`, tạo `src-tauri/src/audio.rs`.
+- [x] **File**: `src-tauri/src/lib.rs`, tạo `src-tauri/src/audio.rs`.
 - **Việc**: chuyển toàn bộ phần master volume / mute / peak / mic / audio session / `set_app_volume` / `toggle_app_mute` + các struct liên quan + static `CAPTURE`. Khai báo `mod audio;` và trỏ lại handler.
 - **Done**: `cd src-tauri; cargo build` + `cargo test`; `npm.cmd run check`.
 - **Token**: ~25k.
@@ -281,7 +281,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 - [x] P1-1 · Scheduler đồng hồ
 - [x] P1-2 · Vòng quét audio/media
 - [ ] P1-3 · Đo lại
-- [ ] P2-1 · audio.rs
+- [x] P2-1 · audio.rs
 - [ ] P2-2 · windows_info.rs
 - [ ] P2-3 · actions.rs
 - [ ] P2-4 · windows.rs
