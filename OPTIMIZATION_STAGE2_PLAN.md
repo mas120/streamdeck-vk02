@@ -32,7 +32,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 ## Phase 0 — Lưới an toàn (làm ngay, tổng ~1 ngày)
 
 ### P0-1 · Git baseline
-- [ ] **Mục tiêu**: có lịch sử để rollback trước khi sửa gì.
+- [x] **Mục tiêu**: có lịch sử để rollback trước khi sửa gì.
 - **File**: `.gitignore`, `.gitattributes` (tạo mới).
 - **Việc**:
   - `git init` trong `streandeck-vk02/` (thư mục có `package.json`).
@@ -238,7 +238,7 @@ Thứ tự làm: **P0 → P1 → P2 → P3 → P4 → P5**. Trong cùng một ph
 
 ## Trạng thái
 
-- [ ] P0-1 · Git baseline
+- [x] P0-1 · Git baseline
 - [ ] P0-2 · Tooling + check:full
 - [ ] P0-3 · Ring buffer lỗi
 - [ ] P0-4 · Xuất chẩn đoán
